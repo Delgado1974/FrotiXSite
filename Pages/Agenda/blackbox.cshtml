@@ -1,0 +1,62 @@
+﻿@page
+@model BlackboxModel
+@using Syncfusion.EJ2
+
+
+
+<!-- Button to Open the Modal -->
+<button type="button" id="openModalBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+	Open Form
+</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Form Modal</h4>
+			</div>
+			<div class="modal-body">
+				<form id="form-element" class="form-vertical" method="post">
+					<div class="form-group">
+						<div class="col-sm-12">
+							<ejs-textbox id="firstname" placeholder="First Name" floatLabelType="Auto"></ejs-textbox>
+							<ejs-checkbox id="checkHandler" checked="true" label="CheckBox: true" change="onChange"></ejs-checkbox>
+							<ejs-dropdowntree id="datevalue" showClearButton="true"
+											  :dataSource="dataSourceArray" popupHeight="300px"
+											  placeholder="Select Address Type" allowFiltering="true">
+
+								<e-dropdowntree-fields text="name" value="id"></e-dropdowntree-fields>
+							</ejs-dropdowntree>
+
+							<input id="BtnSave" type="submit" class="rmbttn" value="Save" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script>
+	// JavaScript array to use as data source for the dropdowntree
+	var dataSourceArray = [
+		{ id: 1, name: 'Item 1' },
+		{ id: 2, name: 'Item 2' },
+		{ id: 3, name: 'Item 3' },
+		{ id: 4, name: 'Item 4' },
+		{ id: 5, name: 'Item 5' },
+		{ id: 6, name: 'Item 6' },
+		{ id: 7, name: 'Item 7' },
+		{ id: 8, name: 'Item 8' },
+		{ id: 9, name: 'Item 9' },
+		{ id: 10, name: 'Item 10' }
+	];
+</script>

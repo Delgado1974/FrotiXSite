@@ -1,0 +1,315 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Patrimonio.UpsertModel
+@using Syncfusion.Blazor.Inputs
+
+@{
+	ViewData["Title"] = "Patrimônio";
+	ViewData["PageName"] = "patrimonio_upsert";
+	ViewData["Heading"] = "<i class='fa-sharp-duotone fa-solid fa-arrows-turn-to-dots'></i> Cadastros: <span class='fw-300'>Patrimônio</span>";
+	ViewData["Category1"] = "Cadastros";
+	ViewData["PageIcon"] = "fa-regular fa-arrows-turn-to-dots";
+}
+
+
+<style>
+	.form-control-xs {
+	height: calc(1em + .775rem + 2px) !important;
+	padding: .125rem .25rem !important;
+	font-size: .75rem !important;
+	line-height: 1.5;
+	border-radius: .2rem;
+	}
+
+	.label {
+	margin-bottom: -5px;
+	margin-top: 10px;
+	}
+
+	input[type=checkbox] {
+	vertical-align: middle;
+	position: relative;
+	bottom: 1px;
+	}
+
+	.escondido {
+	display: none;
+	}
+
+	.espacofundo {
+	padding-bottom: 20px;
+	}
+
+</style>
+
+<style>
+    #dropArea {
+        border: 1px dashed #c3c3cc;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .control_wrapper {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    img#previewImage {
+        margin-top: 20px;
+    }
+</style>
+
+<style>
+    img#previewImage {
+        max-width: 100%; /* Ensures responsiveness */
+        width: 300px; /* Enforces width */
+        height: auto; /* Maintains aspect ratio */
+        display: block; /* Ensures proper alignment */
+        margin-top: 20px; /* Optional: Add space above */
+    }
+</style>
+
+
+@section HeadBlock {
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+	<link rel="stylesheet" href="~/css/dropify.min.css" />
+
+}
+
+@{
+	var patrimonioId = Model.PatrimonioObj?.PatrimonioId.ToString() ?? "00000000-0000-0000-0000-000000000000";
+}
+
+<script>
+
+</script>
+
+<script>
+</script>
+
+
+<form id="formsPatrimonio" method="post" asp-action="Upsert" onkeypress='stopEnterSubmitting(window.event)' enctype="multipart/form-data">
+    <div class="row espacofundo">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div id="painelfundo" class="panel-container show espacofundo">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div id="divPatrimonioIdEmpty" data-patrimonioid="@patrimonioId"></div>
+
+                        @if (Model.PatrimonioObj.PatrimonioId != Guid.Empty)
+                        {
+                            <input type="hidden" id="PatrimonioId" name="PatrimonioObj.PatrimonioId" value="@Model.PatrimonioObj.PatrimonioId" />
+                            <input type="hidden" id="MarcaId" value="@Model.PatrimonioObj.Patrimonio.Marca" />
+                            <input type="hidden" id="ModeloId" value="@Model.PatrimonioObj.Patrimonio.Modelo" />
+
+                            <!-- Hidden inputs for setor and secao values -->
+                            <input type="hidden" id="SetorId" value="@Model.PatrimonioObj.Patrimonio.SetorId" />
+                            <input type="hidden" id="SecaoId" value="@Model.PatrimonioObj.Patrimonio.SecaoId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.PatrimonioObj.Patrimonio.PatrimonioId != Guid.Empty ? "Atualizar " : "Criar ") Patrimônio</h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.NPR"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.NPR"></span>
+                                        <input class="form-control form-control-sm" asp-for="PatrimonioObj.Patrimonio.NPR" pattern="^\d+(\.\d+)?$" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.Marca"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.Marca"></span>
+                                        @* <input class="form-control form-control-sm" asp-for="PatrimonioObj.Patrimonio.Marca" /> *@
+                                        <ejs-combobox id="cmbMarcas"
+                                                      placeholder="Selecione/Insira uma Marca"
+                                                      allowFiltering="true"
+                                                      filterType="Contains"
+                                                      popupHeight="200px"
+                                                      width="100%"
+                                                      showClearButton="true"
+                                                      allowCustom="true"
+                                                      change="onMarcaChange"
+                                                      ejs-for="PatrimonioObj.Patrimonio.Marca">
+                                            <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.Modelo"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.Modelo"></span>
+                                        <!-- ComboBox para Marcas -->
+                                        <ejs-combobox id="cmbModelos"
+                                                      placeholder="Selecione/Insira uma Marca"
+                                                      allowFiltering="true"
+                                                      filterType="Contains"
+                                                      popupHeight="200px"
+                                                      width="100%"
+                                                      showClearButton="true"
+                                                      allowCustom="true"
+                                                      ejs-for="PatrimonioObj.Patrimonio.Modelo">
+                                            <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.SetorId">Setor</label>
+                                    <!-- ComboBox para Modelos -->
+                                    <ejs-combobox id="cmbSetores"
+                                                  placeholder="Selecione um Setor"
+                                                  allowFiltering="true"
+                                                  filterType="Contains"
+                                                  popupHeight="200px"
+                                                  width="100%"
+                                                  showClearButton="true"
+                                                  ejs-for="PatrimonioObj.Patrimonio.SetorId">
+                                        <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+
+                                <div class="col-4 form-group" id="divSecao">
+                                    <label class="label font-weight-bold">Seção</label>
+                                    <!-- ComboBox para Seção -->
+                                    <ejs-combobox id="cmbSecoes"
+                                                  placeholder="Selecione uma Seção"
+                                                  allowFiltering="true"
+                                                  filterType="Contains"
+                                                  popupHeight="200px"
+                                                  width="100%"
+                                                  showClearButton="true"
+                                                  ejs-for="PatrimonioObj.Patrimonio.SecaoId">
+                                        <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                            </div>
+
+                            <!----------------------------------------------------------------------------------------->
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.Descricao">Descrição</label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.Descricao"></span>
+                                        <input class="form-control form-control-sm" asp-for="PatrimonioObj.Patrimonio.Descricao" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.NumeroSerie">Numero de Série</label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.NumeroSerie"></span>
+                                        <input class="form-control form-control-sm" asp-for="PatrimonioObj.Patrimonio.NumeroSerie" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.Situacao">Situação</label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.Situacao"></span>
+                                        <input class="form-control form-control-sm" asp-for="PatrimonioObj.Patrimonio.Situacao" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!----------------------------------------------------------------------------------------->
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="PatrimonioObj.Patrimonio.LocalizacaoAtual">Localização Atual</label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="PatrimonioObj.Patrimonio.LocalizacaoAtual"></span>
+                                        <!-- Depois -->
+                                        <ejs-textbox id="localizacaoAtual"
+                                                     cssClass="my-syncfusion-input--small"
+                                                     ejs-for="@Model.PatrimonioObj.Patrimonio.LocalizacaoAtual"
+                                                     placeholder="Digite a Localização Atual do Patrimônio">
+                                        </ejs-textbox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!----------------------------------------------------------------------------------------->
+                            <br />
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <input type="checkbox" class="form-check-input" asp-for="PatrimonioObj.Patrimonio.Status" id="chkStatus" />
+                                            Status (Ativo/Baixado)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!----------------------------------------------------------------------------------------->
+                            <br />
+                            <br />
+
+                            <div class="row">
+                                <div class="col-lg-8 control-section">
+                                    <label class="label font-weight-bold">Imagem (foto) do Patrimônio</label>
+                                    <div id="dropArea" style="height: auto; width:400px; overflow: auto;">
+                                        <ejs-uploader id="fileUpload"
+                                                      allowedExtensions=".jpg,.jpeg,.png"
+                                                      selected="onFileSelect"
+                                                      removing="onFileRemove"
+                                                      name="UploadedFile">
+                                        </ejs-uploader>
+                                    </div>
+                                </div>
+
+                                <!-- Render the image preview -->
+                                <img id="previewImage" src="@Model.PatrimonioObj.Patrimonio.ImageUrl"
+                                     width="100" heigth="100" style="display:@(string.IsNullOrEmpty(Model.PatrimonioObj.Patrimonio.ImageUrl) ? "none" : "block");" />
+                            </div>
+
+                            <!-- Add spacing using Bootstrap classes -->
+                            <div class="mb-4"></div>
+
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row float-left">
+                                        <div class="col-6 float-left">
+                                            @if (Model.PatrimonioObj.Patrimonio.PatrimonioId != Guid.Empty)
+                                            {
+                                                <button method="post" asp-page-handler="Edit" asp-route-id="@Model.PatrimonioObj.Patrimonio.PatrimonioId" asp-route-npratual="@Model.PatrimonioObj.Patrimonio.NPR" class="btn btn-primary form-control" style="width:200px">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control" style="width:200px">Criar</button>
+                                            }
+                                        </div>
+                                        <div class="col-6 float-right">
+                                            <a asp-page="./Index" class="btn btn-success form-control" style="width:200px">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- Fecha col-12 pt-3 -->
+                    </div> <!-- Fecha panel-content -->
+                </div> <!-- Fecha painelfundo -->
+            </div> <!-- Fecha panel-1 -->
+        </div> <!-- Fecha col-xl-12 -->
+    </div> <!-- Fecha row espacofundo -->
+</form>
+
+
+
+@section ScriptsBlock
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/dropify.min.js"></script>
+    <script src="~/js/cadastros/patrimonio_102.js"></script>
+
+
+} 

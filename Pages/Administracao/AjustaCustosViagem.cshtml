@@ -1,0 +1,398 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using FrotiX.Helpers
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+        public void OnGet()
+        {
+            FrotiX.Pages.Viagens.IndexModel.Initialize(_unitOfWork);
+            ViewData["dataCombustivel"] = new ListaNivelCombustivel(_unitOfWork).NivelCombustivelList();
+
+            ViewData["lstMotorista"] = new ListaMotorista(_unitOfWork).MotoristaList();
+            ViewData["lstVeiculos"] = new ListaVeiculos(_unitOfWork).VeiculosList();
+            ViewData["lstSetor"] = new ListaSetores(_unitOfWork).SetoresList();
+            ViewData["lstStatus"] = new ListaStatus(_unitOfWork).StatusList();
+
+            ViewData["lstFinalidade"] = new ListaFinalidade(_unitOfWork).FinalidadesList();
+            ViewData["lstEvento"] = new ListaEvento(_unitOfWork).EventosList();
+
+        }
+    }
+}
+
+
+@model FrotiX.Models.ViewCustosViagem
+
+@{
+    ViewData["Title"] = "Ajuste de Custos";
+    ViewData["PageName"] = "ajustacustosviagem_index";
+    ViewData["Heading"] = "<i class='fad fa-route'></i> Administração: <span class='fw-300'>Custos das Viagens</span>";
+    ViewData["Category1"] = "Administração";
+    ViewData["PageIcon"] = "fad fa-route";
+}
+
+@section HeadBlock {
+
+
+
+    @*<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />*@
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+        .fundo-laranja:hover,
+        .fundo-laranja:focus,
+        .fundo-laranja:active {
+            background-color: rgba(210, 105, 30, 0.5) !important;
+            color: white !important;
+        }
+
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .img {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: 50%;
+        height: 100%;
+        margin: 0 auto !important;
+    }
+
+    .esconde-diveventos {
+        display: none; /* Set the initial display property to none to hide the div */
+    }
+
+</style>
+
+
+<script>
+
+        function FinalidadeChange() {
+        try {
+            if (document.getElementById('lstFinalidadeAlterada').ej2_instances[0].value === 'Evento') {
+                var lstEvento = document.getElementById("lstEvento").ej2_instances[0];
+                lstEvento.enabled = true; // To enable
+                $(".esconde-diveventos").show(); /* Use the .show() method to make the div visible */
+            }
+            else {
+                var lstEvento = document.getElementById("lstEvento").ej2_instances[0];
+                lstEvento.enabled = false; // To disable
+                lstEvento.value = null;
+                $(".esconde-diveventos").hide(); /* Use the .hide() method to make the div invisible */
+            }
+            
+        } catch (error) {
+            TratamentoErroComLinha("Erro em Javascript", "FinalidadeChange", error);
+
+            console.error(error);
+            toastr.error('Ocorreu um erro ao executar a ação');
+        }
+    }
+
+</script>
+
+
+@if (TempData["ErroJs"] != null)
+{
+    <script>
+        @Html.Raw(TempData["ErroJs"])
+    </script>
+}
+
+<form method="post" asp-action="Index" onkeypress='stopEnterSubmitting(window.event)' enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content float-right">
+                        <a href="/Viagens/Upsert" class="btn btn-info">
+                            <i class="fal fa-route">
+                            </i> &nbsp; Adicionar Viagem
+                        </a>
+                    </div>
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br /><br />
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                <h2 class="text-primary">
+                                    Escolha a viagem a ser alterada:
+                                </h2>
+                            </div>
+@*                             <div class="col-12">
+                                <div class="form-group row">
+                                    <div class="col-2">
+                                        <label class="label font-weight-bold color-black">Escolha uma Data</label>
+                                        <input id="txtData" class="form-control form-control-xs" type="date" />
+                                    </div>
+                                    <div class="col-3">
+                                        <label class="label font-weight-bold color-black"></label>
+                                        <ejs-combobox id="lstFinalidade" placeholder="Selecione uma Finalidade" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstFinalidade"]" popupHeight="250px" change="DefineEscolhaFinalidade" width="100%" showClearButton="true" close="FinalidadeValueChange">
+                                            <e-combobox-fields text="Finalidade" value="FinalidadeId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstVeiculos" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" change="DefineEscolhaVeiculo" width="100%" showClearButton="true" close="VeiculosValueChange">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-dropdowntree id="ddtSetor" placeholder="Selecione um Setor" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." change="DefineEscolhaSetor" close="DefineEscolhaSetor">
+                                            <e-dropdowntree-fields dataSource="@ViewData["lstSetor"]" value="SetorSolicitanteId" text="Nome" parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+                                        </ejs-dropdowntree>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" change="DefineEscolhaMotorista" width="100%" showClearButton="true" close="MotoristaValueChange">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstStatus" placeholder="Viagens com Status..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstStatus"]" popupHeight="250px" change="DefineEscolhaStatus" width="100%" showClearButton="true" close="StatusValueChange">
+                                            <e-combobox-fields text="Status" value="StatusId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+ *@                            <br /><br />
+                            <div id="divViagens">
+                                <table id="tblViagem" class="table table-bordered table-striped" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Vistoria</th>
+                                            <th>Data Inicial</th>
+                                            <th>Data Final</th>
+                                            <th>Hora Inicio</th>
+                                            <th>Hora Fim</th>
+                                            <th>Finalidade</th>
+                                            <th>Motorista</th>
+                                            <th>Veiculo</th>
+                                            <th>Km Inicial</th>
+                                            <th>Km Final</th>
+                                            <th>Quilometragem</th>
+                                            <th>(R$) Motorista</th>
+                                            <th>(R$) Combustível</th>
+                                            <th>(R$) Veículo</th>
+                                            <th>Ação</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="modal fade" id="modalAjustaCustos" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="h3Titulo">Editar a Viagem</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmViagem">
+                    <input type="hidden" id="txtId" />
+
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Nº da Ficha de Vistoria </label>
+                                <input id="txtNoFichaVistoria" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+@*                         <div class="col-9">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Finalidade da Viagem</label>
+                                 <ejs-combobox id="lstFinalidadeAlterada" placeholder="Selecione uma Finalidade" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstFinalidade"]" popupHeight="250px" width="100%" showClearButton="true" change="FinalidadeChange">
+                                    <e-combobox-fields text="Descricao" value="FinalidadeId"></e-combobox-fields>
+                                </ejs-combobox>
+
+                                <label class="label font-weight-bold">Nome do Evento</label>
+                                <ejs-dropdowntree id="lstEvento" placeholder="Selecione um Evento..." showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." popupHeight="200px">
+                                    <e-dropdowntree-fields dataSource="@ViewData["lstEvento"]" value="EventoId" text="Evento"></e-dropdowntree-fields>
+                                </ejs-dropdowntree>
+
+                            </div>
+                        </div> *@
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Finalidade da Viagem</label>
+                                        <ejs-combobox id="lstFinalidadeAlterada" placeholder="Selecione uma Finalidade" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstFinalidade"]" popupHeight="250px" width="100%" showClearButton="true" change="FinalidadeChange">
+                                            <e-combobox-fields text="Descricao" value="FinalidadeId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Nome do Evento</label>
+                                        <ejs-dropdowntree id="lstEvento" placeholder="Selecione um Evento..." showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." popupHeight="200px">
+                                            <e-dropdowntree-fields dataSource="@ViewData["lstEvento"]" value="EventoId" text="Evento"></e-dropdowntree-fields>
+                                        </ejs-dropdowntree>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+@*                     <div class="row">
+                        <div id="divEvento" class="row esconde-diveventos">
+
+                            <div id="ControlRegion" class="col-8 col-md-8">
+                                <div class="form-group">
+                                    <label class="label font-weight-bold">Nome do Evento</label>
+                                    <ejs-dropdowntree id="lstEvento" placeholder="Selecione um Evento..." showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." popupHeight="200px">
+                                        <e-dropdowntree-fields dataSource="@ViewData["lstEvento"]" value="EventoId" text="Evento"></e-dropdowntree-fields>
+                                    </ejs-dropdowntree>
+                                </div>
+                            </div>
+
+                         </div>
+                    </div> *@
+
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Data Inicial</label>
+                                <input id="txtDataInicial" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Hora Inicial</label>
+                                <input id="txtHoraInicial" class="form-control form-control-xs" type="time" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Km Inicial</label>
+                                <input id="txtKmInicial" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Data Final</label>
+                                <input id="txtDataFinal" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Hora Final</label>
+                                <input id="txtHoraFinal" class="form-control form-control-xs" type="time" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Km Final</label>
+                                <input id="txtKmFinal" class="form-control form-control-xs" type="number" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="label font-weight-bold">Motorista</label>
+                            <ejs-combobox id="lstMotoristaAlterado" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" width="100%" showClearButton="true">
+                                <e-combobox-fields text="Nome" value="MotoristaId"></e-combobox-fields>
+                            </ejs-combobox>
+                        </div>
+                        <div class="col-4">
+                            <label class="label font-weight-bold">Veículo</label>
+                            <ejs-combobox id="lstVeiculoAlterado" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" width="100%" showClearButton="true">
+                                <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                            </ejs-combobox>
+                        </div>
+                        <div class="col-4">
+                            <label class="label font-weight-bold">Setor Solicitante</label>
+                            <ejs-dropdowntree id="lstSetorSolicitanteAlterado" placeholder="Selecione um Setor" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar...">
+                                <e-dropdowntree-fields dataSource="@ViewData["lstSetor"]" value="SetorSolicitanteId" text="Nome" parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+
+                    <br />
+                </form>
+                <div class="modal-footer">
+                    <button id="btnAjustarViagem" class="btn btn-primary">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <span class="btn-text">Ajustar Viagem</span>
+                    </button>
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* -------------- Modal da Ficha de Vistoria -------------- *@
+@* ======================================================== *@
+<div class="modal fade" id="modalFicha">
+    <div class="modal-dialog modal-md" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header d-block">
+                <h4 class="modal-title" id="DynamicModalLabel">Ficha de Vistoria</h4>
+            </div>
+
+            <div class="modal-body table-bordered container-fluid">
+                <input type="hidden" id="txtViagemId" />
+
+                <img class="img" id="imgViewer" style="border: 1px solid #000000; margin-top: 10px; height: auto" />
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock{
+
+    <script src="/js/cadastros/atualizacustosviagem_25.js"></script>
+
+}

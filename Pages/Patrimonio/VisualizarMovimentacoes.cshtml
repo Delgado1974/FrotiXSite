@@ -1,0 +1,73 @@
+﻿@page
+@model FrotiX.Pages.MovimentacaoPatrimonio.VisualizarMovimentacoesModel
+
+@{
+    ViewData["Title"] = "Movimentações do Patrimônio";
+    ViewData["PageName"] = "movimentacaopatrimonio_index";
+    ViewData["Heading"] = "<i class='fad fa-car-bus'></i> Movimentações: <span class='fw-300'>Movimentações</span>";
+    ViewData["Category1"] = "Patrimônios";
+    var patrimonioId = Model.patrimonioId;
+    ViewData["PageIcon"] = "fa-regular fa-car-bus";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+<input type="hidden" id="patrimonioId" value="@patrimonioId" />
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="./MovimentacaoPatrimonio/Upsert?patrimonioId=@patrimonioId" class="btn btn-info">
+                        <i class="fa-regular fa-car-bus">
+                        </i> &nbsp; Adicionar movimentação
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblMovimentacaoPatrimonio" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Data Movimentação</th>
+                                    <th>NPR</th>
+                                    <th>Descrição</th>
+                                    <th>Setor Origem</th>
+                                    <th>Seção Origem</th>
+                                    <th>Setor Destino</th>
+                                    <th>Seção Destino</th>
+                                    <th>Responsável Movimentação</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <a asp-page="./Index" class="btn btn-success form-control" style="width:200px">Voltar à Lista</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock {
+    <script src="~/js/cadastros/patrimonio_102.js"></script>
+}

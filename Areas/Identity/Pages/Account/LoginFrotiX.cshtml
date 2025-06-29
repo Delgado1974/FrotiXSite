@@ -1,0 +1,63 @@
+﻿@page
+@model FrotiX.Areas.Identity.Pages.Account.LoginFrotiX
+@{
+    ViewData["Title"] = "FrotiX | Login";
+    Layout = Layout = "_LoginLayout";
+}
+<div class="login-content">
+
+    <div class="form-login-error">
+        <h3>Login Inválido</h3>
+        <p id="error_msg"></p>
+    </div>
+
+    <form method="post" id="form_login" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="entypo-user"></i>
+                </div>
+                <input name="Ponto" asp-for="Input.Ponto" class="form-control" placeholder="Insira seu ponto" autocomplete="off" data-validate="required"/>
+                @*<input type="text" class="form-control" name="Ponto" id="Ponto" placeholder="Insira seu ponto" autocomplete="off" />*@
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="entypo-key"></i>
+                </div>
+                <input name="Password" asp-for="Input.Password" type="password" class="form-control" placeholder="Senha" autocomplete="off" data-validate="required"/>
+                @*<input type="password" class="form-control" name="Password" id="Password" placeholder="Senha" autocomplete="off" />*@
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary btn-block btn-login">
+                <i class="entypo-login"></i>
+                Logar no Sistema
+            </button>
+        </div>
+
+
+    </form>
+
+
+    <div class="login-bottom-links">
+
+        <a href="extra-forgot-password.html" class="link">
+            <i class="fa-duotone fa-user-pilot-tie fa-lg"></i>
+            &nbsp;&nbsp;&nbsp;Esqueceu sua senha?
+        </a>
+        @*<a href="/Register/Index" class="link">Registrar</a>*@
+
+        <br />
+    </div>
+
+</div>
+

@@ -1,0 +1,263 @@
+﻿@page
+@using Syncfusion.EJ2
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Calendar with ListBox</title>
+@* 	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+ *@
+	<style>
+		body {
+			margin-top: 5cm;
+			font-family: "Poppins", sans-serif;
+		}
+
+		.container {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			margin-top: 20px;
+		}
+
+		.calendar-container {
+			margin-right: 20px;
+		}
+
+		.listbox-container {
+			position: relative;
+			width: 250px;
+		}
+
+		/* Circular Badge */
+		.badge-overlay {
+			position: absolute;
+			top: -10px;
+			right: -10px;
+			z-index: 2;
+			font-size: 0.8rem;
+			background-color: #e55b13;
+			color: white;
+			width: 35px;
+			height: 35px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 50%;
+		}
+
+		/* Custom styles for the Syncfusion Calendar */
+		.e-calendar {
+			font-family: "Poppins", sans-serif;
+		}
+
+		/* ListBox item */
+		.normal-item {
+			padding: 0.5rem;
+			background-color: white;
+			color: black;
+			border-bottom: 1px solid #ccc;
+			display: flex;
+			align-items: center;
+		}
+
+		/* Red circular delete button */
+		.remove-btn {
+			background-color: red;
+			color: white;
+			border: none;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+			margin-right: 10px; /* Adds space between button and date */
+			font-size: 1rem; /* Match the font size of the date text */
+			width: 1.5em; /* Adjust width to match font size */
+			height: 1.5em; /* Adjust height to match font size */
+		}
+
+			/* Trash icon within the button */
+			.remove-btn i {
+				font-size: 0.7rem; /* Adjust icon size */
+			}
+
+		/* Change font color, make bold, and increase size on hover */
+		.normal-item:hover .item-text {
+			color: lightcoral; /* Change to desired hover color */
+			font-weight: bold; /* Make text bold */
+			font-size: 0.9rem; /* Reduce font size */
+		}
+
+		/* Change background color on hover */
+		.remove-btn:hover {
+			background-color: darkred; /* Change to desired hover color */
+		}
+
+		/* Change font color of date text on hover */
+		.normal-item:hover .item-text {
+			color: darkred; /* Change to desired hover color */
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<!-- Toggle Button -->
+		<button id="toggleButton" class="btn btn-primary" onclick="toggleControls()">Show/Hide Controls</button>
+
+		<!-- Calendar Control -->
+		<div class="calendar-container" id="calendarContainer" style="display: none;">
+			<div id="calendar"></div>
+		</div>
+
+		<!-- ListBox Container -->
+		<div class="listbox-container" id="listboxContainer" style="display: none;">
+			<!-- Circular Badge Overlay -->
+			<span id="itemCount" class="badge badge-overlay">0</span>
+			<!-- Card for ListBox -->
+			<div class="card">
+				<div class="card-header">Dias Selecionados</div>
+				<div class="card-body">
+					<div id="dateList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Initialize selectedDates array
+			let selectedDates = [];
+
+			// Function to update the Badge (Bootstrap Badge)
+			function updateBadge() {
+				const badge = document.getElementById("itemCount");
+				badge.textContent = selectedDates.length;
+			}
+
+			// Function to format Date to dd/mm/yyyy
+			function formatDate(dateObj) {
+				const day = ("0" + dateObj.getDate()).slice(-2);
+				const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+				const year = dateObj.getFullYear();
+				return `${day}/${month}/${year}`;
+			}
+
+			// Initialize ListBox with a custom template
+			const listBox = new ej.dropdowns.ListBox({
+				dataSource: selectedDates,
+				height: "180px",
+				itemTemplate: `
+				  <div class="normal-item">
+					<button class="remove-btn" onclick="removeDate(\${Timestamp})">
+					  <i class="fas fa-trash-alt"></i>
+					</button>
+					<span class="item-text">\${DateText}</span>
+				  </div>`,
+				noRecordsTemplate: "Sem dias escolhidos..",
+			});
+
+			// Render the ListBox inside the #dateList element
+			listBox.appendTo("#dateList");
+
+			// Function to add a date
+			function addDate(dateObj) {
+				const timestamp = new Date(dateObj).setHours(0, 0, 0, 0); // Normalize time
+				if (!selectedDates.some((d) => d.Timestamp === timestamp)) {
+					selectedDates.push({
+						Timestamp: timestamp,
+						DateText: formatDate(new Date(timestamp)),
+					});
+					selectedDates.sort((a, b) => a.Timestamp - b.Timestamp);
+					console.log("Adding date:", selectedDates); // Debugging statement
+					listBox.dataSource = selectedDates;
+					listBox.dataBind(); // Update the ListBox
+					updateBadge();
+				}
+			}
+
+			// Initialize Calendar with multi-selection
+			const calendar = new ej.calendars.Calendar({
+				showTodayButton: false,
+				isMultiSelection: true,
+				min: new Date(), // Set minimum selectable date as the current date
+				// Set locale to Portuguese (Brazil)
+				locale: "pt-BR",
+				// Event handler for date selection
+				change: function(args) {
+					const selectedDatesArray = args.values;
+					selectedDates = [];
+					selectedDatesArray.forEach((d) => {
+						const normalizedTimestamp = new Date(d).setHours(0, 0, 0, 0);
+						selectedDates.push({
+							Timestamp: normalizedTimestamp,
+							DateText: formatDate(new Date(normalizedTimestamp)),
+						});
+					});
+					// Sort the selectedDates
+					selectedDates.sort((a, b) => a.Timestamp - b.Timestamp);
+					console.log("Selected dates changed:", selectedDates); // Debugging statement
+					// Update ListBox dataSource
+					listBox.dataSource = selectedDates;
+					listBox.dataBind();
+					// Update the Badge
+					updateBadge();
+				},
+			});
+
+			calendar.appendTo("#calendar");
+
+			// Function to remove a date
+			window.removeDate = function(timestamp) {
+				selectedDates = selectedDates.filter((d) => d.Timestamp !== timestamp);
+				console.log("Removing date:", selectedDates); // Debugging statement
+				listBox.dataSource = selectedDates;
+				listBox.dataBind();
+				updateBadge();
+
+				// Update Calendar selection
+				const calendarObj = document.getElementById("calendar").ej2_instances[0];
+				const dateToRemove = new Date(timestamp);
+
+				// Get currently selected dates from calendar
+				let currentSelectedDates = calendarObj.values;
+
+				// Remove the date from calendar if it exists
+				currentSelectedDates = currentSelectedDates.filter(date => {
+					const normalizedDate = new Date(date).setHours(0, 0, 0, 0);
+					return normalizedDate !== timestamp;
+				});
+				calendarObj.values = currentSelectedDates; // Set the updated list of selected dates
+			};
+		});
+
+		function toggleControls() {
+			// Get the calendar and listbox containers
+			var calendarContainer = document.getElementById("calendarContainer");
+			var listboxContainer = document.getElementById("listboxContainer");
+			var toggleButton = document.getElementById("toggleButton");
+
+			// Toggle the visibility of the controls
+			if (calendarContainer.style.display === "none") {
+				calendarContainer.style.display = "block";
+				listboxContainer.style.display = "block";
+				toggleButton.textContent = "Hide Controls";
+			} else {
+				calendarContainer.style.display = "none";
+				listboxContainer.style.display = "none";
+				toggleButton.textContent = "Show Controls";
+			}
+		}
+	</script>
+
+</body>
+
+</html>

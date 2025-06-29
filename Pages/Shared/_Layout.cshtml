@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+
+    <partial name="_Head" />
+    @RenderSection("HeadBlock", required: false)
+
+    <script>
+
+        // Executa script apenas se o campo existir
+        if (document.getElementById("txtDataFinal")) {
+            // Adiciona o cursor de ampulheta logo no início
+            document.documentElement.classList.add('loading');
+
+            // Espera o carregamento completo da página
+            window.addEventListener('load', function () 
+            {
+                document.documentElement.classList.remove('loading');
+            });
+
+
+        }
+
+    </script>
+
+    <style>
+        body.waiting * {
+            cursor: wait !important;
+        }
+    </style>
+
+    <script>
+        document.querySelectorAll("a.nav-link, a.menu-item").forEach(function (element) {
+            element.addEventListener("click", function () {
+                document.body.classList.add("waiting");
+            });
+        });
+
+        window.addEventListener("pageshow", function () {
+            document.body.classList.remove("waiting");
+        });
+    </script>
+
+</head>
+    <body class="mod-bg-1 mod-nav-link mod-nav-link @ViewBag.PreemptiveClass" onload="ClicaDropDowns()">
+        <partial name="_ScriptsLoadingSaving" />
+        <div class="page-wrapper">
+            <div class="page-inner">
+                <partial name="_LeftPanel" />
+                <div class="page-content-wrapper">
+                    <partial name="_PageHeader" />
+                    <main id="js-page-content" role="main" class="page-content" style="background: url('/images/dust_scratches.png'" )>
+                        @if (ViewBag.PreemptiveClass?.Length > 0)
+                        {
+                        }
+                        else
+                        {
+                <partial name="_PageBreadcrumb" />
+                                <div class="subheader"><partial name="_PageHeading" />@RenderSection("Subheaderblock", required: false)</div>}
+                        @RenderBody()
+                    </main>
+
+                    @* --------------Tela Modal------------- *@
+                    @* ===================================== *@
+                    <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" id="form-modal">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <partial name="_PageContentOverlay" />
+                    <partial name="_PageFooter" />
+                    <partial name="_ShortcutModal" />
+                    <partial name="_ColorProfileReference" />
+                </div>
+            </div>
+        </div>
+        <partial name="_ShortcutMenu" />
+        <partial name="_ShortcutMessenger" />
+        <partial name="_PageSettings" />
+        <partial name="_GoogleAnalytics" />
+        <partial name="_ScriptsBasePlugins" />
+        @await Component.InvokeAsync("Notyf")
+        @RenderSection("ScriptsBlock", required: false)
+
+
+        <script>
+            var ajax = new ej.base.Ajax(location.origin + '/../../locale/pt-BR.json', 'GET', false);   //load the de json culture file
+            ajax.send().then((e) => {
+                var loader = JSON.parse(e);
+                ej.base.L10n.load(
+                    loader
+                );
+                ej.base.setCulture('pt-BR');      //Set the culture for the ASP.NET Core controls
+            });
+        </script>
+
+        <ejs-scripts></ejs-scripts>
+    </body>
+
+</html>
+
+@* <li class="nav-item">
+    <a class="nav-link text-light" href="/Administracao/HigienizarViagens">🔧 Higienizar Viagens</a>
+</li> *@
+
+
+<script>
+
+	window.onload = function ()
+    {
+
+		var usuarioAtual
+
+		$.ajax({
+			url: '/api/Login/RecuperaUsuarioAtual',
+			type: "Get",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (data) {
+
+                //debugger;
+
+                //$.each(data, function (key, val) {
+				//	usuarioAtual = val;
+				//});
+
+                usuarioAtual  = data.nome
+
+				console.log("Usuário: " + usuarioAtual)
+				document.getElementById("divUser").innerHTML = usuarioAtual;
+                $('.spanUser').text(usuarioAtual);
+
+			},
+			error: function (err) {
+				console.log(err)
+				alert('something went wrong')
+			}
+		});
+	}
+
+</script>
+

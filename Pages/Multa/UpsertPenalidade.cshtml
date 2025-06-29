@@ -1,0 +1,2036 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Syncfusion.EJ2
+@model FrotiX.Pages.Multa.UpsertPenalidadeModel
+@Html.AntiForgeryToken()
+
+@{
+    ViewData["Title"] = "Notificações";
+    ViewData["PageName"] = "multa_upsertpenalidade";
+    ViewData["Heading"] = "<i class='fad fa-pen-to-square'></i> Cadastros: <span class='fw-300'>Notificação de Penalidade</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-pen-to-square";
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 10px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .btn-largura {
+        width: 100px;
+        height: 100px;
+    }
+
+    .fundo-chocolate {
+        background-color: #7B3F00;
+        color: white;
+    }
+
+    .hidden-overflow {
+        overflow: hidden;
+    }
+
+    body {
+        overflow: visible;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+        .button-container button {
+            width: 20%; /* Adjust the width as needed */
+        }
+
+    .icon-button {
+        padding: 10px;
+        font-size: 16px;
+        /* Add any other styles you want */
+    }
+
+</style>
+
+@section HeadBlock {
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.css" integrity="sha512-tx5+1LWHez1QiaXlAyDwzdBTfDjX07GMapQoFTS74wkcPMsI3So0KYmFe6EHZjI8+eSG0ljBlAQc3PQ5BTaZtQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+}
+
+<script>
+    function stopEnterSubmitting(e) {
+        if (e.keyCode == 13) {
+            var src = e.srcElement || e.target;
+
+            console.log(src.tagName.toLowerCase());
+
+            if (src.tagName.toLowerCase() != "div") {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else {
+                    e.returnValue = false;
+                }
+            }
+        }
+    }
+</script>
+
+<form method="post" asp-action="Upsert" onkeypress='stopEnterSubmitting(window.event)' enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div id="divPainel" class="panel-content">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger">
+                            @if (Model.MultaObj.Multa.MultaId != Guid.Empty)
+                            {
+                                <input type="hidden" asp-for="MultaObj.Multa.MultaId" />
+                            }
+                        </div>
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.MultaObj.Multa.MultaId != Guid.Empty ? "Atualizar " : "Criar ") Penalidade</h2>
+                        </div>
+
+                        <div class="p-3">
+
+                            <input type="text" id="txtFase" asp-for="MultaObj.Multa.Fase" hidden="hidden" />
+
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.NumInfracao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.NumInfracao"></span>
+                                        <input id="txtNumInfracao" class="form-control form-control-xs" asp-for="MultaObj.Multa.NumInfracao" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.Data"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.Data"></span>
+                                        <input id="txtDataInfracao" class="form-control form-control-xs" asp-for="MultaObj.Multa.Data" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.Hora"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.Hora"></span>
+                                        <input id="txtHoraInfracao" class="form-control form-control-xs" asp-for="MultaObj.Multa.Hora" type="time" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.DataNotificacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.DataNotificacao"></span>
+                                        <input id="txtDataNotificacao" class="form-control form-control-xs" asp-for="MultaObj.Multa.DataNotificacao" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.DataLimite"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.DataLimite"></span>
+                                        <input id="txtDataLimite" class="form-control form-control-xs" asp-for="MultaObj.Multa.DataLimite" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.Vencimento"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.Vencimento"></span>
+                                        <input id="txtDataLimite" class="form-control form-control-xs" asp-for="MultaObj.Multa.Vencimento" type="date" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-md-3 col-xl-3">
+                                    <label class="label font-weight-bold" asp-for="MultaObj.Multa.ValorAteVencimento"></label>
+                                    <span class="text-danger" asp-validation-for="MultaObj.Multa.ValorAteVencimento"></span>
+                                    <input id="txtValorAteVencimento" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="MultaObj.Multa.ValorAteVencimento" onKeyPress="return(moeda(this,'.',',',event))" />
+                                </div>
+                                <div class="col-12 col-md-3 col-xl-3">
+                                    <label class="label font-weight-bold" asp-for="MultaObj.Multa.ValorPosVencimento"></label>
+                                    <span class="text-danger" asp-validation-for="MultaObj.Multa.ValorPosVencimento"></span>
+                                    <input id="txtValorPosVencimento" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="MultaObj.Multa.ValorPosVencimento" onKeyPress="return(moeda(this,'.',',',event))" />
+                                </div>
+                                <div class="col-12 col-md-3 col-xl-3">
+                                    <label class="label font-weight-bold" asp-for="MultaObj.Multa.ValorPago"></label>
+                                    <span class="text-danger" asp-validation-for="MultaObj.Multa.ValorPago"></span>
+                                    <input id="txtValorPago" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="MultaObj.Multa.ValorPago" onKeyPress="return(moeda(this,'.',',',event))" />
+                                </div>
+                                <div class="col-6 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.DataPagamento"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.DataPagamento"></span>
+                                        <input id="txtDataLimite" class="form-control form-control-xs" asp-for="MultaObj.Multa.DataPagamento" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-1 align-self-end" aria-label="Exibe comprovante de pagamento!" role="tooltip" data-microtip-position="top-right">
+
+                                    <a class="btn btn-nfs btn-primary btn-sm text-white btnComprovante fundo-chocolate" aria-label="Exibe o Comprovante de Pagamento da Penalidade!" data-microtip-size="medium" data-microtip-position="left" role="tooltip" style="cursor:pointer;">
+                                        <i class="fal fa-receipt"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row pb-12">
+                                <div class="col-12 col-md-12 col-xl-12">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.Localizacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.Localizacao"></span>
+                                        <input id="txtLocalizacao" class="form-control form-control-xs" asp-for="MultaObj.Multa.Localizacao" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row pb-12">
+                                <div class="col-10 col-md-10 col-xl-10">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Infração</label>
+                                        <ejs-dropdownlist id="lstInfracao" dataSource="@ViewData["dataInfracao"]" placeholder="Selecione uma Infracao..." allowFiltering="true" filterType="Contains" popupHeight="220px" ejs-for="@Model.MultaObj.Multa.TipoMultaId">
+                                            <e-dropdownlist-fields text="Descricao" value="TipoMultaId"></e-dropdownlist-fields>
+                                        </ejs-dropdownlist>
+                                    </div>
+                                </div>
+                                <div class="col-2 col-md-2 col-xl-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MultaObj.Multa.Status"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.Status"></span>
+                                        <ejs-combobox id="lstStatus" placeholder="Status..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataStatus"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.Status">
+                                            <e-combobox-fields text="Descricao" value="StatusId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <label class="label font-weight-bold">Órgão Autuante</label>
+                                    <ejs-combobox id="lstOrgao" placeholder="Selecione um Órgão" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataOrgao"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.OrgaoAutuanteId" change="lstOrgaoChange">
+                                        <e-combobox-fields text="Descricao" value="OrgaoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <label class="label font-weight-bold">Empenho do Órgão</label>
+                                    <ejs-dropdownlist id="lstEmpenhos" dataSource="@ViewData["dataTodosEmpenhos"]" placeholder="Selecione um Empenho..." allowFiltering="true" filterType="Contains" popupHeight="220px" ejs-for="@Model.MultaObj.Multa.EmpenhoMultaId" change="lstEmpenhosChange">
+                                        <e-dropdownlist-fields text="NotaEmpenho" value="EmpenhoMultaId"></e-dropdownlist-fields>
+                                    </ejs-dropdownlist>
+                                    <input id="txtEmpenhoMultaId" class="form-control form-control-xs" asp-for="MultaObj.Multa.EmpenhoMultaId" hidden="hidden" />
+                                </div>
+                                <div class="col-6 col-md-3 col-xl-2">
+                                    <label class="label font-weight-bold">Saldo do Empenho</label>
+                                    <input id="txtSaldoEmpenho" class="form-control form-control-xs" disabled="disabled" data-inputmask="'alias': 'currency'" style="text-align: right;" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-4">
+                                    <label class="label font-weight-bold" asp-for="MultaObj.Multa.ProcessoEDoc"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.ProcessoEDoc"></span>
+                                    <input id="txtEDoc" class="form-control form-control-xs" asp-for="MultaObj.Multa.ProcessoEDoc" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <label class="label font-weight-bold">Veículo</label>
+                                    <ejs-combobox id="lstVeiculo" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataVeiculo"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.VeiculoId" change="lstVeiculo_Change" select="lstVeiculo_Select">
+                                        <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-6 col-md-3 col-xl-2">
+                                    <label class="label font-weight-bold">Contrato do Veículo</label>
+                                    <ejs-combobox id="lstContratoVeiculo" placeholder="Selecione um Contrato" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataContratoVeiculos"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.ContratoVeiculoId" change="lstContratoVeiculo_Change" enabled="false">
+                                        <e-combobox-fields text="Descricao" value="ContratoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-6 col-md-3 col-xl-2">
+                                    <label class="label font-weight-bold">Ata do Veículo</label>
+                                    <ejs-combobox id="lstAtaVeiculo" placeholder="Selecione uma Ata" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataAtaVeiculos"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.AtaVeiculoId" change="lstAtaVeiculo_Change" enabled="false">
+                                        <e-combobox-fields text="Descricao" value="AtaId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-1 align-self-end" aria-label="Procurar Viagem!" role="tooltip" data-microtip-position="top-right">
+                                    <a class="btn btn-nfs btn-success btn-sm text-white btnViagem" id="btnViagem" style="cursor: pointer;">
+                                        <i class="fal fa-route"></i>
+                                    </a>
+                                </div>
+                                <div class="col-2 col-md-2 col-xl-2">
+                                    <label class="label font-weight-bold" asp-for="MultaObj.Multa.NoFichaVistoria"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MultaObj.Multa.NoFichaVistoria"></span>
+                                    <input id="txtNoFichaVistoria" class="form-control form-control-xs" disabled="disabled" />
+                                    <input id="txtNoFichaVistoriaEscondido" class="form-control form-control-xs" asp-for="MultaObj.Multa.NoFichaVistoria" hidden="hidden" />
+                                </div>
+                                <div class="col-1 align-self-end" aria-label="Exibe Ficha de Vistoria!" role="tooltip" data-microtip-position="top-right" data-microtip-size="medium">
+                                    <a class="btn btn-nfs btn-primary btn-sm text-white btnFicha" id="btnFicha" style="cursor: pointer;">
+                                        <i class="fa-thin fa-clipboard-list"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <label class="label font-weight-bold">Motorista</label>
+                                    <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataMotorista"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.MotoristaId" change="lstMotorista_Change" select="lstMotorista_Select">
+                                        <e-combobox-fields text="MotoristaCondutor" value="MotoristaId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <label class="label font-weight-bold">Contrato do Motorista</label>
+                                    <ejs-combobox id="lstContratoMotorista" placeholder="Selecione um Contrato" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataContratoMotoristas"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.MultaObj.Multa.ContratoMotoristaId" change="lstContratoMotorista_Change">
+                                        <e-combobox-fields text="Descricao" value="ContratoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <input id="txtAutuacaoPDF" class="form-control form-control-xs" asp-for="MultaObj.Multa.AutuacaoPDF" hidden="hidden" />
+                                            <input type="file" name="files" id="inputAutuacaoPDF" />
+                                            <div id="PDFContainerAutuacao">
+                                                <div id="AutuacaoPDFViewer">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <input type="file" name="files" id="pdf" />
+                                             <input id="txtPenalidadePDF" class="form-control form-control-xs" asp-for="MultaObj.Multa.PenalidadePDF" hidden="hidden" />
+                                            <input id="txtComprovantePDF" class="form-control form-control-xs" asp-for="MultaObj.Multa.ComprovantePDF" hidden="hidden" />
+                                            <div id="PDFContainer">
+                                                <div id="pdfViewer">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                             <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <input type="file" name="files" id="inputEDocPDF" />
+                                            <input id="txtEDocPDF" class="form-control form-control-xs" asp-for="MultaObj.Multa.ProcessoEdocPDF" hidden="hidden" />
+                                            <div id="eDocPDFContainer">
+                                                <div id="eDOCpdfViewer">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <input type="file" name="files" id="inputOutrosDocumentosPDF" />
+                                            <input id="txtOutrosDocumentosPDF" class="form-control form-control-xs" asp-for="MultaObj.Multa.OutrosDocumentosPDF" hidden="hidden" />
+                                            <div id="OutrosDocumentosPDFContainer">
+                                                <div id="OutrosDocumentospdfViewer">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <br />
+
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <label class="label font-weight-bold">Observações a respeito da Multa</label>
+                                            <ejs-richtexteditor ejs-for="@Model.MultaObj.Multa.Observacao" id="rte" toolbarClick="toolbarClick" locale="pt-BR" height="150px">
+                                                <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                                            </ejs-richtexteditor>
+                                            <div id="errorMessage">
+                                                <span asp-validation-for="@Model.MultaObj.Multa.Observacao"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row pb-5">
+                            </div>
+
+                            <div class="row">
+                            </div>
+
+                            <div class="row pb-5">
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div id="divSubmit" class="col-12 col-md-4 pb-2">
+                                            @if (Model.MultaObj.Multa.MultaId != Guid.Empty)
+                                            {
+                                                <button id="btnSubmit" method="post" asp-page-handler="Edit" asp-route-id=@Model.MultaObj.Multa.MultaId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnSubmit" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+                                        </div>
+                                        <div class="col-12" hidden>
+                                            @if (Model.MultaObj.Multa.MultaId != Guid.Empty)
+                                            {
+                                                <button id="btnEscondido" method="post" asp-page-handler="Edit" asp-route-id=@Model.MultaObj.Multa.MultaId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnEscondido" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+                                        </div>
+
+                                        <div class="col-12 col-md-4">
+                                            <a asp-page="./ListaPenalidade" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>
+
+                                        <br />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@* -------------- Modal do Comprovante de Pagamento -------------- *@
+@* =============================================================== *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalComprovante">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Comprovante de Pagamento</h4>
+					<div class="button-container">
+						<button id="btnFecharModalComprovante" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+
+                <div class="modal-body table-bordered container-fluid">
+
+                    <input type="file" name="flComprovante" id="flComprovante" />
+
+                    <div id="PDFContainerComprovante">
+                        <div id="ComprovantePDF">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@* -------------- Modal da Ficha de Vistoria -------------- *@
+@* ======================================================== *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalFicha">
+        <div class="modal-dialog modal-md" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Ficha de Vistoria</h4>
+                    <button id="btnFecharModalFichaVistoria" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+
+                    <img class="img" id="imgViewer" style="border: 1px solid #000000; margin-top: 10px; height: auto" />
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    @*<script src="https://cdn.kendostatic.com/2022.1.412/js/jquery.min.js"></script>*@
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+    <script src="~/js/cadastros/upsertpenalidade.js"></script>
+	<script src="~/js/cadastros/tiraacento.js"></script>
+
+
+    <script>type = "text/javascript"</script>
+
+    <script>
+
+		//Controla o Submit do botão que fecha o formulário de comprovante de pagamentos
+		//==============================================================================
+		$("#btnFecharModalComprovante").click(function (event) {
+
+			$('.modal-backdrop').hide();
+			$('body').removeClass('modal-open');
+			$("#modalComprovante").hide();
+			//const backdrop = document.querySelector('.backdrop');
+			//backdrop.remove();
+			$('body').css({
+				'overflow': 'visible',
+			});
+		});
+
+		//Controla o Submit do botão que fecha o formulário de ficha de vistoria
+		//======================================================================
+		$("#btnFecharModalFichaVistoria").click(function (event) {
+
+			$('.modal-backdrop').hide();
+			$('body').removeClass('modal-open');
+			$("#modalFicha").hide();
+			//const backdrop = document.querySelector('.backdrop');
+			//backdrop.remove();
+			$('body').css({
+				'overflow': 'visible',
+			});
+		});
+
+		//Controla o Submit do botão que fecha o formulário de autuação
+		//======================================================================
+		$("#btnFecharModalAutuacao").click(function (event) {
+
+			$('.modal-backdrop').hide();
+			$('body').removeClass('modal-open');
+			$("#modalAutuacao").hide();
+			//const backdrop = document.querySelector('.backdrop');
+			// backdrop.remove();
+			$('body').css({
+				'overflow': 'visible',
+			});
+		});
+
+		//Controla o Submit do botão que fecha o formulário de eDOC
+		//======================================================================
+		$("#btnFecharModalEDoc").click(function (event) {
+
+			$('.modal-backdrop').hide();
+			$('body').removeClass('modal-open');
+			$("#modalEDoc").hide();
+			//const backdrop = document.querySelector('.backdrop');
+			// backdrop.remove();
+			$('body').css({
+				'overflow': 'visible',
+			});
+		});
+
+		//Controla o Submit do formulário através de botões escondidos (permite a validação via javascript)
+		//=================================================================================================
+		$("#btnSubmit").click(function (event) {
+
+			event.preventDefault()
+
+
+			if (document.getElementById("txtNumInfracao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "O número da Infração é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtDataInfracao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Data da Infração é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtHoraInfracao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Hora da Infração é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtDataNotificacao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Data da Notificação é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtDataLimite").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Data Limite para Interposição de Defesa é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var lstStatus = document.getElementById("lstStatus").ej2_instances[0];
+			if (lstStatus.value === null) {
+				swal({
+					title: "Informação Ausente",
+					text: "O Status é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtLocalizacao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Localização da Infração é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var lstInfracao = document.getElementById("lstInfracao").ej2_instances[0];
+			if (lstInfracao.value === null) {
+				swal({
+					title: "Informação Ausente",
+					text: "A Infração é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var lstOrgao = document.getElementById("lstOrgao").ej2_instances[0];
+			if (lstOrgao.value === null) {
+				swal({
+					title: "Informação Ausente",
+					text: "O Órgão Autuante é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
+			if (lstVeiculo.value === null) {
+				swal({
+					title: "Informação Ausente",
+					text: "O Veículo é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtValorAteVencimento").value === "" || document.getElementById("txtValorAteVencimento").value === "0") {
+				swal({
+					title: "Informação Ausente",
+					text: "O Valor Até o Vencimento é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtValorPosVencimento").value === "" || document.getElementById("txtValorPosVencimento").value === "0") {
+				swal({
+					title: "Informação Ausente",
+					text: "O Valor Após o Vencimento é obrigatório",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			$("#btnEscondido").click();
+
+			$("#btnSubmit").prop("disabled", true);
+
+		});
+
+
+
+
+		function toolbarClick(e) {
+			if (e.item.id == "rte_toolbar_Image") {
+				var element = document.getElementById('rte_upload')
+				element.ej2_instances[0].uploading = function upload(args) {
+					args.currentRequest.setRequestHeader('XSRF-TOKEN', document.getElementsByName('__RequestVerificationToken')[0].value);
+				}
+			}
+		}
+
+		$(document).ready(function () {
+
+			if ('@Model.MultaObj.Multa.MultaId' != '00000000-0000-0000-0000-000000000000') {
+
+				//Seleciona a Infração da Lista e Preenche a lista de empenhos
+				document.getElementById("lstInfracao").ej2_instances[0].value = ['@Model.MultaObj.Multa.TipoMultaId'];
+
+				//$('#txtAutoacaoPDF').attr('value', '@Model.MultaObj.Multa.AutuacaoPDF');
+
+
+				//Visualiza o PDF da Autuação, se houver
+				if ('@Model.MultaObj.Multa.AutuacaoPDF' != null && '@Model.MultaObj.Multa.AutuacaoPDF' != '') {
+
+					// alert('@Model.MultaObj.Multa.AutuacaoPDF');
+					// alert("/DadosEditaveis/Multas/" + '@Model.MultaObj.Multa.AutuacaoPDF');
+
+					var pdfViewer = $("#AutuacaoPDFViewer").kendoPDFViewer({
+						pdfjsProcessing: {
+							file: "/DadosEditaveis/Multas/" + '@Model.MultaObj.Multa.AutuacaoPDF'
+						},
+						width: "100%",
+						height: 400
+					}).data("kendoPDFViewer");
+				}
+
+				//Visualiza o PDF da Penalidade, se houver
+				if ('@Model.MultaObj.Multa.PenalidadePDF' != null && '@Model.MultaObj.Multa.PenalidadePDF' != '') {
+
+					var pdfViewer = $("#pdfViewer").kendoPDFViewer({
+						pdfjsProcessing: {
+							file: "/DadosEditaveis/Multas/" + '@Model.MultaObj.Multa.PenalidadePDF'
+						},
+						width: "100%",
+						height: 400
+					}).data("kendoPDFViewer");
+				}
+
+				//Visualiza o PDF do eDOC, se houver
+				if ('@Model.MultaObj.Multa.ProcessoEdocPDF' != null && '@Model.MultaObj.Multa.ProcessoEdocPDF' != '') {
+
+					var pdfViewer = $("#eDOCpdfViewer").kendoPDFViewer({
+						pdfjsProcessing: {
+							file: "/DadosEditaveis/Multas/" + '@Model.MultaObj.Multa.ProcessoEdocPDF'
+						},
+						width: "100%",
+						height: 400
+					}).data("kendoPDFViewer");
+				}
+
+				//Visualiza o PDF dos Documentos, se houver
+				if ('@Model.MultaObj.Multa.OutrosDocumentosPDF' != null && '@Model.MultaObj.Multa.OutrosDocumentosPDF' != '') {
+
+					var pdfViewer = $("#OutrosDocumentospdfViewer").kendoPDFViewer({
+						pdfjsProcessing: {
+							file: "/DadosEditaveis/Multas/" + '@Model.MultaObj.Multa.OutrosDocumentosPDF'
+						},
+						width: "100%",
+						height: 400
+					}).data("kendoPDFViewer");
+				}
+
+				if ('@Model.MultaObj.Multa.ValorAteVencimento' == 0 || '@Model.MultaObj.Multa.ValorAteVencimento' == null) {
+					$('#txtValorAteVencimento').attr('value', "0,00");
+				}
+
+				if ('@Model.MultaObj.Multa.ValorPosVencimento' == 0 || '@Model.MultaObj.Multa.ValorPosVencimento' == null) {
+					$('#txtValorPosVencimento').attr('value', "0,00");
+				}
+
+				if ('@Model.MultaObj.Multa.ValorPago' == 0 || '@Model.MultaObj.Multa.ValorPago' == null) {
+					$('#txtValorPago').attr('value', "0,00");
+				}
+
+				lstEmpenhosChange();
+
+			}
+			else {
+				document.getElementById("lstContratoVeiculo").ej2_instances[0].text = "";
+				document.getElementById("lstContratoMotorista").ej2_instances[0].text = "";
+				$('#txtValorAteVencimento').attr('value', "0,00");
+				$('#txtValorPosVencimento').attr('value', "0,00");
+				$('#txtValorPago').attr('value', "0,00");
+			}
+
+		});
+
+
+		//Escolheu um Órgão
+		//=================
+		function lstOrgaoChange() {
+
+			document.getElementById("lstEmpenhos").ej2_instances[0].dataSource = [];
+			document.getElementById("lstEmpenhos").ej2_instances[0].dataBind();
+			document.getElementById("lstEmpenhos").ej2_instances[0].text = "";
+			$('#txtEmpenhoMultaId').attr('value', "");
+
+			var lstOrgao = document.getElementById("lstOrgao").ej2_instances[0];
+			console.log(lstOrgao.value);
+
+			if (lstOrgao.value === null) {
+				return;
+			}
+
+			var orgaoid = String(lstOrgao.value);
+
+			$.ajax({
+				url: "/Multa/UpsertPenalidade?handler=AJAXPreencheListaEmpenhos",
+				method: "GET",
+				datatype: "json",
+
+				data: { id: orgaoid },
+
+				success: function (res) {
+
+					if (res.data.length != 0) {
+
+						var empenhomultaid = res.data[0].empenhoMultaId;
+						var notaempenho = res.data[0].notaEmpenho;
+
+						let EmpenhoList = [{ "EmpenhoMultaId": empenhomultaid, "NotaEmpenho": notaempenho }];
+
+						for (var i = 1; i < res.data.length; ++i) {
+							console.log(res.data[i].empenhoMultaId + " - " + res.data[i].notaEmpenho);
+
+							empenhomultaid = res.data[i].empenhoMultaId;
+							notaempenho = res.data[i].notaEmpenho;
+
+							let empenho = { EmpenhoMultaId: empenhomultaid, NotaEmpenho: notaempenho }
+							EmpenhoList.push(empenho);
+
+						}
+
+						document.getElementById("lstEmpenhos").ej2_instances[0].dataSource = EmpenhoList;
+						document.getElementById("lstEmpenhos").ej2_instances[0].dataBind();
+					}
+				}
+			})
+
+			document.getElementById("lstEmpenhos").ej2_instances[0].refresh();
+
+			Swal.fire(
+				'Empenho do Órgão',
+				'Já existe o empenho correto cadastrado para o órgão?',
+				'info'
+			)
+		}
+
+
+
+		// Por algum motivo o vínculo do lstEmpenho com o banco de dados não está funcionando. Então estou escondendo o ID do empenho em um text box escondido
+		function lstEmpenhosChange() {
+
+			var lstEmpenhos = document.getElementById("lstEmpenhos").ej2_instances[0];
+			$('#txtEmpenhoMultaId').attr('value', lstEmpenhos.value);
+
+			var empenhoid = String(lstEmpenhos.value);
+
+			$.ajax({
+				url: "/Multa/UpsertAutuacao?handler=PegaSaldoEmpenho",
+				method: "GET",
+				datatype: "json",
+
+				data: { id: empenhoid },
+
+				success: function (res) {
+
+					//debugger;
+
+					var saldoempenho = res.data;
+
+					$("#txtSaldoEmpenho").val(Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldoempenho));
+
+				}
+			})
+		}
+
+
+		ej.base.L10n.load({
+			"pt-BR": {
+				"richtexteditor": {
+					"alignments": "Alinhamentos",
+					"justifyLeft": "Alinhar à Esquerda",
+					"justifyCenter": "Centralizar",
+					"justifyRight": "Alinhar à Direita",
+					"justifyFull": "Justificar",
+					"fontName": "Nome da Fonte",
+					"fontSize": "Tamanho da Fonte",
+					"fontColor": "Cor da Fonte",
+					"backgroundColor": "Cor de Fundo",
+					"bold": "Negrito",
+					"italic": "Itálico",
+					"underline": "Sublinhado",
+					"strikethrough": "Tachado",
+					"clearFormat": "Limpa Formatação",
+					"clearAll": "Limpa Tudo",
+					"cut": "Cortar",
+					"copy": "Copiar",
+					"paste": "Colar",
+					"unorderedList": "Lista com Marcadores",
+					"orderedList": "Lista Numerada",
+					"indent": "Aumentar Identação",
+					"outdent": "Diminuir Identação",
+					"undo": "Desfazer",
+					"redo": "Refazer",
+					"superscript": "Sobrescrito",
+					"subscript": "Subscrito",
+					"createLink": "Inserir Link",
+					"openLink": "Abrir Link",
+					"editLink": "Editar Link",
+					"removeLink": "Remover Link",
+					"image": "Inserir Imagem",
+					"replace": "Substituir",
+					"align": "Alinhar",
+					"caption": "Título da Imagem",
+					"remove": "Remover",
+					"insertLink": "Inserir Link",
+					"display": "Exibir",
+					"altText": "Texto Alternativo",
+					"dimension": "Mudar Tamanho",
+					"fullscreen": "Maximizar",
+					"maximize": "Maximizar",
+					"minimize": "Minimizar",
+					"lowerCase": "Caixa Baixa",
+					"upperCase": "Caixa Alta",
+					"print": "Imprimir",
+					"formats": "Formatos",
+					"sourcecode": "Visualizar Código",
+					"preview": "Exibir",
+					"viewside": "ViewSide",
+					"insertCode": "Inserir Código",
+					"linkText": "Exibir Texto",
+					"linkTooltipLabel": "Título",
+					"linkWebUrl": "Endereço Web",
+					"linkTitle": "Entre com um título",
+					"linkurl": "http://exemplo.com",
+					"linkOpenInNewWindow": "Abrir Link em Nova Janela",
+					"linkHeader": "Inserir Link",
+					"dialogInsert": "Inserir",
+					"dialogCancel": "Cancelar",
+					"dialogUpdate": "Atualizar",
+					"imageHeader": "Inserir Imagem",
+					"imageLinkHeader": "Você pode proporcionar um link da web",
+					"mdimageLink": "Favor proporcionar uma URL para sua imagem",
+					"imageUploadMessage": "Solte a imagem aqui ou busque para o upload",
+					"imageDeviceUploadMessage": "Clique aqui para o upload",
+					"imageAlternateText": "Texto Alternativo",
+					"alternateHeader": "Texto Alternativo",
+					"browse": "Procurar",
+					"imageUrl": "http://exemplo.com/imagem.png",
+					"imageCaption": "Título",
+					"imageSizeHeader": "Tamanho da Imagem",
+					"imageHeight": "Altura",
+					"imageWidth": "Largura",
+					"textPlaceholder": "Entre com um Texto",
+					"inserttablebtn": "Inserir Tabela",
+					"tabledialogHeader": "Inserir Tabela",
+					"tableWidth": "Largura",
+					"cellpadding": "Espaçamento de célula",
+					"cellspacing": "Espaçamento de célula",
+					"columns": "Número de colunas",
+					"rows": "Número de linhas",
+					"tableRows": "Linhas da Tabela",
+					"tableColumns": "Colunas da Tabela",
+					"tableCellHorizontalAlign": "Alinhamento Horizontal da Célular",
+					"tableCellVerticalAlign": "Alinhamento Vertical da Célular",
+					"createTable": "Criar Tabela",
+					"removeTable": "Remover Tabela",
+					"tableHeader": "Cabeçalho da Tabela",
+					"tableRemove": "Remover Tabela",
+					"tableCellBackground": "Fundo da Célula",
+					"tableEditProperties": "Editar Propriedades da Tabela",
+					"styles": "Estilos",
+					"insertColumnLeft": "Inserir Coluna à Esquerda",
+					"insertColumnRight": "Inserir Coluna à Direita",
+					"deleteColumn": "Apagar Coluna",
+					"insertRowBefore": "Inserir Linha Antes",
+					"insertRowAfter": "Inserir Linha Depois",
+					"deleteRow": "Apagar Linha",
+					"tableEditHeader": "Edita Tabela",
+					"TableHeadingText": "Cabeçãlho",
+					"TableColText": "Col",
+					"imageInsertLinkHeader": "Inserir Link",
+					"editImageHeader": "Edita Imagem",
+					"alignmentsDropDownLeft": "Alinhar à Esquerda",
+					"alignmentsDropDownCenter": "Centralizar",
+					"alignmentsDropDownRight": "Alinhar à Direita",
+					"alignmentsDropDownJustify": "Justificar",
+					"imageDisplayDropDownInline": "Inline",
+					"imageDisplayDropDownBreak": "Break",
+					"tableInsertRowDropDownBefore": "Inserir linha antes",
+					"tableInsertRowDropDownAfter": "Inserir linha depois",
+					"tableInsertRowDropDownDelete": "Apagar linha",
+					"tableInsertColumnDropDownLeft": "Inserir coluna à esquerda",
+					"tableInsertColumnDropDownRight": "Inserir coluna à direita",
+					"tableInsertColumnDropDownDelete": "Apagar Coluna",
+					"tableVerticalAlignDropDownTop": "Alinhar no Topo",
+					"tableVerticalAlignDropDownMiddle": "Alinhar no Meio",
+					"tableVerticalAlignDropDownBottom": "Alinhar no Fundo",
+					"tableStylesDropDownDashedBorder": "Bordas Pontilhadas",
+					"tableStylesDropDownAlternateRows": "Linhas Alternadas",
+					"pasteFormat": "Colar Formato",
+					"pasteFormatContent": "Escolha a ação de formatação",
+					"plainText": "Texto Simples",
+					"cleanFormat": "Limpar",
+					"keepFormat": "Manter",
+					"formatsDropDownParagraph": "Parágrafo",
+					"formatsDropDownCode": "Código",
+					"formatsDropDownQuotation": "Citação",
+					"formatsDropDownHeading1": "Cabeçalho 1",
+					"formatsDropDownHeading2": "Cabeçalho 2",
+					"formatsDropDownHeading3": "Cabeçalho 3",
+					"formatsDropDownHeading4": "Cabeçalho 4",
+					"fontNameSegoeUI": "SegoeUI",
+					"fontNameArial": "Arial",
+					"fontNameGeorgia": "Georgia",
+					"fontNameImpact": "Impact",
+					"fontNameTahoma": "Tahoma",
+					"fontNameTimesNewRoman": "Times New Roman",
+					"fontNameVerdana": "Verdana"
+				}
+			}
+		})
+
+
+		//Desabilita o Drop Zone
+		kendo.ui.Upload.fn._supportsDrop = function () { return false; }
+
+
+		//Upload do PDF da Autuação
+		//=========================
+		$("#inputAutuacaoPDF").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SavePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione a Autuação...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccessAutuacao
+		});
+
+		function onSuccessAutuacao(e) {
+
+			//Remove a DIV para excluir o PDF escolhido anteriormente
+			$("#AutuacaoPDFViewer").remove();
+
+			//Cria DIV do PDF
+			$("#PDFContainerAutuacao").append("<div id='AutuacaoPDFViewer'> </div>");
+
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				//debugger;
+
+				console.log(this.name);
+
+				//document.getElementById("txtAutuacaoPDF").setAttribute('value', this.name.replaceAll(" ", "_"));
+				document.getElementById("txtAutuacaoPDF").setAttribute('value', TiraAcento(this.name));
+
+				console.log(document.getElementById("txtAutuacaoPDF").value);
+
+				var pdfViewer = $("#AutuacaoPDFViewer").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtAutuacaoPDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+		}
+
+
+		//Upload do PDF da Penalidade
+		//===========================
+		$("#pdf").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SavePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione a Notificação de Penalidade...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccessPenalidade
+		});
+
+		function onSuccessPenalidade(e) {
+
+			//Remove a DIV para excluir o PDF escolhido anteriormente
+			$("#pdfViewer").remove();
+
+			//Cria DIV do PDF
+			$("#PDFContainer").append("<div id='pdfViewer'> </div>");
+
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				console.log(this.name);
+
+				//document.getElementById("txtPenalidadePDF").setAttribute('value', this.name.replaceAll(" ", "_"));
+				document.getElementById("txtPenalidadePDF").setAttribute('value', TiraAcento(this.name));
+
+				console.log(document.getElementById("txtPenalidadePDF").value);
+
+				var pdfViewer = $("#pdfViewer").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtPenalidadePDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+
+			var viewer = new ej.pdfviewer.PdfViewer({
+				// other configurations
+			});
+
+			viewer.documentLoadFailed = function (args) {
+				// Handle the error here
+				console.log('Erro ao carregar documento:', 'O Arquivo não existe na base de dados!');
+			};
+		}
+
+
+
+		//Desabilita o Drop Zone
+		kendo.ui.Upload.fn._supportsDrop = function () { return false; }
+
+
+		//Upload do PDF do Comprovante
+		//===========================
+		$("#flComprovante").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SaveComprovantePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione o Comprovante de Pagamento...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccessComprovante
+		});
+
+		function onSuccessComprovante(e) {
+
+
+			//debugger;
+
+			//Remove a DIV para excluir o PDF escolhido anteriormente
+			$("#ComprovantePDF").remove();
+
+			//Cria DIV do PDF
+			$("#PDFContainerComprovante").append("<div id='ComprovantePDF'> </div>");
+
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				console.log(this.name);
+
+				//document.getElementById("txtComprovantePDF").setAttribute('value', this.name.replaceAll(" ", "_"));
+				document.getElementById("txtComprovantePDF").setAttribute('value', TiraAcento(this.name));
+
+				console.log(document.getElementById("txtComprovantePDF").value);
+
+				var pdfViewer = $("#ComprovantePDF").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtComprovantePDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+		}
+
+		//------------------ Insere o Processo eDoc --------- --------------------------------
+		//=====================================================================================
+
+		//Upload do PDF do Processo eDoc
+		//==============================
+		$("#inputEDocPDF").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SavePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione o Processo eDOC...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccessEDoc
+		});
+
+		function onSuccessEDoc(e) {
+
+			//Remove a DIV para excluir o PDF escolhido anteriormente
+			$("#eDOCpdfViewer").remove();
+
+			//Cria DIV do PDF
+			$("#eDocPDFContainer").append("<div id='eDOCpdfViewer'> </div>");
+
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				console.log(this.name);
+
+				//document.getElementById("txtEDocPDF").setAttribute('value', this.name.replaceAll(" ", "_"));
+				document.getElementById("txtEDocPDF").setAttribute('value', TiraAcento(this.name));
+
+				console.log(document.getElementById("txtEDocPDF").value);
+
+				var pdfViewer = $("#eDOCpdfViewer").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtEDocPDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+		}
+
+
+		//Upload de Documentos Diversos
+		//==============================
+		$("#inputOutrosDocumentosPDF").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SavePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione o arquivo com Documentos a serem carregados...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccessDocumentos
+		});
+
+		function onSuccessDocumentos(e) {
+
+			//Remove a DIV para excluir o PDF escolhido anteriormente
+			$("#OutrosDocumentospdfViewer").remove();
+
+			//Cria DIV do PDF
+			$("#OutrosDocumentosPDFContainer").append("<div id='OutrosDocumentospdfViewer'> </div>");
+
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				console.log(this.name);
+
+				//document.getElementById("txtOutrosDocumentosPDF").setAttribute('value', this.name.replaceAll(" ", "_"));
+				document.getElementById("txtOutrosDocumentosPDF").setAttribute('value', TiraAcento(this.name));
+
+				console.log(document.getElementById("txtOutrosDocumentosPDF").value);
+
+				var pdfViewer = $("#OutrosDocumentospdfViewer").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtOutrosDocumentosPDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+		}
+
+		function moeda(a, e, r, t) {
+			let n = ""
+				, h = j = 0
+				, u = tamanho2 = 0
+				, l = ajd2 = ""
+				, o = window.Event ? t.which : t.keyCode;
+			if (13 == o || 8 == o)
+				return !0;
+			if (n = String.fromCharCode(o),
+				-1 == "0123456789".indexOf(n))
+				return !1;
+			for (u = a.value.length,
+				h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+				;
+			for (l = ""; h < u; h++)
+				-1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+			if (l += n,
+				0 == (u = l.length) && (a.value = ""),
+				1 == u && (a.value = "0" + r + "0" + l),
+				2 == u && (a.value = "0" + r + l),
+				u > 2) {
+				for (ajd2 = "",
+					j = 0,
+					h = u - 3; h >= 0; h--)
+					3 == j && (ajd2 += e,
+						j = 0),
+						ajd2 += l.charAt(h),
+						j++;
+				for (a.value = "",
+					tamanho2 = ajd2.length,
+					h = tamanho2 - 1; h >= 0; h--)
+					a.value += ajd2.charAt(h);
+				a.value += r + l.substr(u - 2, u)
+			}
+			return !1
+		}
+
+		//------------------ Procura Viagem Associada à Multa --------------------------------
+		//====================================================================================
+		$(document).on('click', '.btnViagem', function () {
+
+			if (document.getElementById("txtDataInfracao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Data da Infração deve ser informada!",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			if (document.getElementById("txtHoraInfracao").value === "") {
+				swal({
+					title: "Informação Ausente",
+					text: "A Hora da Infração é obrigatória",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
+			if (lstVeiculo.value === null) {
+				swal({
+					title: "Informação Ausente",
+					text: "O Veículo deve ser informado!",
+					icon: "error",
+					buttons: true,
+					dangerMode: true,
+					buttons: {
+						ok: "Ok"
+					}
+				})
+				return;
+			}
+
+			var dataToPost = JSON.stringify({ 'VeiculoId': lstVeiculo.value, 'Data': document.getElementById("txtDataInfracao").value, 'Hora': document.getElementById("txtHoraInfracao").value });
+			var url = '/api/Multa/ProcuraViagem';
+			$.ajax({
+				url: url,
+				type: "POST",
+				data: dataToPost,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (data) {
+					if (data.success) {
+
+						toastr.success(data.message);
+
+						$('#txtNoFichaVistoria').attr('value', data.nofichavistoria);
+						$('#txtNoFichaVistoriaEscondido').attr('value', data.nofichavistoria);
+
+						//Recupera o motorista
+						EscolhendoMotorista = true;
+						document.getElementById("lstMotorista").ej2_instances[0].value = data.motoristaid;
+
+					}
+					else {
+						$('#txtNoFichaVistoria').attr('value', '');
+						$('#txtNoFichaVistoriaEscondido').attr('value', '');
+						toastr.error(data.message);
+					}
+				},
+				error: function (err) {
+					console.log(err)
+					alert('something went wrong')
+				}
+			});
+		});
+
+
+		var ViagemId = '';
+
+		//------------------ Procura Ficha de Vistoria da Viagem --------------------------------
+		//=======================================================================================
+		$(document).on('click', '.btnFicha', function () {
+
+			var dataToPost = JSON.stringify({ 'NoFichaVistoria': document.getElementById("txtNoFichaVistoria").value });
+			var url = '/api/Multa/ProcuraFicha';
+			$.ajax({
+				url: url,
+				type: "POST",
+				data: dataToPost,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (data) {
+					if (data.success) {
+						ViagemId = data.viagemid;
+						toastr.success(data.message);
+						$('#modalFicha').modal('show');
+					}
+					else {
+						toastr.error(data.message);
+					}
+				},
+				error: function (err) {
+					console.log(err)
+					alert('something went wrong')
+				}
+			});
+		});
+
+
+		$("#modalFicha").modal
+			({
+				keyboard: true,
+				backdrop: "static",
+				show: false,
+
+			}).on("show.bs.modal", function (event) {
+
+				console.log(ViagemId);
+
+				//document.getElementById("txtViagemId").value = ViagemId
+
+				var id = ViagemId;
+
+				var label = document.getElementById("DynamicModalLabel");
+				label.innerHTML = ("");
+
+				$.ajaxSetup({ async: false });
+
+				$.ajax({
+					type: "get",
+					url: "/api/Viagem/PegaFichaModal",
+					data: { id: id },
+					success: function (res) {
+
+
+						var fichavistoria = document.getElementById("txtNoFichaVistoria").value;
+						console.log("fichavistoria: " + fichavistoria);
+
+						var label = document.getElementById("DynamicModalLabel");
+
+						console.log("label: " + label);
+
+						$('#imgViewer').removeAttr("src")
+
+						if (res === false) {
+							label.innerHTML = ("Infração sem Autuação digitalizada");
+							$('#imgViewer').attr('src', "/Images/FichaAmarelaNova.jpg");
+						}
+						else {
+							label.innerHTML = ("Ficha de Vistoria Nº: <b>" + fichavistoria + "</b>");
+							$('#imgViewer').attr('src', "data:image/jpg;base64," + res);
+						}
+
+
+					},
+					error: function (error) {
+						console.log(error);
+					}
+				});
+
+			}).on("hide.bs.modal", function (event) {
+				$('#imgViewer').removeAttr("src")
+			});
+
+
+		var EscolhendoMotorista = false;
+		var EscolhendoContratoMotorista = false;
+
+		var EscolhendoVeiculo = false;
+		var EscolhendoContratoVeiculo = false;
+
+		$("#txtNumInfracao").focusout(function () {
+
+			if (document.getElementById("txtNumInfracao").value === '') {
+				return;
+			}
+
+			var NumInfracao = document.getElementById("txtNumInfracao").value;
+
+			//Verifica se Número da Infração já foi cadastrado
+			$.ajax({
+				url: "api/Multa/MultaExistente",
+				method: "GET",
+				datatype: "json",
+				data: { numinfracao: NumInfracao },
+				success: function (res) {
+
+					var ExisteFicha = [res.data];
+
+					//debugger;
+
+					if (ExisteFicha[0] === true) {
+						swal({
+							title: "Alerta no Número da Infração",
+							text: "Já existe uma Multa inserida com esta numeração!",
+							icon: "warning",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+
+						return;
+					}
+				}
+			})
+		});
+
+
+		//Escolhendo Veiculo
+		//==================
+		function lstVeiculo_Select() {
+
+			EscolhendoVeiculo = true;
+
+		}
+
+		//Escolhendo Motorista
+		//====================
+		function lstMotorista_Select() {
+
+			EscolhendoMotorista = true;
+
+		}
+
+
+		//Recupera o Contrato/Ata do Veículo
+		//==================================
+		function lstVeiculo_Change() {
+
+			if (document.getElementById("lstVeiculo").ej2_instances[0].value === '') {
+				return;
+			}
+
+			var veiculoId = document.getElementById("lstVeiculo").ej2_instances[0].value;
+
+			$.ajax({
+				url: "api/Multa/PegaInstrumentoVeiculo",
+				method: "GET",
+				datatype: "json",
+				data: { Id: veiculoId },
+				success: function (data) {
+
+
+					if (data.instrumentoid != null) {
+
+						if (data.instrumento == "contrato") {
+							document.getElementById("lstContratoVeiculo").ej2_instances[0].value = data.instrumentoid;
+							document.getElementById("lstAtaVeiculo").ej2_instances[0].value = '';
+						}
+						else {
+							document.getElementById("lstContratoVeiculo").ej2_instances[0].value = '';
+							document.getElementById("lstAtaVeiculo").ej2_instances[0].value = data.instrumentoid;
+						}
+
+					}
+					else {
+
+						document.getElementById("lstContratoVeiculo").ej2_instances[0].value = '';
+
+						swal({
+							title: "Atenção ao Contrato do Veículo",
+							text: "O veículo escolhido não possui contrato/ata!",
+							icon: "info",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+					}
+				}
+			});
+		}
+
+		//Valida o Contrato do Veículo
+		//============================
+		function lstContratoVeiculo_Change() {
+
+			if (EscolhendoVeiculo) {
+				EscolhendoVeiculo = false;
+				return;
+			}
+
+			document.getElementById("lstAtaVeiculo").ej2_instances[0].value = '';
+
+			if (document.getElementById("lstContratoVeiculo").ej2_instances[0].value === '' || document.getElementById("lstVeiculo").ej2_instances[0].value === '') {
+				return;
+			}
+
+			var veiculoId = document.getElementById("lstVeiculo").ej2_instances[0].value;
+			var contratoId = document.getElementById("lstContratoVeiculo").ej2_instances[0].value;
+
+			$.ajax({
+				url: "api/Multa/ValidaContratoVeiculo",
+				method: "GET",
+				datatype: "json",
+				data: { veiculoId: veiculoId, contratoId: contratoId },
+				success: function (data) {
+
+					//debugger;
+
+					if (data.success === false) {
+
+						swal({
+							title: "Alerta no Contrato do Veículo",
+							text: "O veículo escolhido não pertence a esse contrato!",
+							icon: "warning",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+
+						document.getElementById("lstVeiculo").ej2_instances[0].value = '';
+					}
+
+
+				}
+			});
+		}
+
+		//Valida a Ata do Veículo
+		//============================
+		function lstAtaVeiculo_Change() {
+
+			if (EscolhendoVeiculo) {
+				EscolhendoVeiculo = false;
+				return;
+			}
+
+			document.getElementById("lstContratoVeiculo").ej2_instances[0].value = '';
+
+			if (document.getElementById("lstAtaVeiculo").ej2_instances[0].value === '' || document.getElementById("lstVeiculo").ej2_instances[0].value === '') {
+				return;
+			}
+
+			if (document.getElementById("lstAtaVeiculo").ej2_instances[0].value != '' && document.getElementById("lstContratoVeiculo").ej2_instances[0].value != '') {
+				document.getElementById("lstContratoVeiculo").ej2_instances[0].value = '';
+			}
+
+			var veiculoId = document.getElementById("lstVeiculo").ej2_instances[0].value;
+			var ataId = document.getElementById("lstAtaVeiculo").ej2_instances[0].value;
+
+			$.ajax({
+				url: "api/Multa/ValidaAtaVeiculo",
+				method: "GET",
+				datatype: "json",
+				data: { veiculoId: veiculoId, ataId: ataId },
+				success: function (data) {
+
+					//debugger;
+
+					if (data.success === false) {
+
+						swal({
+							title: "Alerta na Ata do Veículo",
+							text: "O veículo escolhido não pertence a essa ata!",
+							icon: "warning",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+
+						document.getElementById("lstVeiculo").ej2_instances[0].value = '';
+					}
+
+
+				}
+			});
+		}
+
+
+		//Recupera o Contrato do Motorista
+		//================================
+		function lstMotorista_Change() {
+
+			if (document.getElementById("lstMotorista").ej2_instances[0].value === '') {
+				return;
+			}
+
+			var motoristaId = document.getElementById("lstMotorista").ej2_instances[0].value;
+
+			$.ajax({
+				url: "api/Multa/PegaContratoMotorista",
+				method: "GET",
+				datatype: "json",
+				data: { Id: motoristaId },
+				success: function (data) {
+
+					//debugger;
+
+					if (data.contratoid != '') {
+
+						document.getElementById("lstContratoMotorista").ej2_instances[0].value = data.contratoid;
+
+					}
+					else {
+
+						document.getElementById("lstContratoMotorista").ej2_instances[0].value = '';
+
+						swal({
+							title: "Atenção ao Contrato do Motorista",
+							text: "O motorista escolhido não possui contrato!",
+							icon: "info",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+
+					}
+
+
+				}
+			});
+		}
+
+		//Valida o Contrato do Motorista
+		//==============================
+		function lstContratoMotorista_Change() {
+
+			if (EscolhendoMotorista) {
+				EscolhendoMotorista = false;
+				return;
+			}
+
+			if (document.getElementById("lstContratoMotorista").ej2_instances[0].value === '' || document.getElementById("lstMotorista").ej2_instances[0].value === '') {
+				return;
+			}
+
+			var motoristaId = document.getElementById("lstMotorista").ej2_instances[0].value;
+			var contratoId = document.getElementById("lstContratoMotorista").ej2_instances[0].value;
+
+			$.ajax({
+				url: "api/Multa/ValidaContratoMotorista",
+				method: "GET",
+				datatype: "json",
+				data: { veiculoId: motoristaId, contratoId: contratoId },
+				success: function (data) {
+
+					//debugger;
+
+					if (data.success === false) {
+
+						swal({
+							title: "Alerta no Contrato do Motorista",
+							text: "O motorista escolhido não pertence a esse contrato!",
+							icon: "warning",
+							buttons: true,
+							dangerMode: true,
+							buttons: {
+								ok: "Ok"
+							}
+						})
+
+						document.getElementById("lstMotorista").ej2_instances[0].value = '';
+					}
+				}
+			});
+		}
+
+
+		var ComprovantePDF = '';
+
+		//------------------ Procura o Registro de Pagamento da Multa --------------------------------
+		//============================================================================================
+		$(document).on('click', '.btnComprovante', function () {
+
+
+			////Remove a DIV para excluir o PDF escolhido anteriormente
+			var elem = document.getElementById("ComprovantePDF");
+			elem.parentElement.removeChild(elem);
+			//$("#PDFContainerComprovante").remove();
+
+			////Cria DIV do PDF
+			$("#PDFContainerComprovante").append("<div id='ComprovantePDF'></div>");
+
+			$('#modalComprovante').modal('show');
+
+		});
+
+
+		$("#modalComprovante").modal
+			({
+				keyboard: true,
+				show: false,
+
+			}).on("show.bs.modal", function (event) {
+
+				if (document.getElementById("txtComprovantePDF").value != '') {
+					var ComprovantePDF = $("#ComprovantePDF").kendoPDFViewer({
+						pdfjsProcessing: {
+							file: "/DadosEditaveis/Multas/" + document.getElementById("txtComprovantePDF").value
+						},
+						width: "100%",
+						height: 400
+					}).data("kendoPDFViewer");
+
+					//debugger;
+
+				}
+
+				//debugger;
+
+			}).on("hide.bs.modal", function (event) {
+
+				//Limpa o controle de Upload de arquivos
+				var upload = $("#flComprovante").data("kendoUpload");
+				upload.clearAllFiles();
+
+				$("div").removeClass("modal-backdrop");
+				$('body').removeClass('modal-open');
+				$("body").css("overflow", "auto");
+
+
+			});
+
+
+
+		var ComprovantePDF = '';
+
+		//------------------ Procura a Notificação de Autuação --------------------------------
+		//=====================================================================================
+		$(document).on('click', '.btnNotificacao', function () {
+
+
+			////Remove a DIV para excluir o PDF escolhido anteriormente
+			var elem = document.getElementById("AutuacaoPDFViewer");
+			elem.parentElement.removeChild(elem);
+			//$("#PDFContainerComprovante").remove();
+
+			////Cria DIV do PDF
+			$("#PDFContainerAutuacao").append("<div id='AutuacaoPDFViewer'></div>");
+
+			$('#modalAutuacao').modal('show');
+
+		});
+
+
+		$("#modalFicha").modal
+			({
+				keyboard: true,
+				backdrop: "static",
+				show: false,
+
+			}).on("show.bs.modal", function (event) {
+
+				console.log(ViagemId);
+
+				//document.getElementById("txtViagemId").value = ViagemId
+
+				var id = ViagemId;
+
+				var label = document.getElementById("DynamicModalLabel");
+				label.innerHTML = ("");
+
+				$.ajaxSetup({ async: false });
+
+				$.ajax({
+					type: "get",
+					url: "/api/Viagem/PegaFichaModal",
+					data: { id: id },
+					success: function (res) {
+
+
+						var fichavistoria = document.getElementById("txtNoFichaVistoria").value;
+						console.log("fichavistoria: " + fichavistoria);
+
+						var label = document.getElementById("DynamicModalLabel");
+
+						console.log("label: " + label);
+
+						$('#imgViewer').removeAttr("src")
+
+						if (res === false) {
+							label.innerHTML = ("Infração sem Autuação digitalizada");
+							$('#imgViewer').attr('src', "/Images/FichaAmarelaNova.jpg");
+						}
+						else {
+							label.innerHTML = ("Ficha de Vistoria Nº: <b>" + fichavistoria + "</b>");
+							$('#imgViewer').attr('src', "data:image/jpg;base64," + res);
+						}
+
+
+					},
+					error: function (error) {
+						console.log(error);
+					}
+				});
+
+			}).on("hide.bs.modal", function (event) {
+				$('#imgViewer').removeAttr("src")
+			});
+
+
+
+    </script>
+
+}

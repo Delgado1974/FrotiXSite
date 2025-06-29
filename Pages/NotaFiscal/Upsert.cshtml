@@ -1,0 +1,893 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.NotaFiscal.UpsertModel
+
+
+@{
+    ViewData["Title"] = "Notas Fiscais";
+    ViewData["PageName"] = "upsert_index";
+    ViewData["Heading"] = "<i class='fad fa-file-invoice-dollar'></i> Cadastros: <span class='fw-300'>Notas Fiscais</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-file-invoice-dollar";
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    escondido {
+        visibility: hidden;
+    }
+
+    .input-icons i {
+        position: absolute;
+    }
+
+    .input-icons {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .icon {
+        padding: 10px;
+        min-width: 40px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
+}
+
+
+<form id="frmNotaFiscal" method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.NotaFiscalObj.NotaFiscal.NotaFiscalId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="NotaFiscalObj.NotaFiscal.NotaFiscalId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.NotaFiscalObj.NotaFiscal.NotaFiscalId != Guid.Empty ? "Atualizar " : "Criar ") Nota Fiscal  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+
+                                <div class="col-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Contrato/Ata</label>
+                                        <select id="lstInstrumento" class="form-control form-control-xs">
+                                            <option value=""> -- Selecione um Instrumento -- </option>
+                                            <option value=0>Contrato</option>
+                                            <option value=1>Ata de Registro de Preços</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                @* DIV Com as informações do Contrato *@
+                                <div id="divContrato">
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">Contratos com Status</label>
+                                            <select id="status" class="form-control form-control-xs">
+                                                <option value=1>Ativo</option>
+                                                <option value=0>Inativo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.ContratoId"></label>
+                                            <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.ContratoId"></span>
+                                            @Html.DropDownListFor(m => m.NotaFiscalObj.NotaFiscal.ContratoId,
+                                                                    Model.NotaFiscalObj.ContratoList,
+                                                                    "- Selecione um Contrato -",
+                                                                    new { @class = "form-control form-control-xs", @id = "listaContrato" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @* DIV Com as informações da Ata *@
+                                <div id="divAta">
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">Atas com Status</label>
+                                            <select id="status" class="form-control form-control-xs">
+                                                <option value=1>Ativo</option>
+                                                <option value=0>Inativo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.AtaId"></label>
+                                            <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.AtaId"></span>
+                                            @Html.DropDownListFor(m => m.NotaFiscalObj.NotaFiscal.AtaId,
+                                                                    Model.NotaFiscalObj.AtaList,
+                                                                    "- Selecione uma Ata -",
+                                                                    new { @class = "form-control form-control-xs", @id = "listaAta" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <label class="label font-weight-bold">Empenhos</label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="NotaFiscalObj.NotaFiscal.EmpenhoId"></span>
+                                    @Html.Hidden("NotaFiscal_EmpenhoId", Model.NotaFiscalObj.NotaFiscal.EmpenhoId)
+
+                                    <select id="ListaEmpenhos" name="NotaFiscalObj.NotaFiscal.EmpenhoId" class="form-control form-control-xs">
+                                        <option value="">-- Selecione um Empenho --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.NumeroNF"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.NumeroNF"></span>
+                                        <input id="txtNF" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.NumeroNF" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.DataEmissao"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.DataEmissao"></span>
+                                        <input id="txtDataEmissao" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.DataEmissao" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.TipoNF"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="NotaFiscalObj.NotaFiscal.TipoNF"></span>
+                                        <select id="lstTipoNF" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.TipoNF">
+                                            <option value="">-- Objeto da Nota --</option>
+                                            <option value="Terceirização">Terceirização</option>
+                                            <option value="Locação">Locação</option>
+                                            <option value="Serviços">Serviços</option>
+                                            <option value="Combustível">Combustível</option>
+                                            <option value="Oficina/Peças">Oficina/Peças</option>
+                                            <option value="Oficina/Serviços">Oficina/Serviços</option>
+                                            <option value="Oficina/Óleo">Oficina/Óleo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.AnoReferencia"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.AnoReferencia"></span>
+                                        <select id="lstAnoReferencia" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.AnoReferencia">
+                                            <option value="">-- Ano de Referência --</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.MesReferencia"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.MesReferencia"></span>
+                                        <select id="lstMesReferencia" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.MesReferencia">
+                                            <option value="">-- Mês de Referência --</option>
+                                            <option value="1">Janeiro</option>
+                                            <option value="2">Fevereiro</option>
+                                            <option value="3">Março</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Maio</option>
+                                            <option value="6">Junho</option>
+                                            <option value="7">Julho</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Setembro</option>
+                                            <option value="10">Outubro</option>
+                                            <option value="11">Novembro</option>
+                                            <option value="12">Dezembro</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="divGasolina" class="col-2" style="display: none">
+                                    <div class="form-group">
+                                        <label id="lblMediaGasolina" class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.MediaGasolina"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.MediaGasolina"></span>
+                                        <input id="txtMediaGasolina" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.MediaGasolina" />
+                                    </div>
+                                </div>
+
+                                <div id="divDiesel" class="col-2" style="display: none">
+                                    <div class="form-group">
+                                        <label id="lblMediaDiesel" class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.MediaDiesel"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.MediaDiesel"></span>
+                                        <input id="txtMediaDiesel" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.MediaDiesel" />
+                                    </div>
+                                </div>
+
+                                <div id="divVeiculo" class="col-3" style="display: none">
+                                    <label id="lblVeiculo" class="label"><strong>Veículo Reparado</strong> <i>(Quando Tipo NF for Oficina)</i></label>
+                                    <ejs-combobox id="lstVeiculo" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataVeiculo"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.NotaFiscalObj.NotaFiscal.VeiculoId">
+                                        <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div id="divOperador" class="col-2" style="display: none">
+                                    <div class="form-group">
+                                        <label id="lblOperador" class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalOperador"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.CustoMensalOperador"></span>
+                                        <input id="txtOperador" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalOperador" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                                    </div>
+                                </div>
+
+                                <div id="divMotorista" class="col-2" style="display: none">
+                                    <div class="form-group">
+                                        <label id="lblMotorista" class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalMotorista"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.CustoMensalMotorista"></span>
+                                        <input id="txtMotorista" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalMotorista" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                                    </div>
+                                </div>
+
+                                <div id="divLavador" class="col-2" style="display: none">
+                                    <div class="form-group">
+                                        <label id="lblLavador" class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalLavador"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.CustoMensalLavador"></span>
+                                        <input id="txtLavador" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.CustoMensalLavador" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.ValorNF"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.ValorNF"></span>
+                                        <input id="ValorNF" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="NotaFiscalObj.NotaFiscal.ValorNF" onKeyPress="return(moeda(this,'.',',',event))" />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.ValorGlosa"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.ValorGlosa"></span>
+                                        <input id="ValorGlosa" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="NotaFiscalObj.NotaFiscal.ValorGlosa" onKeyPress="return(moeda(this,'.',',',event))" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.MotivoGlosa"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.MotivoGlosa"></span>
+                                        <input class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.MotivoGlosa" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="NotaFiscalObj.NotaFiscal.Objeto"></label>
+                                        <span class="text-danger" asp-validation-for="NotaFiscalObj.NotaFiscal.Objeto"></span>
+                                        <input id="txtObjeto" class="form-control form-control-xs" asp-for="NotaFiscalObj.NotaFiscal.Objeto" />
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <br />
+                            <div class="form-group row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @if (Model.NotaFiscalObj.NotaFiscal.NotaFiscalId != Guid.Empty)
+                                            {
+                                                <button id="btnSubmit" class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnSubmit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+                                        </div>
+                                        <div class="col-6" hidden>
+                                            @if (Model.NotaFiscalObj.NotaFiscal.NotaFiscalId != Guid.Empty)
+                                            {
+                                                <button id="btnEscondido" method="post" asp-page-handler="Edit" asp-route-id=@Model.NotaFiscalObj.NotaFiscal.NotaFiscalId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnEscondido" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+                                        </div>
+                                        <div class="col-6">
+                                            <a asp-page="./Index" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section ScriptsBlock
+{
+    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
+    @* <script src="~/js/formplugins/select2/select2.bundle.js"></script> *@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+     <script>
+
+         var CustoMensalOperador;
+         var CustoMensalMotorista;
+         var CustoMensalLavador;
+
+        function moeda(a, e, r, t) {
+            let n = ""
+                , h = j = 0
+                , u = tamanho2 = 0
+                , l = ajd2 = ""
+                , o = window.Event ? t.which : t.keyCode;
+            if (13 == o || 8 == o)
+                return !0;
+            if (n = String.fromCharCode(o),
+                -1 == "0123456789".indexOf(n))
+                return !1;
+            for (u = a.value.length,
+                h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+                ;
+            for (l = ""; h < u; h++)
+                -1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+            if (l += n,
+                0 == (u = l.length) && (a.value = ""),
+                1 == u && (a.value = "0" + r + "0" + l),
+                2 == u && (a.value = "0" + r + l),
+                u > 2) {
+                for (ajd2 = "",
+                    j = 0,
+                    h = u - 3; h >= 0; h--)
+                    3 == j && (ajd2 += e,
+                        j = 0),
+                        ajd2 += l.charAt(h),
+                        j++;
+                for (a.value = "",
+                    tamanho2 = ajd2.length,
+                    h = tamanho2 - 1; h >= 0; h--)
+                    a.value += ajd2.charAt(h);
+                a.value += r + l.substr(u - 2, u)
+            }
+            return !1
+        }
+    </script>
+
+     <script>
+
+        @*/**
+            * Number.prototype.format(n, x, s, c)
+            *
+            * @param integer n: length of decimal
+            * @param integer x: length of whole part
+            * @param mixed   s: sections delimiter
+            * @param mixed   c: decimal delimiter
+            **/*@
+        Number.prototype.format = function(n, x, s, c) {
+            var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+                num = this.toFixed(Math.max(0, ~~n));
+
+            return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+        };
+
+         $(document).ready(function () {
+
+
+             document.getElementById("divContrato").style.display = "none"
+             document.getElementById("divAta").style.display = "none"
+
+
+             $("#lstInstrumento").on('change', function () {
+
+                 if ($("#lstInstrumento").val() === '0') {
+                     //Exibe Contrato
+                     document.getElementById("divContrato").style.display = "block"
+                     document.getElementById("divAta").style.display = "none"
+                     $('#ListaContratos').empty();
+                     //loadListaContratos(1);
+                 }
+
+                 if ($("#lstInstrumento").val() === '1') {
+                     //Exibe Ata
+                     document.getElementById("divAta").style.display = "block"
+                     document.getElementById("divContrato").style.display = "none"
+                     $('#ListaAtas').empty();
+                     //loadListaAtas(1);
+                 }
+
+                 console.log($("#lstInstrumento").val());
+
+             });
+
+
+
+
+             document.getElementById("divGasolina").style.display = "none";
+             document.getElementById("divDiesel").style.display = "none";
+             document.getElementById("divVeiculo").style.display = "none";
+             document.getElementById("divOperador").style.display = "none";
+             document.getElementById("divMotorista").style.display = "none";
+             document.getElementById("divLavador").style.display = "none";
+
+             if ('@Model.NotaFiscalObj.NotaFiscal.VeiculoId' === null || '@Model.NotaFiscalObj.NotaFiscal.VeiculoId' === '') {
+                 var veiculo = document.getElementById('lstVeiculo').ej2_instances[0];
+                 veiculo.value = '';
+             }
+             else
+             {
+                 var veiculo = document.getElementById('lstVeiculo').ej2_instances[0];
+                 veiculo.value = '@Model.NotaFiscalObj.NotaFiscal.VeiculoId';
+                 document.getElementById("divVeiculo").style.display = "block";
+             }
+
+             console.log("Tipo NF: " + '@Model.NotaFiscalObj.NotaFiscal.TipoNF');
+
+             if ('@Model.NotaFiscalObj.NotaFiscal.TipoNF' === "Combust&#xED;vel" || '@Model.NotaFiscalObj.NotaFiscal.TipoNF' === "Combustível") {
+
+                 document.getElementById("divGasolina").style.display = "block";
+                $("#txtMediaGasolina").val('@Model.NotaFiscalObj.NotaFiscal.MediaGasolina');
+                 document.getElementById("txtMediaGasolina").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.MediaGasolina').replace(",", ".")).format(2, 3, '.', ',');
+
+                 document.getElementById("divDiesel").style.display = "block";
+                $("#txtMediaDiesel").val('@Model.NotaFiscalObj.NotaFiscal.MediaDiesel');
+                 document.getElementById("txtMediaDiesel").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.MediaDiesel').replace(",", ".")).format(2, 3, '.', ',');
+            }
+
+             console.log('@Model.NotaFiscalObj.NotaFiscal.TipoNF');
+
+             if ('@Model.NotaFiscalObj.NotaFiscal.TipoNF' === "Terceirização" || '@Model.NotaFiscalObj.NotaFiscal.TipoNF' === "Terceiriza&#xE7;&#xE3;o") {
+
+                 document.getElementById("divOperador").style.display = "block";
+                 $("#txtOperador").val('@Model.NotaFiscalObj.NotaFiscal.CustoMensalOperador');
+                 document.getElementById("txtOperador").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.CustoMensalOperador').replace(",", ".")).format(2, 3, '.', ',');
+
+                 document.getElementById("divMotorista").style.display = "block";
+                 $("#txtMotorista").val('@Model.NotaFiscalObj.NotaFiscal.CustoMensalMotorista');
+                 document.getElementById("txtMotorista").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.CustoMensalMotorista').replace(",", ".")).format(2, 3, '.', ',');
+
+                 document.getElementById("divLavador").style.display = "block";
+                 $("#txtLavador").val('@Model.NotaFiscalObj.NotaFiscal.CustoMensalLavador');
+                 document.getElementById("txtLavador").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.CustoMensalLavador').replace(",", ".")).format(2, 3, '.', ',');
+            }
+
+             if ('@Model.NotaFiscalObj.NotaFiscal.ValorNF' != '')
+             {
+                 document.getElementById("ValorNF").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.ValorNF').replace(",", ".")).format(2, 3, '.', ',');
+             }
+             if ('@Model.NotaFiscalObj.NotaFiscal.ValorGlosa' != '')
+             {
+                 document.getElementById("ValorGlosa").value = parseFloat(('@Model.NotaFiscalObj.NotaFiscal.ValorGlosa').replace(",", ".")).format(2, 3, '.', ',');
+             }
+
+         });
+
+
+         //Pega o Contrato para verificar se é de operador/motorista/lavador
+         function GetContrato(id) {
+             $.ajax({
+                 url: "api/NotaFiscal/GetContrato",
+                 method: "GET",
+                 data: { id: id },
+                 contentType: "application/json",
+                 dataType: "json",
+                 success: function (res) {
+
+                     res.data.forEach(function (obj) {
+                         console.log("ContratoId: " + obj.contratoId);
+                         CustoMensalOperador = obj.custoMensalOperador;
+                         CustoMensalMotorista = obj.custoMensalMotorista;
+                         CustoMensalLavador = obj.custoMensalLavador;
+                     });
+
+                     return;
+
+                 }
+             })
+         }
+
+         function GetEmpenhoList(id) {
+             $.ajax({
+                 url: "api/NotaFiscal/EmpenhoList",
+                 method: "GET",
+                 data: { id: id },
+                 success: function (res) {
+                     var option = '<option>-- Selecione um Empenho --</option>';
+
+                     if (res != null && res.data.length) {
+
+                         res.data.forEach(function (obj) {
+                             option += '<option value="' + obj.empenhoId + '">';
+                             option += obj.notaEmpenho;
+                             option += '</option>';
+                         });
+                     }
+                     console.log(option);
+                     $('#ListaEmpenhos').empty().append(option);
+
+                     var vid = $('#NotaFiscal_EmpenhoId').val();
+                     console.log("EmpenhoId: " + vid);
+                     if (vid) $('#ListaEmpenhos').val(vid);
+                 }
+             })
+         }
+
+         $(function () {
+             var pageId = $('#NotaFiscalObj_NotaFiscal_NotaFiscalId').val();
+
+             console.log("PageId: " + pageId);
+
+             if (pageId) {
+                 var listacontratoId = $('#listaContrato').val();
+                 GetEmpenhoList(listacontratoId);
+                 GetContrato(listacontratoId);
+             }
+
+             $('#listaContrato').change(function () {
+                 var id = $(this).val();
+                 GetEmpenhoList(id);
+                 GetContrato(id);
+             });
+         });
+
+
+         $("#lstTipoNF").change(function () {
+
+             var TipoNF = document.getElementById("lstTipoNF").value;
+             console.log(TipoNF);
+
+
+             //Esconde e zera elementos
+             document.getElementById("divGasolina").style.display = "none";
+             document.getElementById("divDiesel").style.display = "none";
+             document.getElementById("divVeiculo").style.display = "none";
+             document.getElementById("divOperador").style.display = "none";
+             document.getElementById("divMotorista").style.display = "none";
+             document.getElementById("divLavador").style.display = "none";
+
+             $("#txtMediaGasolina").val('');
+             $("#txtMediaDiesel").val('');
+             $("#txtOperador").val('');
+             $("#txtMotorista").val('');
+             $("#txtLavador").val('');
+
+             var veiculo = document.getElementById('lstVeiculo').ej2_instances[0];
+             veiculo.value = '';
+
+             if (TipoNF === "Combustível") {
+                 document.getElementById("divGasolina").style.display = "block";
+                 document.getElementById("divDiesel").style.display = "block";
+             }
+
+             if (TipoNF === "Oficina/Peças" || TipoNF === "Oficina/Serviços" || TipoNF === "Oficina/Óleo") {
+                 document.getElementById("divVeiculo").style.display = "block";
+             }
+
+             if (TipoNF === "Terceirização") {
+                 document.getElementById("divOperador").style.display = "block";
+                 document.getElementById("divMotorista").style.display = "block";
+                 document.getElementById("divLavador").style.display = "block";
+
+                 $("#txtOperador").val(CustoMensalOperador);
+                 $("#txtMotorista").val(CustoMensalMotorista);
+                 $("#txtLavador").val(CustoMensalLavador);
+           }
+
+
+         });
+
+
+         //Controla o Submit do formulário através de botões escondidos (permite a validação via javascript)
+         //=================================================================================================
+         $("#btnSubmit").click(function (event) {
+
+             event.preventDefault()
+
+
+             //Valida campos obrigatórios
+             //--------------------------
+             if (document.getElementById("txtNF").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O número da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+             if (document.getElementById("txtDataEmissao").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "A data de emissão da Nota Fiscal é obrigatória",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+
+             var TipoNF = document.getElementById("lstTipoNF").value;
+
+             console.log("Tipo NF Submit: " + TipoNF);
+
+             if (TipoNF === "") {
+
+                    swal({
+                        title: "Informação Ausente",
+                        text: "O Tipo de Nota Fiscal é Obrigatório",
+                        icon: "error",
+                        buttons: true,
+                        dangerMode: true,
+                        buttons: {
+                            ok: "Ok"
+                        }
+                    })
+                    return;
+             }
+
+             if (TipoNF === "Combustível") {
+
+                 if (document.getElementById("txtMediaGasolina").value === "0") {
+                     console.log("Entrei no IF");
+                     swal({
+                         title: "Informação Ausente",
+                         text: "A média mensal da Gasolina é obrigatória",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+                 if (document.getElementById("txtMediaDiesel").value === "0") {
+                     console.log("Entrei no IF");
+                     swal({
+                         title: "Informação Ausente",
+                         text: "A média mensal do Diesel é obrigatória",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+                 $("#btnEscondido").click();
+
+             }
+
+             if (TipoNF === "Oficina/Peças" || TipoNF === "Oficina/Serviços" || TipoNF === "Oficina/Óleo") {
+
+                 var veiculo = document.getElementById('lstVeiculo').ej2_instances[0];
+
+                 console.log("Entrei no IF da Oficina: " + veiculo.value );
+
+
+                 if (veiculo.value === '' || veiculo.value === null) {
+                     swal({
+                         title: "Informação Ausente",
+                         text: "O Veículo reparado é obrigatório!",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+             }
+
+            if (TipoNF === "Terceirização") {
+
+                if (document.getElementById("txtOperador").value === "0" || document.getElementById("txtOperador").value === "" ) {
+                     swal({
+                         title: "Informação Ausente",
+                         text: "O valor mensal dos Operadores é obrigatório",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+                if (document.getElementById("txtMotorista").value === "0" || document.getElementById("txtMotorista").value === "") {
+                     swal({
+                         title: "Informação Ausente",
+                         text: "O valor mensal dos Motoristas é obrigatório",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+
+                if (document.getElementById("txtLavador").value === "0" || document.getElementById("txtLavador").value === "") {
+                     swal({
+                         title: "Informação Ausente",
+                         text: "O valor mensal dos Lavadores é obrigatório",
+                         icon: "error",
+                         buttons: true,
+                         dangerMode: true,
+                         buttons: {
+                             ok: "Ok"
+                         }
+                     })
+                     return;
+                 }
+
+                 $("#btnEscondido").click();
+
+             }
+
+             if (document.getElementById("lstAnoReferencia").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O ano de referência da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+             if (document.getElementById("lstMesReferencia").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O mês de referência da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+             if (document.getElementById("listaContrato").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O Contrato da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+             if (document.getElementById("ListaEmpenhos").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O Empenho da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+             if (document.getElementById("ValorNF").value === "0" || document.getElementById("ValorNF").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O valor da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+
+             if (document.getElementById("txtObjeto").value === "") {
+                 swal({
+                     title: "Informação Ausente",
+                     text: "O Objeto da Nota Fiscal é obrigatório",
+                     icon: "error",
+                     buttons: true,
+                     dangerMode: true,
+                     buttons: {
+                         ok: "Ok"
+                     }
+                 })
+                 return;
+             }
+
+
+
+             $("#btnEscondido").click();
+
+
+         });
+
+     </script>
+
+    
+
+}

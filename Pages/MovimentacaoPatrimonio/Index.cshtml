@@ -1,0 +1,73 @@
+﻿@page
+@model FrotiX.Models.MovimentacaoPatrimonio
+@*Esse Model tá certo?, nas outras ele referencia como FrotiX.Pages.MovimentacaoPatrimonio*@
+@{
+    ViewData["Title"] = "Movimentações";
+    ViewData["PageName"] = "movimentacaopatrimonio_index";
+    ViewData["Heading"] = "<i class='fa-duotone fa-solid fa-truck-fast'></i> Cadastros: <span class='fw-300'>Movimentações</span>";
+    ViewData["Category1"] = "Movimentações";
+    ViewData["PageIcon"] = "fa-regular fa-truck-fast";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="./MovimentacaoPatrimonio/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-truck-fast">
+                        </i> &nbsp; Cadastrar movimentação
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblMovimentacaoPatrimonio" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Data Movimentação</th>
+                                    <th>NPR</th>
+                                    <th>Descrição</th>
+                                    <th>Setor Origem</th>
+                                    <th>Seção Origem</th>
+                                    <th>Setor Destino</th>
+                                    <th>Seção Destino</th>
+                                    <th>Responsável Movimentação</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock {
+
+
+    <script src="~/js/cadastros/movimentacaopatrimonio_08.js"></script>
+
+
+}

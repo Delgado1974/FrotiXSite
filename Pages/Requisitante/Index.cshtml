@@ -1,0 +1,66 @@
+﻿@page
+@model FrotiX.Models.Requisitante
+
+@{
+    ViewData["Title"] = "Requisitantes";
+    ViewData["PageName"] = "requisitante_index";
+    ViewData["Heading"] = "<i class='fad fa-users-class'></i> Cadastros: <span class='fw-300'>Requisitantes</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-users-class";
+}
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Requisitante/Upsert" class="btn btn-info">
+                        <i class="fal fa-users-class">
+                        </i> &nbsp; Adicionar Requisitante
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblRequisitante" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Ponto</th>
+                                    <th>Nome</th>
+                                    <th>Ramal</th>
+                                    <th>Setor</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js//cadastros/requisitante.js"></script>
+}

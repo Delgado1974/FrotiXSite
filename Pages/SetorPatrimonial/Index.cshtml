@@ -1,0 +1,67 @@
+﻿@page
+@model FrotiX.Models.Cadastros.SetorPatrimonial
+@{
+    ViewData["Title"] = "Setores Patrimoniais";
+    ViewData["PageName"] = "setorpatrimonial_index";
+	ViewData["Heading"] = "<i class='fa-duotone fa-solid fa-chess-rook'></i> Cadastros: <span class='fw-300'>Setores Patrimoniais</span>";
+    ViewData["Category1"] = "Cadastros";
+	ViewData["PageIcon"] = "fa-regular fa-chess-rook"; //Tem que mudar aqui
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel" style="width: 60%; margin: 0 auto;">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="./SetorPatrimonial/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-chess-rook"></i> &nbsp; Adicionar Setor
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblSetor" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Setor</th>
+                                    <th>Detentor</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock {
+
+
+    <script src="~/js/cadastros/setor_patrimonial_22.js"></script>
+
+
+}

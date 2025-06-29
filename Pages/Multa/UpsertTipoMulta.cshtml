@@ -1,0 +1,159 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Multa.UpsertTipoMultaModel
+
+@{
+    ViewData["Title"] = "Código de Trânsito Brasileiro";
+    ViewData["PageName"] = "multa_upserttipomulta";
+    ViewData["Heading"] = "<i class='fad fa-ballot-check'></i> Cadastros: <span class='fw-300'>Código de Trânsito - Tipos de Multa</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-ballot-check";
+
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.TipoMultaObj.TipoMultaId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="TipoMultaObj.TipoMultaId" />
+                        }
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.TipoMultaObj.TipoMultaId != Guid.Empty ? "Atualizar " : "Criar ") Tipo de Multa  </h2>
+                        </div>
+
+                        <div class="col-10 pt-3">
+
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="TipoMultaObj.Artigo"></label>
+                                        <span class="text-danger  font-weight-light" asp-validation-for="TipoMultaObj.Artigo"></span>
+                                        <input class="form-control form-control-xs" asp-for="TipoMultaObj.Artigo" />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="TipoMultaObj.Infracao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="TipoMultaObj.Infracao"></span>
+                                        <select class="form-control form-control-xs" asp-for="TipoMultaObj.Infracao">
+                                            <option value="">-- Infração --</option>
+                                            <option value="Gravíssima">Gravíssima</option>
+                                            <option value="Grave">Grave</option>
+                                            <option value="Média">Média</option>
+                                            <option value="Leve">Leve</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="TipoMultaObj.CodigoDenatran"></label>
+                                        <span class="text-danger  font-weight-light" asp-validation-for="TipoMultaObj.CodigoDenatran"></span>
+                                        <input id="txtDenatran" class="form-control form-control-xs" asp-for="TipoMultaObj.CodigoDenatran" />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="TipoMultaObj.Desdobramento"></label>
+                                        <span class="text-danger  font-weight-light" asp-validation-for="TipoMultaObj.Desdobramento"></span>
+                                        <input class="form-control form-control-xs" asp-for="TipoMultaObj.Desdobramento" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <label class="label font-weight-bold">Descrição da Multa </label>
+                                            <ejs-richtexteditor ejs-for="@Model.TipoMultaObj.Descricao" id="rte" toolbarClick="toolbarClick" locale="pt-BR" height="200px">
+                                                <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                                            </ejs-richtexteditor>
+                                            <div id="errorMessage">
+                                                <span asp-validation-for="@Model.TipoMultaObj.Descricao"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <br />
+
+                            <div class="form-group row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">@(Model.TipoMultaObj.TipoMultaId != Guid.Empty ? "Atualizar" : "Criar")</button>
+
+                                        </div>
+                                        <div class="col-6">
+                                            <a asp-page="./ListaTiposMulta" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/jquery.inputmask.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+            $("#txtDenatran").inputmask("999-9");  //static mask
+        });
+
+        function toolbarClick(e) {
+            if (e.item.id == "rte_toolbar_Image") {
+                var element = document.getElementById('rte_upload')
+                element.ej2_instances[0].uploading = function upload(args) {
+                    args.currentRequest.setRequestHeader('XSRF-TOKEN', document.getElementsByName('__RequestVerificationToken')[0].value);
+                }
+            }
+        }
+
+
+    </script>
+
+}

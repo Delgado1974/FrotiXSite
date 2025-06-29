@@ -1,0 +1,396 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Motorista.UpsertModel
+
+@{
+    ViewData["Title"] = "Motoristas";
+    ViewData["PageName"] = "motorista_index";
+    ViewData["Heading"] = "<i class='fad fa-user-tie'></i> Cadastros: <span class='fw-300'>Motoristas</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-user-tie";
+}
+
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .escondido {
+        display: none;
+    }
+
+    .espacofundo {
+        padding-bottom: 20px;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/dropify.min.css" />
+
+}
+
+
+<form method="post" asp-action="Upsert" enctype="multipart/form-data">
+    <div class="row espacofundo">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div id="painelfundo" class="panel-container show espacofundo">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.MotoristaObj.Motorista.MotoristaId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="MotoristaObj.Motorista.MotoristaId" />
+                        }
+                        <input type="hidden" asp-for="MotoristaObj.Motorista.UsuarioIdAlteracao" />
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.MotoristaObj.Motorista.MotoristaId != Guid.Empty ? "Atualizar " : "Criar ") Motorista  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.Nome"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.Nome"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.Nome" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.CPF"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.CPF"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.CPF" oninput="mascara(this)" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.DataNascimento"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.DataNascimento"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.DataNascimento" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.Celular01"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.Celular01"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.Celular01" />
+                                    </div>
+                                </div>
+@*                                 <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.Celular02"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.Celular02"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.Celular02" />
+                                    </div>
+                                </div>
+ *@                                <div class="col-2">
+                                    <label id="lblCodMotoristaQCard" class="label font-weight-bold" asp-for="MotoristaObj.Motorista.CodMotoristaQCard"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.CodMotoristaQCard"></span>
+                                    <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.CodMotoristaQCard" placeholder="Digite o código da Planilha" />
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.CNH"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.CNH"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.CNH" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.CategoriaCNH"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.CategoriaCNH"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.CategoriaCNH" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.DataVencimentoCNH"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.DataVencimentoCNH"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.DataVencimentoCNH" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.DataIngresso"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.DataIngresso"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.DataIngresso" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.OrigemIndicacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.OrigemIndicacao"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.OrigemIndicacao" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.Ponto"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.Ponto"></span>
+                                        <input class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.Ponto" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MotoristaObj.Motorista.UnidadeId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.UnidadeId"></span>
+                                        @Html.DropDownListFor(m => m.MotoristaObj.Motorista.UnidadeId,
+                                                                Model.MotoristaObj.UnidadeList,
+                                                                "-- Selecione uma Unidade --",
+                                                                new { @class = "form-control form-control-xs" })
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <label id="lblcontrato" class="label font-weight-bold" asp-for="MotoristaObj.Motorista.ContratoId"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.ContratoId"></span>
+                                    @Html.DropDownListFor(m => m.MotoristaObj.Motorista.ContratoId,
+                                                          Model.MotoristaObj.ContratoList,
+                                                          "-- Selecione um Contrato --",
+                                                          new { @class = "form-control form-control-xs", @Name = "lstcontratos" })
+                                </div>
+                                <div class="col-2">
+                                    <label id="lblcondutorapoio" class="label font-weight-bold" asp-for="MotoristaObj.Motorista.TipoCondutor"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.TipoCondutor"></span>
+                                    <select class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.TipoCondutor">
+                                        <option value="">-- Selecione uma opção --</option>
+                                        <option value="Terceirizado">Terceirizado</option>
+                                        <option value="Servidor">Servidor</option>
+                                        <option value="CNE">CNE</option>
+                                        <option value="Secretário Parlamentar">Secretário Parlamentar</option>
+                                        <option value="Locadora">Locadora</option>
+                                    </select>
+                                </div>
+                                <div class="col-2">
+                                    <label id="lblEfetivoFerista" class="label font-weight-bold" asp-for="MotoristaObj.Motorista.EfetivoFerista"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="MotoristaObj.Motorista.EfetivoFerista"></span>
+                                    <select class="form-control form-control-xs" asp-for="MotoristaObj.Motorista.EfetivoFerista">
+                                        <option value="">-- Selecione uma opção --</option>
+                                        <option value="Efetivo">Efetivo</option>
+                                        <option value="Ferista">Ferista</option>
+                                        <option value="Cobertura">Cobertura</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row float-right">
+                                <div class="col-6 float-right">
+                                    <label class="label font-weight-bold">Foto</label>
+                                    <input class="form-control" id="txtFile" type="file" value="Upload File" style="width:300px;" asp-for="FotoUpload" />
+                                </div>
+                            </div>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <div class="float-right">
+                                <img id="imgViewer" width="200" style="border:1px solid #000000;margin-top:10px;" asp-for="FotoUpload" />
+                            </div>
+                            <br />
+                            <br />
+                            @if (Model.MotoristaObj.Motorista.MotoristaId != Guid.Empty)
+                            {
+                                <div class="panel-content float-right">
+
+                                    <a href="/Motorista/UploadCNH?id=@Model.MotoristaObj.Motorista.MotoristaId" class="btn btn-info text-white" style="cursor:pointer;">
+                                        <i class="fal fa-id-card"></i> &nbsp; Upload da CNH Digitalizada
+
+                                    </a>
+                                </div>
+                            }
+                            <div class="row">
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">
+                                                <input type="checkbox" class="form-check-input" asp-for="MotoristaObj.Motorista.Status" />
+                                                Ativo/Inativo
+                                            </label>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row  float-left">
+                                        <div class="col-12  float-left">
+                                            @if (Model.MotoristaObj.Motorista.MotoristaId != Guid.Empty)
+                                            {
+                                                <button method="post" asp-page-handler="Edit" asp-route-id=@Model.MotoristaObj.Motorista.MotoristaId class="btn btn-primary form-control" style="width:200px">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control" style="width:200px">Criar</button>
+                                            }
+                                            <a asp-page="./Index" class="btn btn-success form-control" style="width:200px">Voltar à Lista</a>
+                                        </div>
+                                        <div class="col-6  float-left">
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <div class="row float-left">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    @if (Model.MotoristaObj.Motorista.MotoristaId != Guid.Empty)
+                                                    {
+                                                        <label class="font-weight-light">Alterado/Incluído por @Model.MotoristaObj.NomeUsuarioAlteracao em @Model.MotoristaObj.Motorista.DataAlteracao.ToString("dd/MM/yy") as @Model.MotoristaObj.Motorista.DataAlteracao.ToString("HH:mm")</label>
+                                                    }
+                                                </div>
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/dropify.min.js"></script>
+    <script src="//datatables.net/download/build/nightly/jquery.dataTables.js"></script>
+
+    <script>
+
+
+        //Formata CPF
+        //====================
+        function mascara(i) {
+
+            var v = i.value;
+
+            if (isNaN(v[v.length - 1])) { // impede entrar outro caractere que não seja número
+                i.value = v.substring(0, v.length - 1);
+                return;
+            }
+
+            i.setAttribute("maxlength", "14");
+            if (v.length == 3 || v.length == 7) i.value += ".";
+            if (v.length == 11) i.value += "-";
+
+        }
+
+
+        //Carrega a foto no controle e redimensiona o painel
+        //==================================================
+        $("#txtFile").change(function (event) {
+            var files = event.target.files;
+            $("#imgViewer").attr("src", window.URL.createObjectURL(files[0]));
+            $("#painelfundo").css({
+                "padding-bottom:": "200px"
+            });
+        });
+
+        //Limpa a lista de Condutores se escolher Contrato
+        //==================================================
+        $("#MotoristaObj_Motorista_ContratoId").on("change", function () {
+            console.log("Selecionei Contrato");
+            $("#MotoristaObj_Motorista_CondutorId").val("");
+        });
+
+        //Limpa a lista de Condutores se escolher Contrato
+        //==================================================
+        $("#MotoristaObj_Motorista_CondutorId").on("change", function () {
+            console.log("Selecionei Contrato");
+            $("#MotoristaObj_Motorista_ContratoId").val("");
+        });
+
+
+        @*$(document).ready(function () {
+            if ('@Model.MotoristaObj.Motorista.MotoristaId' != '') {
+                console.info("Entrei na Função");
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Motorista/PegaFoto",
+                    success: function (data) {
+                        console.info(data);
+                        $('#imgViewer').attr('src', "data:image/jpg;base64," + data.foto + "");
+                    },
+                    error: function (data) {
+                        console.log('Error:', data);
+                    }
+                });
+            }
+        });*@
+
+                $(document).ready(function () {
+            if ('@Model.MotoristaObj.Motorista.MotoristaId' != '00000000-0000-0000-0000-000000000000') {
+                console.info("Foto do Editar");
+                console.info('@Model.MotoristaObj.Motorista.MotoristaId');
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Motorista/PegaFoto",
+                    success: function (data) {
+                        console.info(data);
+                        $('#imgViewer').attr('src', "data:image/jpg;base64," + data.foto + "");
+                    },
+                    error: function (data) {
+                        console.log('Error:', data);
+                    }
+                });
+            } else {
+                console.info("Foto do Inserir");
+                var origin = window.location.origin
+                console.info(origin + "/Images/barbudo.jpg");
+                $('#imgViewer').attr('src', "/Images/barbudo.jpg");
+
+
+                // let list = new DataTransfer();
+                // let file = new File(["content"], origin + "/Images/barbudo.jpg");
+                // list.items.add(file);
+                // let myFileList = list.files;
+                // document.querySelector('.image-url').files = myFileList;
+
+
+                //$('#txtFile').attr('value', origin + "/Images/barbudo.jpg");
+
+            }
+        });
+
+
+
+    </script>
+
+
+
+}

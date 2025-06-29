@@ -1,0 +1,99 @@
+﻿@page
+@model FrotiX.Pages.Agenda.SyncfusionMVCModel
+@using FrotiX.Models
+@using Syncfusion.EJ2
+@{
+    ViewData["Title"] = "Calendar Multi-Select with ListBox";
+}
+
+<div class="mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <div class="row mt-4">
+        <!-- Calendar Section -->
+        <div class="col-md-6">
+            <label for="calendar" class="form-label">Select Dates:</label>
+            <input id="calendar" />
+        </div>
+
+        <!-- ListBox Section -->
+        <div class="col-md-6">
+            <label for="selectedDates" class="form-label">Selected Dates:</label>
+            <ul id="selectedDates" class="list-group">
+                <!-- Selected dates will appear here -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the Calendar with multi-selection
+            var calendarObj = new ej.calendars.Calendar({
+                // Set the selection mode to 'Multiple' to allow multiple date selection
+                selectionMode: 'Multiple',
+                change: onCalendarChange
+            });
+
+            // Render the Calendar
+            calendarObj.appendTo('#calendar');
+
+            // Function to handle Calendar's change event
+            function onCalendarChange(args) {
+                updateSelectedDatesList(args.value);
+            }
+
+            // Function to update the ListBox based on selected dates
+            function updateSelectedDatesList(selectedDates) {
+                var listBox = document.getElementById('selectedDates');
+                listBox.innerHTML = ''; // Clear existing list
+
+                if (selectedDates && selectedDates.length > 0) {
+                    selectedDates.forEach(function(date) {
+                        var li = document.createElement('li');
+                        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                        // Format the date (you can customize the format as needed)
+                        var formattedDate = new Date(date).toLocaleDateString();
+
+                        var span = document.createElement('span');
+                        span.textContent = formattedDate;
+
+                        var removeBtn = document.createElement('button');
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.className = 'btn btn-sm btn-danger';
+                        removeBtn.setAttribute('data-date', date.toISOString());
+
+                        // Attach click event to remove the date
+                        removeBtn.addEventListener('click', function(e) {
+                            removeDate(e.target.getAttribute('data-date'));
+                        });
+
+                        li.appendChild(span);
+                        li.appendChild(removeBtn);
+                        listBox.appendChild(li);
+                    });
+                }
+            }
+
+            // Function to remove a date from the Calendar's selection
+            function removeDate(dateString) {
+                var dateToRemove = new Date(dateString);
+                var selectedValues = calendarObj.value || [];
+
+                // Find the index of the date to remove
+                var index = selectedValues.findIndex(function(date) {
+                    return date.toDateString() === dateToRemove.toDateString();
+                });
+
+                if (index !== -1) {
+                    // Remove the date from the selected values
+                    selectedValues.splice(index, 1);
+                    // Update the Calendar's value
+                    calendarObj.value = selectedValues;
+                    // Trigger the change event to update the ListBox
+                    calendarObj.dataBind();
+                    updateSelectedDatesList(selectedValues);
+                }
+            }
+        });
+    </script>

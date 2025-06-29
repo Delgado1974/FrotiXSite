@@ -1,0 +1,747 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+
+        public void OnGet()
+        {
+            FrotiX.Pages.Multa.ListaEmpenhosMultaModel.Initialize(_unitOfWork);
+
+            ViewData["lstOrgaoAutuante"] = new ListaOrgaoAutuante(_unitOfWork).OrgaoAutuanteList();
+
+        }
+
+    }
+}
+
+@{
+    ViewData["Title"] = "Empenhos dos Órgãos Autuantes";
+    ViewData["PageName"] = "multa_listaempenhosmulta";
+    ViewData["Heading"] = "<i class='fad fa-money-check-alt'></i> Multas: <span class='fw-300'>Empenhos dos Órgãos Autuantes</span>";
+    ViewData["Category1"] = "Multas";
+    ViewData["PageIcon"] = "fal fa-money-check-alt";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+</style>
+
+<script>
+
+    //------ Função de Escolha do ComboBox Órgão ------------------
+    //=============================================================
+    function OrgaoValueChange() {
+
+        var dataTableEmpenhos = $('#tblEmpenho').DataTable();
+        dataTableEmpenhos.destroy();
+        $('#tblEmpenho tbody').empty();
+
+        console.log("OrgaoValueChange");
+
+        var orgao = document.getElementById('lstOrgaosAutuantes').ej2_instances[0];
+
+        if (orgao.value === null) {
+
+            return;
+        }
+
+        var orgaoId = orgao.value.toString();
+
+        $('#divEmpenho').removeAttr('hidden');
+
+        var OrgaoAutuanteId = JSON.stringify({ 'OrgaoAutuanteId': '6FC00C08-3D85-4D59-DCA8-08D9C7A20AB1' });
+
+        dataTableEmpenho = $('#tblEmpenho').DataTable({
+            'columnDefs': [
+                {
+                    "targets": 0, // Nota de Empenho
+                    "className": "text-center",
+                    "width": "5%"
+                },
+                {
+                    "targets": 1, // Vigência
+                    "className": "text-center",
+                    "width": "5%"
+                },
+                {
+                    "targets": 2, // Saldo Inicial
+                    "className": "text-right",
+                    "width": "8%"
+                },
+                {
+                    "targets": 3, // Saldo Movimentação
+                    "className": "text-right",
+                    "width": "8%"
+                },
+                {
+                    "targets": 4, // Saldo Atual
+                    "className": "text-right",
+                    "width": "8%"
+                },
+                {
+                    "targets": 5, // Ação
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 6, // Movimentações
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 7, // EmpenhoId
+                    "className": "text-center",
+                    "visible": false
+                }
+            ],
+            responsive: true,
+            "ajax": {
+                type: "GET",
+                url: "/api/multa/PegaEmpenhos",
+                "data": { id: orgaoId },
+                dataType: "json",
+            },
+            "columns": [
+                { "data": "notaEmpenho" },
+                { "data": "anoVigencia" },
+                { "data": "saldoInicialFormatado" },
+                { "data": "saldoMovimentacaoFormatado" },
+                { "data": "saldoAtualFormatado" },
+                {
+                    "data": "empenhoMultaId",
+                    "render": function (data) {
+                        return `<div class="text-center">
+                                    <a href="/Multa/UpsertEmpenhosMulta?id=${data}" class="btn btn-primary btn-xs text-white"  aria-label="Editar o Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Excluir o Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}'>
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                    <a class="btn btn-documentos btn-info btn-xs text-white" data-toggle="modal" data-target="#modalNF" id="rowdata" aria-label="Notas do Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}'>
+                                        <i class="fal fa-file-pdf"></i>
+                                    </div>`;
+                    },
+                },
+                {
+                    "data": "empenhoMultaId",
+                    "render": function (data) {
+                        return `<div class="text-center">
+                                    <a class="btn btn-aporte btn-dark btn-xs text-white" data-toggle="modal" data-target="#modalAporte" id="rowdata" aria-label="Aporte ao Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}' data-backdrop="false">
+                                        <i class="fal fa-plus-circle"></i>
+                                    <a class="btn btn-anulacao btn-danger btn-xs text-white" data-toggle="modal" data-target="#modalAnulacao" id="rowdata" aria-label="Anulação do Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}' data-backdrop="false">
+                                        <i class="fal fa-minus-circle"></i>
+                                    </div>`;
+                    },
+                },
+                { "data": "empenhoMultaId" },
+            ],
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                "emptyTable": "Sem Dados para Exibição"
+            },
+            "width": "100%"
+        });
+
+    }
+
+</script>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Multa/UpsertEmpenhosMulta" class="btn btn-info">
+                        <i class="fal fa-money-check-alt">
+                        </i> &nbsp; Adicionar Empenho
+                    </a>
+                </div>
+
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br />
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">
+                                Escolha um Órgão Autuante para visualizar seus Empenhos:
+                            </h2>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Órgão Autuantes</label>
+                                <ejs-combobox id="lstOrgaosAutuantes" placeholder="Selecione um Órgão" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstOrgaoAutuante"]" popupHeight="250px" change="OrgaoValueChange" width="100%" showClearButton="true">
+                                    <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                </ejs-combobox>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <div id="divEmpenho" hidden="hidden">
+                            <table id="tblEmpenho" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nota de Empenho</th>
+                                        <th>Vigência</th>
+                                        <th>Saldo Inicial</th>
+                                        <th>Total de Movimentações</th>
+                                        <th>Saldo Atual</th>
+                                        <th>Ação</th>
+                                        <th>Movimentações</th>
+                                        <th>EmpenhoId</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Aportar -->
+<div class="modal fade" id="modalAporte">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Aportar Valores ao Empenho</h4>
+                @*<button type="button" class="close" data-dismiss="modal">&times;<span aria-hidden="true"></span></button>*@
+            </div>
+
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                @*<h6 id="modal_body">Corpo do Modal</h6>*@
+                <form id="frmAporte">
+                    <input type="hidden" id="txtId" />
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Data do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtData" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Descrição</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDescricao" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Valor do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtValor" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnAportar" class="btn btn-primary" type="submit" value="SUBMIT">Aportar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal anular -->
+<div class="modal fade" id="modalAnulacao">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">anular Valores do Empenho</h4>
+            </div>
+
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                @*<h6 id="modal_body">Corpo do Modal</h6>*@
+                <form id="frmanulacao">
+                    <input type="hidden" id="txtId" />
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Data da anulacao</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDataanulacao" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Descrição</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDescricaoanulacao" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Valor da anulacao</label>
+                                <span class="text-danger"></span>
+                                <input id="txtValoranulacao" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnAnular" class="btn btn-primary" type="submit" value="SUBMIT">Anular</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Multas -->
+<div class="modal fade" id="modalMultas">
+    <div class="modal-dialog modal-xl" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Multas do Empenho</h4>
+            </div>
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                <form id="frmMultas">
+                    <table id="tblMultas" class="table table-bordered table-striped" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Nº Infração</th>
+                                <th>Local</th>
+                                <th>Data de Pagamento</th>
+                                <th>Valor Pago</th>
+                                <th>Ação</th>
+                                <th>MultaId</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock{
+
+    <script>
+
+        // Botão APORTAR do Modal
+        //=======================
+        $("#btnAportar").click(function (e) {
+
+            e.preventDefault();
+
+            console.log("txtDescricao.val: (" + $("#txtDescricao").val() + ")");
+            console.log("txtData.val: (" + $("#txtDescricao").val() + ")");
+            console.log("txtValor.val: (" + $("#txtDescricao").val() + ")");
+
+            if ($("#txtData").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A data do Aporte é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtDescricao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A descrição do Aporte é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtValor").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "O valor do Aporte é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var valorAporte = $("#txtValor").val().replace(".", "");
+
+            var i = 0;
+            while ((i = valorAporte.indexOf(".", i)) != -1) {
+                valorAporte = valorAporte.replace(".", "");
+            }
+
+            var objAporteEmpenho = JSON.stringify({ "EmpenhoMultaId": $('#txtId').val(), "Descricao": $('#txtDescricao').val(), "Valor": valorAporte, "DataMovimentacao": $('#txtData').val(), "TipoMovimentacao": "A" })
+
+            $.ajax({
+                type: "post",
+                url: "/api/Multa/Aporte",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objAporteEmpenho,
+
+                success: function (data) {
+                    toastr.success(data.message);
+
+                    $('#tblEmpenho').DataTable().ajax.reload(null, false);
+                    $("#modalAporte").hide();
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+        // Botão anular do Modal
+        //=======================
+        $("#btnAnular").click(function (e) {
+
+            e.preventDefault();
+
+            console.log("txtDescricaoanulacao.val: (" + $("#txtDescricaoanulacao").val() + ")");
+            console.log("txtDataanulacao.val: (" + $("#txtDataanulacao").val() + ")");
+            console.log("txtValoranulacao.val: (" + $("#txtValoranulacao").val() + ")");
+
+            if ($("#txtDataanulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A data da anulação é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtDescricaoanulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A descrição da anulação é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtValoranulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "O valor da anulação é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+
+            var valoranulacao = $("#txtValoranulacao").val().replace(".", "");
+
+            var i = 0;
+            while ((i = valoranulacao.indexOf(".", i)) != -1) {
+                valoranulacao = valoranulacao.replace(".", "");
+            }
+
+            var objAnulacaoEmpenho = JSON.stringify({ "EmpenhoMultaId": $('#txtId').val(), "Descricao": $('#txtDescricaoanulacao').val(), "Valor": valoranulacao, "DataMovimentacao": $('#txtDataanulacao').val(), "TipoMovimentacao": "G" })
+
+            $.ajax({
+                type: "post",
+                url: "/api/Multa/anulacao",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objAnulacaoEmpenho,
+
+                success: function (data) {
+                    toastr.success(data.message);
+
+                    $('#tblEmpenho').DataTable().ajax.reload(null, false);
+                    $("#modalAnulacao").hide();
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            //Configura a Exibição do Modal de Aporte
+            //=======================================
+            $("#modalAporte").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+                var button = $(event.relatedTarget); // button the triggered modal
+                var empenhoMultaId = button.data("id"); //data-id of button which is equal to id (primary key) of person
+                /*
+                Although below is working to get and display values for id (personId),
+                it is recommended that they be fetched via ajax ($.ajax()) that queries data
+                from database based on personId
+                */
+                var notaEmpenho = $(event.relatedTarget).closest("tr").find("td:eq(0)").text();
+                //var firstName = $(event.relatedTarget).closest("tr").find("td:eq(2)").text();
+
+                //displays values to modal
+                $(this).find("#DynamicModalLabel").html($("<b>Aportar Valor ao Empenho: " + notaEmpenho + "</b>"))
+                //$(this).find("#modal_body").html($("<b>ID: " + personId + "<br>Last Name: " + lastName + "<br>First Name: " + firstName + "</b>"))
+                $('#btnAportar').attr('data-id', empenhoMultaId);
+                $('#txtId').attr('value', empenhoMultaId);
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+            //Configura a Exibição do Modal de anulacao
+            //======================================
+            $("#modalAnulacao").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+                var button = $(event.relatedTarget); // button the triggered modal
+                var empenhoMultaId = button.data("id"); //data-id of button which is equal to id (primary key) of person
+                /*
+                Although below is working to get and display values for id (personId),
+                it is recommended that they be fetched via ajax ($.ajax()) that queries data
+                from database based on personId
+                */
+                var notaEmpenho = $(event.relatedTarget).closest("tr").find("td:eq(0)").text();
+                //var firstName = $(event.relatedTarget).closest("tr").find("td:eq(2)").text();
+
+                //displays values to modal
+                $(this).find("#DynamicModalLabel").html($("<b>Anular Valor do Empenho: " + notaEmpenho + "</b>"))
+                //$(this).find("#modal_body").html($("<b>ID: " + personId + "<br>Last Name: " + lastName + "<br>First Name: " + firstName + "</b>"))
+                $('#btnAnular').attr('data-id', empenhoMultaId);
+                $('#txtId').attr('value', empenhoMultaId);
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+            //Configura a Exibição do Modal de Multas
+            //=======================================
+            $("#modalMultas").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                var button = $(event.relatedTarget); // button the triggered modal
+                var empenhoMultaId = button.data("id"); //data-id of button which is equal to id (primary key) of person
+
+                console.log("Empenho: " + empenhoMultaId);
+
+                var dataTableMultas = $('#tblMultas').DataTable();
+                dataTableMultas.destroy();
+
+                dataTableMultas = $('#tblMultas').DataTable({
+                    'columnDefs': [
+                        {
+                            "targets": 0,                //Data
+                            "className": "text-center",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 1,                //Multa
+                            "className": "text-center",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 2,               //Local Multa
+                            "className": "text-right",
+                            "width": "50%",
+                        },
+                        {
+                            "targets": 3,               //Data de Pagamento
+                            "className": "text-center",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 4,               //Valor Pago
+                            "className": "text-right",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 5,               //Ação
+                            "className": "text-center",
+                            "width": "12%",
+                        },
+                        {
+                            "targets": 6,               //MultaId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        }
+                    ],
+                    responsive: true,
+                    "ajax": {
+                        "url": "/api/multa/multaempenho",
+                        "data": { id: empenhoMultaId },
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "dataFormatada" },
+                        { "data": "numInfracao" },
+                        { "data": "localizacao" },
+                        { "data": "dataPagamentoFormatada" },
+                        { "data": "valorPago" },
+                        {
+                            "data": "multaId",
+                            "render": function (data) {
+                                return `<div class="text-center">
+                                    <a href="/Multa/UpsertAutuacao?id=${data}" class="btn btn-primary btn-xs text-white"  aria-label="Editar a Multa (autuação)!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                    <a href="/Multa/UpsertPenalidade?id=${data}" class="btn btn-primary btn-xs text-white"  aria-label="Editar a Multa (penalidade)!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Excluir a Multa!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}'>
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                            </div>`;
+                            },
+                        },
+                        { "data": "multaId" },
+                    ],
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                        "emptyTable": "Sem Dados para Exibição"
+                    }
+                });
+
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+        });
+    </script>
+
+    <script>
+        function moeda(a, e, r, t) {
+            let n = ""
+                , h = j = 0
+                , u = tamanho2 = 0
+                , l = ajd2 = ""
+                , o = window.Event ? t.which : t.keyCode;
+            if (13 == o || 8 == o)
+                return !0;
+            if (n = String.fromCharCode(o),
+                -1 == "0123456789".indexOf(n))
+                return !1;
+            for (u = a.value.length,
+                h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+                ;
+            for (l = ""; h < u; h++)
+                -1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+            if (l += n,
+                0 == (u = l.length) && (a.value = ""),
+                1 == u && (a.value = "0" + r + "0" + l),
+                2 == u && (a.value = "0" + r + l),
+                u > 2) {
+                for (ajd2 = "",
+                    j = 0,
+                    h = u - 3; h >= 0; h--)
+                    3 == j && (ajd2 += e,
+                        j = 0),
+                        ajd2 += l.charAt(h),
+                        j++;
+                for (a.value = "",
+                    tamanho2 = ajd2.length,
+                    h = tamanho2 - 1; h >= 0; h--)
+                    a.value += ajd2.charAt(h);
+                a.value += r + l.substr(u - 2, u)
+            }
+            return !1
+        }
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+
+        });
+
+
+    </script>
+
+
+}

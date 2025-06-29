@@ -1,0 +1,75 @@
+﻿@page
+@model FrotiX.Models.Veiculo
+
+@{
+    ViewData["Title"] = "Veículos";
+    ViewData["PageName"] = "veiculo_index";
+    ViewData["Heading"] = "<i class='fad fa-car-bus'></i> Cadastros: <span class='fw-300'>Veículos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-regular fa-car-bus";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Veiculo/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-car-bus">
+                        </i> &nbsp; Adicionar Veículo
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblVeiculo" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Placa</th>
+                                    <th>Marca</th>
+                                    <th>Contrato/Fornecedor</th>
+                                    <th>Unidade</th>
+                                    <th>Combustível</th>
+                                    <th>Consumo</th>
+                                    <th>Km</th>
+                                    <th>Reserva</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+
+
+	<script src="~/js/cadastros/veiculo_index.js"></script>
+
+
+}

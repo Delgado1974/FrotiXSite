@@ -1,0 +1,360 @@
+﻿@page
+@model FrotiX.Models.Unidade
+
+@{
+    ViewData["Title"] = "Recursos";
+    ViewData["PageName"] = "usuarios_recursos";
+    ViewData["Heading"] = "<i class='fa-duotone fa-book-journal-whills'></i> Cadastros: <span class='fw-300'>Recursos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-light fa-book-journal-whills";
+}
+
+@section HeadBlock {
+
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Usuarios/UpsertRecurso" class="btn btn-info">
+                        <i class="fa-regular fa-users">
+                        </i> &nbsp; Adicionar Recurso
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblRecurso" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Nome Menu</th>
+                                    <th>Ordem</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*----------------- MODAL de Usuários  ------------------------*@
+@*=============================================================*@
+<div class="modal fade" id="modalControleAcesso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="h3Titulo">Exibe os Usuários e seu acesso aos recurso</h3>
+            </div> 
+            <div class="modal-body">
+                <form id="frmStatus">
+
+                    <input type="hidden" id="txtRecursoId" />
+
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br /><br />
+                            <table id="tblRecursos" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nome Completo do Usuário</th>
+                                        <th>Status de Acesso</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </form>
+                <br /><br />
+                <div class="modal-footer">
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+@*     <script src="~/js/cadastros/recurso.js"></script> *@
+
+
+
+
+
+    <script>
+
+
+        var dataTable;
+
+        $(document).ready(function ()
+        {
+            loadList();
+
+            $(document).on('click', '.btn-delete', function ()
+            {
+                var id = $(this).data('id');
+
+                
+
+                swal({
+                    title: "Você tem certeza que deseja apagar este Recurso?",
+                    text: "Não será possível recuperar os dados eliminados!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        cancel: "Cancelar",
+                        confirm: "Excluir"
+                    }
+                }).then((willDelete) =>
+                {
+                    if (willDelete)
+                    {
+                       var dataToPost = JSON.stringify(id);
+
+                        var url = '/api/Usuario/DeleteRecurso';
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: dataToPost,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data)
+                            {
+                                if (data.success)
+                                {
+                                    toastr.success(data.message);
+                                    dataTable.ajax.reload();
+                                }
+                                else
+                                {
+                                    toastr.error(data.message);
+                                }
+                            },
+                            error: function (err)
+                            {
+                                console.log(err)
+                                alert('something went wrong')
+                            }
+                        });
+
+                    }
+                });
+            });
+
+            $(document).on('click', '.updateStatusRecurso', function ()
+            {
+                var url = $(this).data('url');
+                var currentElement = $(this);
+
+                $.get(url, function (data)
+                {
+                    if (data.success)
+                    {
+                        toastr.success("Status alterado com sucesso!");
+                        var text = 'Ativo';
+
+                        if (data.type == 1)
+                        {
+                            text = 'Inativo';
+                            currentElement.removeClass('btn-success').addClass('fundo-cinza');
+                        }
+                        else
+                            currentElement.removeClass('fundo-cinza').addClass('btn-success');
+
+                        currentElement.text(text);
+                    }
+                    else alert('Something went wrong!');
+                });
+            });
+
+            $(document).on('click', '.updateStatusAcesso', function ()
+            {
+                var url = $(this).data('url');
+                var currentElement = $(this);
+
+                $.get(url, function (data)
+                {
+                    if (data.success)
+                    {
+                        toastr.success("Status alterado com sucesso!");
+                        var text = 'Com Acesso';
+
+                        if (data.type == 1)
+                        {
+                            text = 'Sem Acesso';
+                            currentElement.removeClass('btn-success').addClass('fundo-cinza');
+                        }
+                        else
+                            currentElement.removeClass('fundo-cinza').addClass('btn-success');
+
+                        currentElement.text(text);
+                    }
+                    else alert('Something went wrong!');
+                });
+            });
+
+        });
+
+
+        function loadList()
+        {
+            dataTable = $('#tblRecurso').DataTable({
+                'order': [],
+                'columnDefs': [
+                    {
+                        "targets": 0,                //Nome
+                        "className": "text-left",
+                        "width": "30%",
+                    },
+                    {
+                        "targets": 1,               //Nome Menu
+                        "className": "text-left",
+                        "width": "20%",
+                    },
+                    {
+                        "targets": 2,               //Ordem
+                        "className": "text-center",
+                        "width": "8%",
+                    },
+                    {
+                        "targets": 3,               //Ação
+                        "className": "text-center",
+                        "width": "8%",
+                    },
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": "/api/recurso",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "nome" },
+                    { "data": "nomeMenu" },
+                    { "data": "ordem" },
+                    {
+                        "data": "recursoId",
+                        "render": function (data)
+                        {
+                            return `<div class="text-center">
+                                        <a href="/Usuarios/UpsertRecurso?id=${data}" class="btn btn-primary btn-xs text-white"  aria-label="Editar o Recurso!" data-microtip-position="top" role="tooltip"  style="cursor:pointer;">
+                                            <i class="far fa-edit"></i>
+                                        </a>
+                                        <a class="btn-delete btn btn-danger btn-xs text-white"   aria-label="Excluir o Recurso!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                        <a class="btn btn-foto btn-xs text-white fundo-laranja" data-toggle="modal" data-target="#modalControleAcesso" id="rowdata" aria-label="Controle de Acesso!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}' data-backdrop="false">
+                                            <i class="fa-thin fa-diagram-successor"></i>
+                                        </a>
+                            </div>`;
+                        },
+                    },
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                    "emptyTable": "Sem Dados para Exibição"
+                },
+                "width": "100%"
+            });
+        }
+
+
+
+
+
+
+
+
+        //Configura o MODAL de Recursos
+        //=============================
+        $('#modalControleAcesso').on('shown.bs.modal', function (event)
+        {
+            var button = $(event.relatedTarget); // button the triggered modal
+            var recursoId = button.data("id");
+
+            $('#txtRecursoId').attr('value', recursoId);
+
+			$('#tblRecursos').DataTable().destroy();
+			  
+            dataTableRecursos = $('#tblRecursos').DataTable({
+                'order': [],
+                'columnDefs': [
+                    {
+                        "targets": 0,                //Nome Completo
+                        "className": "text-left",
+                        "width": "40%",
+                    },
+                    {
+                        "targets": 1,               //Acesso
+                        "className": "text-center",
+                        "width": "10%",
+                    },
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": "/api/Usuario/PegaUsuariosRecurso",
+                    "type": "GET",
+                    "datatype": "json",
+                    "data": { recursoId: recursoId },
+                },
+                "columns": [
+                    { "data": "nomeCompleto" },
+                    {
+                       "data": "acesso",
+                       "render": function (data, type, row, meta)
+                        {
+                            if (data)
+                                return '<a href="javascript:void" class="updateStatusAcesso btn btn-success btn-xs text-white" data-url="/api/Usuario/UpdateStatusAcesso?IDS=' + row.ids + '">Com Acesso</a>';
+                            else
+                                return '<a href="javascript:void" class="updateStatusAcesso btn btn-xs fundo-cinza text-white text-bold" data-url="/api/Usuario/UpdateStatusAcesso?IDS=' + row.ids + '">Sem Acesso</a>';
+                        },
+                    },
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                    "emptyTable": "Sem Dados para Exibição"
+                },
+                "width": "100%"
+            });
+
+        }).on("hide.bs.modal", function (event)
+        {
+
+        });
+
+
+    </script>
+}

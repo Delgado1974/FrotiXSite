@@ -1,0 +1,279 @@
+<!-- Versão mais nova do jQUery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+		crossorigin="anonymous"></script>
+
+<!-- Include the Syncfusion library -->
+<script src="https://cdn.syncfusion.com/ej2/29.2.7/dist/ej2.min.js"></script>
+<link href="https://cdn.syncfusion.com/ej2/29.2.7/ej2-base/styles/bootstrap5.css" rel="stylesheet" />
+
+<!-- Registering Syncfusion License key for Javascript-->
+<script>ej.base.registerLicense("ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5WdUViXn1WcHBUR2JcWkZ/");</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+@* Fontawesome 6.6.0 *@
+<script src="https://kit.fontawesome.com/afeb78ad1f.js" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.7/umd/popper.min.js"></script>
+
+
+<script src="~/js/vendors.bundle.js"></script>
+<script src="~/js/app.bundle.js"></script>
+<script src="~/js/site.js"></script>
+
+@*Controla o "Wait" dos botões*@
+@*============================*@
+<script src="~/js/botao-loading.js"></script>
+
+
+@*Data Tables Scripts*@
+@*===================*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.3.0-beta.2/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.3.0-beta.2/vfs_fonts.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/scroller/2.0.6/js/dataTables.scroller.min.js"></script>
+@*===================*@
+
+
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="https://cdn.tiny.cloud/1/kl9497zd17qjx1o2xzsybc9rf2dikkylq4ou0riihjjo7wbg/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+<script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="js/loading_script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
+
+@*Funções de Apoio ("Helpers")*@
+@*============================*@
+<script src="js/toastHelper_006.js"></script>
+<script src="js/sweetalert_interop_048.js"></script>
+<script src="js/alerta_006.js"></script>
+
+
+
+@*Scripts de Formatação em valor numérico com Pontos e Vírgulas*@
+@*=============================================================*@
+<script>
+	function moeda(a, e, r, t) {
+		let n = ""
+			, h = j = 0
+			, u = tamanho2 = 0
+			, l = ajd2 = ""
+			, o = window.Event ? t.which : t.keyCode;
+		if (13 == o || 8 == o)
+			return !0;
+		if (n = String.fromCharCode(o),
+			-1 == "0123456789".indexOf(n))
+			return !1;
+		for (u = a.value.length,
+			h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+			;
+		for (l = ""; h < u; h++)
+			-1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+		if (l += n,
+			0 == (u = l.length) && (a.value = ""),
+			1 == u && (a.value = "0" + r + "0" + l),
+			2 == u && (a.value = "0" + r + l),
+			u > 2) {
+			for (ajd2 = "",
+				j = 0,
+				h = u - 3; h >= 0; h--)
+				3 == j && (ajd2 += e,
+					j = 0),
+					ajd2 += l.charAt(h),
+					j++;
+			for (a.value = "",
+				tamanho2 = ajd2.length,
+				h = tamanho2 - 1; h >= 0; h--)
+				a.value += ajd2.charAt(h);
+			a.value += r + l.substr(u - 2, u)
+		}
+		return !1
+	}
+</script>
+
+
+
+@*------  Scripts de Configuração do Rich Text Editor ---------*@
+@*=============================================================*@
+<script>
+
+	var defaultRTE;
+
+	function onCreate() {
+
+		defaultRTE = this;
+
+	}
+
+	//Função necessária para o RTE
+	function toolbarClick(e) {
+		if (e.item.id == "rte_toolbar_Image") {
+			var element = document.getElementById('rte_upload')
+			element.ej2_instances[0].uploading = function upload(args) {
+				args.currentRequest.setRequestHeader('XSRF-TOKEN', document.getElementsByName('__RequestVerificationToken')[0].value);
+			}
+		}
+	}
+
+	ej.base.L10n.load({
+		"pt-BR": {
+			"richtexteditor": {
+				"alignments": "Alinhamentos",
+				"justifyLeft": "Alinhar à Esquerda",
+				"justifyCenter": "Centralizar",
+				"justifyRight": "Alinhar à Direita",
+				"justifyFull": "Justificar",
+				"fontName": "Nome da Fonte",
+				"fontSize": "Tamanho da Fonte",
+				"fontColor": "Cor da Fonte",
+				"backgroundColor": "Cor de Fundo",
+				"bold": "Negrito",
+				"italic": "Itálico",
+				"underline": "Sublinhado",
+				"strikethrough": "Tachado",
+				"clearFormat": "Limpa Formatação",
+				"clearAll": "Limpa Tudo",
+				"cut": "Cortar",
+				"copy": "Copiar",
+				"paste": "Colar",
+				"unorderedList": "Lista com Marcadores",
+				"orderedList": "Lista Numerada",
+				"indent": "Aumentar Identação",
+				"outdent": "Diminuir Identação",
+				"undo": "Desfazer",
+				"redo": "Refazer",
+				"superscript": "Sobrescrito",
+				"subscript": "Subscrito",
+				"createLink": "Inserir Link",
+				"openLink": "Abrir Link",
+				"editLink": "Editar Link",
+				"removeLink": "Remover Link",
+				"image": "Inserir Imagem",
+				"replace": "Substituir",
+				"align": "Alinhar",
+				"caption": "Título da Imagem",
+				"remove": "Remover",
+				"insertLink": "Inserir Link",
+				"display": "Exibir",
+				"altText": "Texto Alternativo",
+				"dimension": "Mudar Tamanho",
+				"fullscreen": "Maximizar",
+				"maximize": "Maximizar",
+				"minimize": "Minimizar",
+				"lowerCase": "Caixa Baixa",
+				"upperCase": "Caixa Alta",
+				"print": "Imprimir",
+				"formats": "Formatos",
+				"sourcecode": "Visualizar Código",
+				"preview": "Exibir",
+				"viewside": "ViewSide",
+				"insertCode": "Inserir Código",
+				"linkText": "Exibir Texto",
+				"linkTooltipLabel": "Título",
+				"linkWebUrl": "Endereço Web",
+				"linkTitle": "Entre com um título",
+				"linkurl": "http://exemplo.com",
+				"linkOpenInNewWindow": "Abrir Link em Nova Janela",
+				"linkHeader": "Inserir Link",
+				"dialogInsert": "Inserir",
+				"dialogCancel": "Cancelar",
+				"dialogUpdate": "Atualizar",
+				"imageHeader": "Inserir Imagem",
+				"imageLinkHeader": "Você pode proporcionar um link da web",
+				"mdimageLink": "Favor proporcionar uma URL para sua imagem",
+				"imageUploadMessage": "Solte a imagem aqui ou busque para o upload",
+				"imageDeviceUploadMessage": "Clique aqui para o upload",
+				"imageAlternateText": "Texto Alternativo",
+				"alternateHeader": "Texto Alternativo",
+				"browse": "Procurar",
+				"imageUrl": "http://exemplo.com/imagem.png",
+				"imageCaption": "Título",
+				"imageSizeHeader": "Tamanho da Imagem",
+				"imageHeight": "Altura",
+				"imageWidth": "Largura",
+				"textPlaceholder": "Entre com um Texto",
+				"inserttablebtn": "Inserir Tabela",
+				"tabledialogHeader": "Inserir Tabela",
+				"tableWidth": "Largura",
+				"cellpadding": "Espaçamento de célula",
+				"cellspacing": "Espaçamento de célula",
+				"columns": "Número de colunas",
+				"rows": "Número de linhas",
+				"tableRows": "Linhas da Tabela",
+				"tableColumns": "Colunas da Tabela",
+				"tableCellHorizontalAlign": "Alinhamento Horizontal da Célular",
+				"tableCellVerticalAlign": "Alinhamento Vertical da Célular",
+				"createTable": "Criar Tabela",
+				"removeTable": "Remover Tabela",
+				"tableHeader": "Cabeçalho da Tabela",
+				"tableRemove": "Remover Tabela",
+				"tableCellBackground": "Fundo da Célula",
+				"tableEditProperties": "Editar Propriedades da Tabela",
+				"styles": "Estilos",
+				"insertColumnLeft": "Inserir Coluna à Esquerda",
+				"insertColumnRight": "Inserir Coluna à Direita",
+				"deleteColumn": "Apagar Coluna",
+				"insertRowBefore": "Inserir Linha Antes",
+				"insertRowAfter": "Inserir Linha Depois",
+				"deleteRow": "Apagar Linha",
+				"tableEditHeader": "Edita Tabela",
+				"TableHeadingText": "Cabeçãlho",
+				"TableColText": "Col",
+				"imageInsertLinkHeader": "Inserir Link",
+				"editImageHeader": "Edita Imagem",
+				"alignmentsDropDownLeft": "Alinhar à Esquerda",
+				"alignmentsDropDownCenter": "Centralizar",
+				"alignmentsDropDownRight": "Alinhar à Direita",
+				"alignmentsDropDownJustify": "Justificar",
+				"imageDisplayDropDownInline": "Inline",
+				"imageDisplayDropDownBreak": "Break",
+				"tableInsertRowDropDownBefore": "Inserir linha antes",
+				"tableInsertRowDropDownAfter": "Inserir linha depois",
+				"tableInsertRowDropDownDelete": "Apagar linha",
+				"tableInsertColumnDropDownLeft": "Inserir coluna à esquerda",
+				"tableInsertColumnDropDownRight": "Inserir coluna à direita",
+				"tableInsertColumnDropDownDelete": "Apagar Coluna",
+				"tableVerticalAlignDropDownTop": "Alinhar no Topo",
+				"tableVerticalAlignDropDownMiddle": "Alinhar no Meio",
+				"tableVerticalAlignDropDownBottom": "Alinhar no Fundo",
+				"tableStylesDropDownDashedBorder": "Bordas Pontilhadas",
+				"tableStylesDropDownAlternateRows": "Linhas Alternadas",
+				"pasteFormat": "Colar Formato",
+				"pasteFormatContent": "Escolha a ação de formatação",
+				"plainText": "Texto Simples",
+				"cleanFormat": "Limpar",
+				"keepFormat": "Manter",
+				"formatsDropDownParagraph": "Parágrafo",
+				"formatsDropDownCode": "Código",
+				"formatsDropDownQuotation": "Citação",
+				"formatsDropDownHeading1": "Cabeçalho 1",
+				"formatsDropDownHeading2": "Cabeçalho 2",
+				"formatsDropDownHeading3": "Cabeçalho 3",
+				"formatsDropDownHeading4": "Cabeçalho 4",
+				"fontNameSegoeUI": "SegoeUI",
+				"fontNameArial": "Arial",
+				"fontNameGeorgia": "Georgia",
+				"fontNameImpact": "Impact",
+				"fontNameTahoma": "Tahoma",
+				"fontNameTimesNewRoman": "Times New Roman",
+				"fontNameVerdana": "Verdana"
+			}
+		}
+	})
+
+</script>
+

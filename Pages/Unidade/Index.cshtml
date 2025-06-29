@@ -1,0 +1,69 @@
+﻿@page
+@model FrotiX.Models.Unidade
+
+@{
+    ViewData["Title"] = "Unidades";
+    ViewData["PageName"] = "unidade_index";
+    ViewData["Heading"] = "<i class='fa-duotone fa-chalkboard-user'></i> Cadastros: <span class='fw-300'>Unidades Usuárias</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-duotone fa-chalkboard-user";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Unidade/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-chalkboard-user">
+                        </i> &nbsp; Adicionar Unidade Usuária
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblUnidade" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Sigla</th>
+                                    <th>Nome da Unidade</th>
+                                    <th>Contato</th>
+                                    <th>Ponto</th>
+                                    <th>Ramal</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js/cadastros/unidade.js"></script>
+
+}

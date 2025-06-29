@@ -1,0 +1,1125 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+        public void OnGet()
+        {
+            FrotiX.Pages.Ocorrencia.OcorrenciasModel.Initialize(_unitOfWork);
+
+            ViewData["lstMotorista"] = new ListaMotoristaOcorrencias(_unitOfWork).MotoristaList();
+            ViewData["lstVeiculos"] = new ListaVeiculosOcorrencias(_unitOfWork).VeiculosList();
+            ViewData["lstUnidade"] = new ListaUnidadeOcorrencias(_unitOfWork).UnidadeList();
+            ViewData["lstStatus"] = new ListaStatusOcorrencias(_unitOfWork).StatusList();
+
+        }
+    }
+}
+
+
+@model FrotiX.Models.ViewViagens
+
+@{
+    ViewData["Title"] = "Ocorrências";
+    ViewData["PageName"] = "ocorrencia_ocorrencias";
+    ViewData["Heading"] = "<i class='fad fa-swords-laser'></i> Vistoria: <span class='fw-300'>Ocorrências</span>";
+    ViewData["Category1"] = "Vistoria";
+    ViewData["PageIcon"] = "fad fa-swords-laser";
+}
+
+@section HeadBlock {
+
+
+}
+
+<style>
+    .fundo-ebony {
+        background-color: #828E7B;
+        color: white;
+    }
+
+    .fundo-chocolate {
+        background-color: #7B3F00;
+        color: white;
+    }
+
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .btn_margem {
+        margin-top: 2px;
+        margin-left: 2px;
+        margin-right: 2px;
+        margin-bottom: 2px;
+    }
+
+
+</style>
+
+<script>
+
+    var URLapi = "/api/viagem";
+    var IDapi = "";
+
+    var escolhendoVeiculo = false;
+    var escolhendoUnidade = false;
+    var escolhendoMotorista = false;
+    var escolhendoData = false;
+    var escolhendoStatus = false;
+
+
+    //------ Indica um Item Sendo Escolhido-------------
+    //==================================================
+    function DefineEscolhaVeiculo() {
+        console.log("Fechou Veículo");
+        escolhendoVeiculo = true;
+        escolhendoUnidade = false;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoStatus = false;
+
+        var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+        if (veiculos.value === null) {
+            //ListaTodasOcorrencias();
+        }
+
+    }
+    function DefineEscolhaUnidade() {
+        //    console.log("Fechou Unidade");
+        //    escolhendoVeiculo = false;
+        //    escolhendoUnidade = true;
+        //    escolhendoMotorista = false;
+        //    escolhendoData = false;
+        //    escolhendoStatus = false;
+        //    var Unidades = document.getElementById('ddtUnidade').ej2_instances[0];
+        //    console.log(Unidades.value);
+        //    if (Unidades.value === null || Unidades.value === '') {
+        //        console.log("Deveria estar aqui listando todas as viagens");
+        //        //ListaTodasOcorrencias();
+        //    }
+    }
+    function DefineEscolhaMotorista() {
+        console.log("Fechou Motorista");
+        escolhendoVeiculo = false;
+        escolhendoUnidade = false;
+        escolhendoMotorista = true;
+        escolhendoData = false;
+        escolhendoStatus = false;
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        if (motoristas.value === null) {
+            //ListaTodasOcorrencias();
+        }
+    }
+    function DefineEscolhaData() {
+        console.log("Escolheu Data");
+        escolhendoVeiculo = false;
+        escolhendoUnidade = false;
+        escolhendoMotorista = false;
+        escolhendoCombustivel = false;
+        escolhendoData = true;
+        escolhendoStatus = false;
+    }
+    function DefineEscolhaStatus() {
+        console.log("Fechou Status");
+        escolhendoVeiculo = false;
+        escolhendoUnidade = false;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoStatus = true;
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+        if (status.value === null) {
+            //ListaTodasOcorrencias();
+        }
+    }
+
+
+    //------ Lista Todos as Ocorrências  -------------
+    //==================================================
+
+    function ListaTodasOcorrencias() {
+
+        console.log("Lista Todos");
+
+        escolhendoVeiculo = false;
+        escolhendoUnidade = false;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoStatus = false;
+
+        URLapi = "/api/ocorrencia/Ocorrencias";
+        IDapi = "";
+
+        ListaTblOcorrências(URLapi, IDapi);
+    }
+
+
+    //------ Função de Escolha do ComboBox Veículos ------------------
+    //================================================================
+    function VeiculosValueChange() {
+
+        if (escolhendoVeiculo === false) {
+            return;
+        }
+
+        console.log("VeiculosValueChange");
+
+        var dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+        dataTableOcorrencias.destroy();
+        $('#tblOcorrencia tbody').empty();
+
+        $("#txtData").val('');
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        motoristas.value = "";
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+        status.value = "";
+
+        var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+        if (veiculos.value === null) {
+            ListaTodasOcorrencias();
+            return;
+        }
+        var veiculoId = veiculos.value.toString();
+
+        URLapi = "/api/ocorrencia/OcorrenciasVeiculos";
+        IDapi = veiculoId;
+
+        ListaTblOcorrências(URLapi, IDapi);
+
+    }
+
+
+    //------ Função de Escolha do ComboBox Motorista ------------------
+    //=================================================================
+    function MotoristaValueChange() {
+
+        console.log("MotoristaValueChange");
+
+        if (escolhendoMotorista === false) {
+            return;
+        }
+
+        var dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+        dataTableOcorrencias.destroy();
+        $('#tblOcorrencia tbody').empty();
+
+        $("#txtData").val('');
+        var veiculo = document.getElementById('lstVeiculos').ej2_instances[0];
+        veiculo.value = "";
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+        status.value = "";
+
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        if (motoristas.value === null) {
+            ListaTodasOcorrencias();
+            return;
+        }
+        var motoristaId = motoristas.value.toString();
+
+        URLapi = "/api/ocorrencia/OcorrenciasMotoristas";
+        IDapi = motoristaId;
+
+        ListaTblOcorrências(URLapi, IDapi);
+
+    }
+
+
+    //------ Função de Escolha do ComboBox Status ------------------
+    //==============================================================
+    function StatusValueChange() {
+
+
+        console.log("StatusValueChange");
+
+        if (escolhendoStatus === false) {
+            return;
+        }
+
+        var dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+        dataTableOcorrencias.destroy();
+        $('#tblOcorrencia tbody').empty();
+
+        $("#txtData").val('');
+        var veiculo = document.getElementById('lstVeiculos').ej2_instances[0];
+        veiculo.value = "";
+        var motorista = document.getElementById('lstMotorista').ej2_instances[0];
+        motorista.value = "";
+
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+
+        var statusId = status.value.toString();
+
+        console.log(statusId);
+
+        URLapi = "/api/ocorrencia/OcorrenciasStatus";
+        IDapi = statusId;
+
+        ListaTblOcorrências(URLapi, IDapi);
+
+    }
+
+    //Ajusta funcionamento do RTE no Modal
+    //====================================
+    var defaultRTE;
+
+    function onCreate() {
+        defaultRTE = this;
+    }
+
+</script>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">
+                                Escolha os filtros desejados para visualizar as Viagens:
+                            </h2>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <div class="col-2">
+                                    <label class="label font-weight-bold color-black">Escolha uma Data</label>
+                                    <input id="txtData" class="form-control form-control-xs" type="date" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <ejs-combobox id="lstVeiculos" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" change="DefineEscolhaVeiculo" width="100%" showClearButton="true" close="VeiculosValueChange">
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+
+                                @*<div class="col-3">
+                                        <ejs-dropdowntree id="ddtUnidade" placeholder="Selecione uma Unidade" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." change="DefineEscolhaUnidade" close="UnidadeValueChange">
+                                            <e-dropdowntree-fields dataSource="@ViewData["lstUnidade"]" value="Id" text="Descricao"></e-dropdowntree-fields>
+                                        </ejs-dropdowntree>
+                                    </div>*@
+
+                                @*<div class="col-3">
+                                        <ejs-combobox id="lstUnidade" placeholder="Selecione uma Unidade" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstUnidade"]" popupHeight="250px" change="DefineEscolhaUnidade" width="100%" showClearButton="true" close="UnidadeValueChange">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>*@
+
+
+                                <div class="col-3">
+                                    <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" change="DefineEscolhaMotorista" width="100%" showClearButton="true" close="MotoristaValueChange">
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-3">
+                                    <ejs-combobox id="lstStatus" placeholder="Ocorrências com Status..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstStatus"]" popupHeight="250px" change="DefineEscolhaStatus" width="100%" showClearButton="true" close="StatusValueChange">
+                                        <e-combobox-fields text="Status" value="StatusId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <div id="divOcorrencias">
+                            <table id="tblOcorrencia" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Ficha</th>
+                                        <th>Data</th>
+                                        <th>Motorista</th>
+                                        <th>Veiculo</th>
+                                        <th>Resumo Ocorrência</th>
+                                        <th>Solução da Ocorrência</th>
+                                        <th>Status</th>
+                                        <th>Ação</th>
+                                        <th>Descrição da Ocorrência</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalOcorrencia" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Editar a Ocorrência</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmOcorrencia">
+                    <input type="hidden" id="txtId" />
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Resumo</label>
+                                <input id="txtResumo" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <label class="label font-weight-bold">Descrição da Ocorrência</label>
+                    <ejs-richtexteditor id="rteOcorrencias" created="onCreate" locale="pt-BR" height="250px">
+                        <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                    </ejs-richtexteditor>
+                    <br />
+                    <br />
+                    <label class="label font-weight-bold">Solução da Ocorrência</label>
+                    <ejs-richtexteditor id="rteSolucao" created="onCreateSolucao" locale="pt-BR" height="250px">
+                        <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                    </ejs-richtexteditor>
+                    <br />
+                    <input type="checkbox" id="chkStatusOcorrencia">
+                    <label for="chkStatusOcorrencia">Ocorrência Baixada</label>
+                </form>
+                <div class="modal-footer">
+                    <button id="btnEditarOcorrencia" class="btn btn-primary" type="submit" value="SUBMIT">Editar a Ocorrência</button>
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock{
+
+
+    <script src="~/js/cadastros/ocorrencias.js"></script>
+
+    <script>
+        var defaultRTE;
+
+        function onCreate() {
+
+            defaultRTE = this;
+
+        }
+
+        function onCreateSolucao() {
+
+            defaultRTESolucao = this;
+
+        }
+
+
+        $('#modalOcorrencia').on('shown.bs.modal', function (event) {
+
+            var dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+            var row = $(this).closest('tr');
+            var data = dataTableOcorrencias.row(row).data();
+            console.log("Linha: " + row + " - Dado: " + data);
+
+            var RowNumber = $(event.relatedTarget).closest("tr").find("td:eq(8)").text() - 1;
+
+            defaultRTE.refreshUI();
+            defaultRTESolucao.refreshUI();
+
+            var button = $(event.relatedTarget); // button the triggered modal
+            var viagemId = button.data("id");
+            console.log(viagemId);
+            $('#txtId').attr('value', viagemId);
+
+            console.log("Row Number: " + RowNumber);
+
+            var data = $('#tblOcorrencia').DataTable().row(RowNumber).data();
+
+
+            var ResumoOcorrencia = data['resumoOcorrencia'];
+            var DescricaoOcorrencia = data['descricaoOcorrencia'];
+            var Status = data['statusOcorrencia'];
+            var SolucaoOcorrencia = data['descricaoSolucaoOcorrencia'];
+
+            $('#txtResumo').attr('value', ResumoOcorrencia);
+            var descricao = document.getElementById('rteOcorrencias').ej2_instances[0];
+            descricao.value = DescricaoOcorrencia;
+
+            var solucao = document.getElementById('rteSolucao').ej2_instances[0];
+            solucao.value = SolucaoOcorrencia;
+
+
+            //Se a ocorrência estiver baixada, desabilita tudo
+            if (Status === "Baixada") {
+
+                $("#chkStatusOcorrencia").prop("checked", true);
+
+                $('#txtResumo').attr('readonly', true);
+                $('#chkStatusOcorrencia').attr('readonly', true);
+
+                descricao.readonly = true; // To disable
+
+                $('#btnEditarOcorrencia').hide();
+            }
+            else {
+                $('#txtResumo').attr('readonly', false);
+                descricao.readonly = false;
+                $('#chkStatusOcorrencia').attr('readonly', false);
+                $("#chkStatusOcorrencia").prop("checked", false);
+                $('#btnEditarOcorrencia').show();
+            }
+        }).on("hide.bs.modal", function (event) {
+
+            $('#txtResumo').removeAttr("readonly")
+
+            $('#txtResumo').attr('value', '');
+            var descricao = document.getElementById('rteOcorrencias').ej2_instances[0];
+            descricao.value = '';
+
+            var solucao = document.getElementById('rteSolucao').ej2_instances[0];
+            solucao.value = '';
+
+            $('#btnEditarOcorrencia').attr('visible', 'true');
+        });
+
+
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            ListaTodasOcorrencias();
+
+            $("#txtData").change(function () {
+
+                DefineEscolhaData();
+
+                console.log("txtDataChange");
+
+                var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+                veiculos.value = "";
+                var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+                motoristas.value = "";
+
+                var date = $('#txtData').val().split("-");
+                console.log(date, $('#txtData').val())
+                day = date[2];
+                month = date[1];
+                year = date[0];
+                var dataViagem = (day + "/" + month + "/" + year);
+
+                console.log(dataViagem);
+
+                URLapi = "/api/ocorrencia/OcorrenciasData";
+                IDapi = dataViagem;
+
+                debugger;
+
+                ListaTblOcorrências(URLapi, IDapi);
+
+            });
+
+        });
+
+
+        // Botão Fechar do Modal
+        //=============================
+        $("#btnFechar").click(function (e) {
+            $("div").removeClass("modal-backdrop");
+        });
+
+        // Botão Editar Ocorrência do Modal
+        //=================================
+        $("#btnEditarOcorrencia").click(function (e) {
+
+            e.preventDefault();
+
+            Resumo = $("#txtResumo").val();
+
+            if (Resumo === '') {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O Resumo da Ocorrência é obrigatório",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            var descricao = document.getElementById('rteOcorrencias').ej2_instances[0];
+            var solucao = document.getElementById('rteSolucao').ej2_instances[0];
+
+            if ($('#chkStatusOcorrencia').prop('checked')) {
+                var statusOcorrencia = "Baixada";
+            }
+            else {
+                var statusOcorrencia = "Aberta";
+            }
+
+            //debugger;
+
+            var objViagem = JSON.stringify({ "ViagemId": $('#txtId').val(), "ResumoOcorrencia": $('#txtResumo').val(), "DescricaoOcorrencia": descricao.value, "StatusOcorrencia": statusOcorrencia, "SolucaoOcorrencia": solucao.value })
+
+
+            $.ajax({
+                type: "post",
+                url: "/api/Ocorrencia/EditaOcorrencia",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objViagem,
+
+                success: function (data) {
+                    toastr.success(data.message);
+                    $('#tblOcorrencia').DataTable().ajax.reload(null, false);
+                    $("#modalOcorrencia").hide();
+                    $("div").removeClass("modal-backdrop");
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+
+        //Função necessária para o RTE
+        function toolbarClick(e) {
+            if (e.item.id == "rte_toolbar_Image") {
+                var element = document.getElementById('rte_upload')
+                element.ej2_instances[0].uploading = function upload(args) {
+                    args.currentRequest.setRequestHeader('XSRF-TOKEN', document.getElementsByName('__RequestVerificationToken')[0].value);
+                }
+            }
+        }
+
+        ej.base.L10n.load({
+            "pt-BR": {
+                "richtexteditor": {
+                    "alignments": "Alinhamentos",
+                    "justifyLeft": "Alinhar à Esquerda",
+                    "justifyCenter": "Centralizar",
+                    "justifyRight": "Alinhar à Direita",
+                    "justifyFull": "Justificar",
+                    "fontName": "Nome da Fonte",
+                    "fontSize": "Tamanho da Fonte",
+                    "fontColor": "Cor da Fonte",
+                    "backgroundColor": "Cor de Fundo",
+                    "bold": "Negrito",
+                    "italic": "Itálico",
+                    "underline": "Sublinhado",
+                    "strikethrough": "Tachado",
+                    "clearFormat": "Limpa Formatação",
+                    "clearAll": "Limpa Tudo",
+                    "cut": "Cortar",
+                    "copy": "Copiar",
+                    "paste": "Colar",
+                    "unorderedList": "Lista com Marcadores",
+                    "orderedList": "Lista Numerada",
+                    "indent": "Aumentar Identação",
+                    "outdent": "Diminuir Identação",
+                    "undo": "Desfazer",
+                    "redo": "Refazer",
+                    "superscript": "Sobrescrito",
+                    "subscript": "Subscrito",
+                    "createLink": "Inserir Link",
+                    "openLink": "Abrir Link",
+                    "editLink": "Editar Link",
+                    "removeLink": "Remover Link",
+                    "image": "Inserir Imagem",
+                    "replace": "Substituir",
+                    "align": "Alinhar",
+                    "caption": "Título da Imagem",
+                    "remove": "Remover",
+                    "insertLink": "Inserir Link",
+                    "display": "Exibir",
+                    "altText": "Texto Alternativo",
+                    "dimension": "Mudar Tamanho",
+                    "fullscreen": "Maximizar",
+                    "maximize": "Maximizar",
+                    "minimize": "Minimizar",
+                    "lowerCase": "Caixa Baixa",
+                    "upperCase": "Caixa Alta",
+                    "print": "Imprimir",
+                    "formats": "Formatos",
+                    "sourcecode": "Visualizar Código",
+                    "preview": "Exibir",
+                    "viewside": "ViewSide",
+                    "insertCode": "Inserir Código",
+                    "linkText": "Exibir Texto",
+                    "linkTooltipLabel": "Título",
+                    "linkWebUrl": "Endereço Web",
+                    "linkTitle": "Entre com um título",
+                    "linkurl": "http://exemplo.com",
+                    "linkOpenInNewWindow": "Abrir Link em Nova Janela",
+                    "linkHeader": "Inserir Link",
+                    "dialogInsert": "Inserir",
+                    "dialogCancel": "Cancelar",
+                    "dialogUpdate": "Atualizar",
+                    "imageHeader": "Inserir Imagem",
+                    "imageLinkHeader": "Você pode proporcionar um link da web",
+                    "mdimageLink": "Favor proporcionar uma URL para sua imagem",
+                    "imageUploadMessage": "Solte a imagem aqui ou busque para o upload",
+                    "imageDeviceUploadMessage": "Clique aqui para o upload",
+                    "imageAlternateText": "Texto Alternativo",
+                    "alternateHeader": "Texto Alternativo",
+                    "browse": "Procurar",
+                    "imageUrl": "http://exemplo.com/imagem.png",
+                    "imageCaption": "Título",
+                    "imageSizeHeader": "Tamanho da Imagem",
+                    "imageHeight": "Altura",
+                    "imageWidth": "Largura",
+                    "textPlaceholder": "Entre com um Texto",
+                    "inserttablebtn": "Inserir Tabela",
+                    "tabledialogHeader": "Inserir Tabela",
+                    "tableWidth": "Largura",
+                    "cellpadding": "Espaçamento de célula",
+                    "cellspacing": "Espaçamento de célula",
+                    "columns": "Número de colunas",
+                    "rows": "Número de linhas",
+                    "tableRows": "Linhas da Tabela",
+                    "tableColumns": "Colunas da Tabela",
+                    "tableCellHorizontalAlign": "Alinhamento Horizontal da Célular",
+                    "tableCellVerticalAlign": "Alinhamento Vertical da Célular",
+                    "createTable": "Criar Tabela",
+                    "removeTable": "Remover Tabela",
+                    "tableHeader": "Cabeçalho da Tabela",
+                    "tableRemove": "Remover Tabela",
+                    "tableCellBackground": "Fundo da Célula",
+                    "tableEditProperties": "Editar Propriedades da Tabela",
+                    "styles": "Estilos",
+                    "insertColumnLeft": "Inserir Coluna à Esquerda",
+                    "insertColumnRight": "Inserir Coluna à Direita",
+                    "deleteColumn": "Apagar Coluna",
+                    "insertRowBefore": "Inserir Linha Antes",
+                    "insertRowAfter": "Inserir Linha Depois",
+                    "deleteRow": "Apagar Linha",
+                    "tableEditHeader": "Edita Tabela",
+                    "TableHeadingText": "Cabeçãlho",
+                    "TableColText": "Col",
+                    "imageInsertLinkHeader": "Inserir Link",
+                    "editImageHeader": "Edita Imagem",
+                    "alignmentsDropDownLeft": "Alinhar à Esquerda",
+                    "alignmentsDropDownCenter": "Centralizar",
+                    "alignmentsDropDownRight": "Alinhar à Direita",
+                    "alignmentsDropDownJustify": "Justificar",
+                    "imageDisplayDropDownInline": "Inline",
+                    "imageDisplayDropDownBreak": "Break",
+                    "tableInsertRowDropDownBefore": "Inserir linha antes",
+                    "tableInsertRowDropDownAfter": "Inserir linha depois",
+                    "tableInsertRowDropDownDelete": "Apagar linha",
+                    "tableInsertColumnDropDownLeft": "Inserir coluna à esquerda",
+                    "tableInsertColumnDropDownRight": "Inserir coluna à direita",
+                    "tableInsertColumnDropDownDelete": "Apagar Coluna",
+                    "tableVerticalAlignDropDownTop": "Alinhar no Topo",
+                    "tableVerticalAlignDropDownMiddle": "Alinhar no Meio",
+                    "tableVerticalAlignDropDownBottom": "Alinhar no Fundo",
+                    "tableStylesDropDownDashedBorder": "Bordas Pontilhadas",
+                    "tableStylesDropDownAlternateRows": "Linhas Alternadas",
+                    "pasteFormat": "Colar Formato",
+                    "pasteFormatContent": "Escolha a ação de formatação",
+                    "plainText": "Texto Simples",
+                    "cleanFormat": "Limpar",
+                    "keepFormat": "Manter",
+                    "formatsDropDownParagraph": "Parágrafo",
+                    "formatsDropDownCode": "Código",
+                    "formatsDropDownQuotation": "Citação",
+                    "formatsDropDownHeading1": "Cabeçalho 1",
+                    "formatsDropDownHeading2": "Cabeçalho 2",
+                    "formatsDropDownHeading3": "Cabeçalho 3",
+                    "formatsDropDownHeading4": "Cabeçalho 4",
+                    "fontNameSegoeUI": "SegoeUI",
+                    "fontNameArial": "Arial",
+                    "fontNameGeorgia": "Georgia",
+                    "fontNameImpact": "Impact",
+                    "fontNameTahoma": "Tahoma",
+                    "fontNameTimesNewRoman": "Times New Roman",
+                    "fontNameVerdana": "Verdana"
+                }
+            }
+        })
+
+
+    </script>
+
+    <script>
+
+        function ListaTblOcorrências(URLapi, IDapi) {
+
+
+        var dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+        dataTableOcorrencias.destroy();
+        $('#tblOcorrencia tbody').empty();
+
+
+        DataTable.datetime('DD/MM/YYYY');
+
+
+        dataTableOcorrencias = $('#tblOcorrencia').DataTable({
+
+            autoWidth: false,
+
+            dom: 'Bfrtip',
+
+            lengthMenu: [
+                [10, 25, 50, -1],
+                ['10 linhas', '25 linhas', '50 linhas', 'Todas as Linhas']
+            ],
+
+            buttons: ['pageLength', 'excel', {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL'
+            }],
+
+            "aaSorting": [],
+
+            order: [[0, 'desc']],
+
+            'columnDefs': [
+                {
+                    "targets": 0, //Ficha de Vistoria
+                    "className": "text-center",
+                    "width": "3%",
+                },
+                {
+                    "targets": 1, //Data Início
+                    "className": "text-center",
+                    "width": "3%",
+                },
+                {
+                    "targets": 2, //Motorista
+                    "className": "text-left",
+                    "width": "10%",
+                },
+                {
+                    "targets": 3, //Veículo
+                    "className": "text-left",
+                    "width": "10%",
+                },
+                {
+                    "targets": 4, //Resumo Ocorrência
+                    "className": "text-center",
+                    "width": "20%",
+                    "render": function (data, type, full, meta) {
+                        return `<div class="text-center">
+                                                                                        <a aria-label="&#9881; (${full.descOcorrencia})" data-microtip-position="top" role="tooltip" data-microtip-size="medium" style="cursor:pointer;" data-id='${data}'>
+                                                                                            ${full.resumoOcorrencia}
+                                                                                        </a>
+                                                                                    </div>`;
+                    },
+                },
+                {
+                    "targets": 5, //Solução Ocorrência
+                    "className": "text-center",
+                    "width": "20%",
+                },
+                {
+                    "targets": 6, //Status da Ocorrência
+                    "className": "text-center",
+                    "width": "4%",
+                },
+                {
+                    "targets": 7, //Ação
+                    "className": "text-center",
+                    "width": "5%",
+                },
+                {
+                    "targets": 8, //Descrição Ocorrência
+                    "className": "text-center",
+                    "width": "10%",
+                    "visible": false
+                },
+                {
+                    "targets": 9, //Row Number
+                    "className": "text-center",
+                    "width": "1%",
+                }
+            ],
+            responsive: true,
+            "ajax": {
+                "url": URLapi,
+                "data": { Id: IDapi},
+                "type": "GET",
+                "datatype": "json"
+            },
+
+            "columns": [
+                { "data": "noFichaVistoria" },
+                { "data": "dataInicial" },
+                { "data": "nomeMotorista" },
+                { "data": "descricaoVeiculo" },
+                { "data": "resumoOcorrencia" },
+                { "data": "descricaoSolucaoOcorrencia" },
+                {
+                    "data": "statusOcorrencia",
+                    "render": function (data, type, row, meta) {
+                        if (row.statusOcorrencia === "Aberta")
+                            return '<a class="btn btn-success btn-xs text-white">Aberta</a>';
+                        else if (row.statusOcorrencia === "Baixada")
+                            return '<a class="btn  btn-xs fundo-cinza text-white text-bold">Baixada</a>'
+                        else if (row.statusOcorrencia === "Manutenção")
+                            return '<a class="btn  btn-xs  fundo-ebony text-white text-bold">Manutenção</a>'
+                        else
+                            return '<a class="btn  btn-xs fundo-chocolate text-white text-bold">Pendente</a>';
+                    }
+                },
+                {
+                    "data": "viagemId",
+                    "render": function (data) {
+                        return `<div class="text-center">
+                                <a class="btn btn-primary btn-xs text-white btn_margem" data-toggle="modal" data-target="#modalOcorrencia" id="btnEditar" aria-label="Edita a Ocorrência!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                    <i class="fal fa-edit"></i>
+
+
+                                <a class="btn btn btn-baixar btn-xs text-white fundo-laranja btn_margem" aria-label="Baixar a Ocorrência!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                    <i class="far fa-flag-checkered"></i>
+                                </a>
+
+                    </div>`;
+                    }
+                },
+                { "data": "descricaoOcorrencia" },
+                {
+                    "data": "viagemId",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+            ],
+            "language": {
+                "emptyTable": "Nenhum registro encontrado",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                "infoFiltered": "(Filtrados de _MAX_ registros)",
+                "infoThousands": ".",
+                "loadingRecords": "Carregando...",
+                "processing": "Processando...",
+                "zeroRecords": "Nenhum registro encontrado",
+                "search": "Pesquisar",
+                "paginate": {
+                    "next": "Próximo",
+                    "previous": "Anterior",
+                    "first": "Primeiro",
+                    "last": "Último"
+                },
+                "aria": {
+                    "sortAscending": ": Ordenar colunas de forma ascendente",
+                    "sortDescending": ": Ordenar colunas de forma descendente"
+                },
+                "select": {
+                    "rows": {
+                        "_": "Selecionado %d linhas",
+                        "1": "Selecionado 1 linha"
+                    },
+                    "cells": {
+                        "1": "1 célula selecionada",
+                        "_": "%d células selecionadas"
+                    },
+                    "columns": {
+                        "1": "1 coluna selecionada",
+                        "_": "%d colunas selecionadas"
+                    }
+                },
+                "buttons": {
+                    "copySuccess": {
+                        "1": "Uma linha copiada com sucesso",
+                        "_": "%d linhas copiadas com sucesso"
+                    },
+                    "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                    "colvis": "Visibilidade da Coluna",
+                    "colvisRestore": "Restaurar Visibilidade",
+                    "copy": "Copiar",
+                    "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                    "copyTitle": "Copiar para a Área de Transferência",
+                    "csv": "CSV",
+                    "excel": "Excel",
+                    "pageLength": {
+                        "-1": "Mostrar todos os registros",
+                        "_": "Mostrar %d registros"
+                    },
+                    "pdf": "PDF",
+                    "print": "Imprimir"
+                },
+                "autoFill": {
+                    "cancel": "Cancelar",
+                    "fill": "Preencher todas as células com",
+                    "fillHorizontal": "Preencher células horizontalmente",
+                    "fillVertical": "Preencher células verticalmente"
+                },
+                "lengthMenu": "Exibir _MENU_ resultados por página",
+                "searchBuilder": {
+                    "add": "Adicionar Condição",
+                    "button": {
+                        "0": "Construtor de Pesquisa",
+                        "_": "Construtor de Pesquisa (%d)"
+                    },
+                    "clearAll": "Limpar Tudo",
+                    "condition": "Condição",
+                    "conditions": {
+                        "date": {
+                            "after": "Depois",
+                            "before": "Antes",
+                            "between": "Entre",
+                            "empty": "Vazio",
+                            "equals": "Igual",
+                            "not": "Não",
+                            "notBetween": "Não Entre",
+                            "notEmpty": "Não Vazio"
+                        },
+                        "number": {
+                            "between": "Entre",
+                            "empty": "Vazio",
+                            "equals": "Igual",
+                            "gt": "Maior Que",
+                            "gte": "Maior ou Igual a",
+                            "lt": "Menor Que",
+                            "lte": "Menor ou Igual a",
+                            "not": "Não",
+                            "notBetween": "Não Entre",
+                            "notEmpty": "Não Vazio"
+                        },
+                        "string": {
+                            "contains": "Contém",
+                            "empty": "Vazio",
+                            "endsWith": "Termina Com",
+                            "equals": "Igual",
+                            "not": "Não",
+                            "notEmpty": "Não Vazio",
+                            "startsWith": "Começa Com"
+                        },
+                        "array": {
+                            "contains": "Contém",
+                            "empty": "Vazio",
+                            "equals": "Igual à",
+                            "not": "Não",
+                            "notEmpty": "Não vazio",
+                            "without": "Não possui"
+                        }
+                    },
+                    "data": "Data",
+                    "deleteTitle": "Excluir regra de filtragem",
+                    "logicAnd": "E",
+                    "logicOr": "Ou",
+                    "title": {
+                        "0": "Construtor de Pesquisa",
+                        "_": "Construtor de Pesquisa (%d)"
+                    },
+                    "value": "Valor",
+                    "leftTitle": "Critérios Externos",
+                    "rightTitle": "Critérios Internos"
+                },
+                "searchPanes": {
+                    "clearMessage": "Limpar Tudo",
+                    "collapse": {
+                        "0": "Painéis de Pesquisa",
+                        "_": "Painéis de Pesquisa (%d)"
+                    },
+                    "count": "{total}",
+                    "countFiltered": "{shown} ({total})",
+                    "emptyPanes": "Nenhum Painel de Pesquisa",
+                    "loadMessage": "Carregando Painéis de Pesquisa...",
+                    "title": "Filtros Ativos"
+                },
+                "thousands": ".",
+                "datetime": {
+                    "previous": "Anterior",
+                    "next": "Próximo",
+                    "hours": "Hora",
+                    "minutes": "Minuto",
+                    "seconds": "Segundo",
+                    "amPm": [
+                        "am",
+                        "pm"
+                    ],
+                    "unknown": "-",
+                    "months": {
+                        "0": "Janeiro",
+                        "1": "Fevereiro",
+                        "10": "Novembro",
+                        "11": "Dezembro",
+                        "2": "Março",
+                        "3": "Abril",
+                        "4": "Maio",
+                        "5": "Junho",
+                        "6": "Julho",
+                        "7": "Agosto",
+                        "8": "Setembro",
+                        "9": "Outubro"
+                    },
+                    "weekdays": [
+                        "Domingo",
+                        "Segunda-feira",
+                        "Terça-feira",
+                        "Quarta-feira",
+                        "Quinte-feira",
+                        "Sexta-feira",
+                        "Sábado"
+                    ]
+                },
+                "editor": {
+                    "close": "Fechar",
+                    "create": {
+                        "button": "Novo",
+                        "submit": "Criar",
+                        "title": "Criar novo registro"
+                    },
+                    "edit": {
+                        "button": "Editar",
+                        "submit": "Atualizar",
+                        "title": "Editar registro"
+                    },
+                    "error": {
+                        "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                    },
+                    "multi": {
+                        "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                        "restore": "Desfazer alterações",
+                        "title": "Multiplos valores",
+                        "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                    },
+                    "remove": {
+                        "button": "Remover",
+                        "confirm": {
+                            "_": "Tem certeza que quer deletar %d linhas?",
+                            "1": "Tem certeza que quer deletar 1 linha?"
+                        },
+                        "submit": "Remover",
+                        "title": "Remover registro"
+                    }
+                },
+                "decimal": ","
+            },
+            "width": "100%"
+        });
+    }
+
+    </script>
+
+
+
+}

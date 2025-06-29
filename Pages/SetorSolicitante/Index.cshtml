@@ -1,0 +1,225 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+        public void OnGet()
+        {
+            FrotiX.Pages.SetorSolicitante.IndexModel.Initialize(_unitOfWork);
+            var tree = FrotiX.Pages.SetorSolicitante.IndexModel.TreeGridItems.GetSelfData();
+            ViewData["data"] = tree;
+        }
+    }
+}
+
+@model FrotiX.Models.SetorSolicitante
+
+@{
+    ViewData["Title"] = "Setores Solicitantes";
+    ViewData["PageName"] = "setorsolicitante_index";
+    ViewData["Heading"] = "<i class='fad fa-building'></i> Cadastros: <span class='fw-300'>Setores Solicitantes</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-building";
+}
+
+@{
+
+    List<object> cols = new List<object>();
+    cols.Add(new { field = "Nome", direction = "Ascending" });
+}
+
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/SetorSolicitante/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-building">
+                        </i> &nbsp; Adicionar Setor Solicitante
+                    </a>
+                </div>
+                <br />
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <div id="ControlRegion">
+                            <div class="control-section">
+                                <ejs-treegrid id="TreeGrid" dataSource="@ViewData["data"]" idMapping="SetorSolicitanteId" parentIdMapping='SetorPaiId' allowPaging="true" treeColumnIndex="1" toolbar="@(new List<string>() { "Search" })" rowSelected="rowSelected" rowDeselecting="rowDeselecting" enableHover="true" locale="pt-BR" allowSorting="true">
+                                    <e-treegrid-pagesettings pageSize="10"></e-treegrid-pagesettings>
+                                    <e-treegrid-sortsettings columns="cols"></e-treegrid-sortsettings>
+                                    <e-treegrid-columns>
+                                        <e-treegrid-column field="SetorSolicitanteId" headerText="ID do Setor" textAlign="Left" width="0"></e-treegrid-column>
+                                        <e-treegrid-column field="Nome" headerText="Nome" width="50"></e-treegrid-column>
+                                        <e-treegrid-column field="Sigla" headerText="Sigla" textAlign="Center" width="20"></e-treegrid-column>
+                                        <e-treegrid-column field="Ramal" headerText="Ramal" textAlign="Center" width="20"></e-treegrid-column>
+                                        <e-treegrid-column field="Status" headerText="Status" textAlign="Center" width="10"></e-treegrid-column>
+                                    </e-treegrid-columns>
+                                </ejs-treegrid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="panel-content float-right">
+                    <a id="btneditar" href="/SetorSolicitante/Upsert" class="btn btn-outline-secondary">
+                        <i class="far fa-edit">
+                        </i> &nbsp; Editar Setor Solicitante
+                    </a>
+                    <a id="btn-delete" class="btn btn-outline-danger">
+                        <i class="far fa-trash-alt">
+                        </i> &nbsp; Apagar Setor Solicitante
+                    </a>
+                    <a id="btnreport" href="/SetorSolicitante/RelatorioSetorSolicitante" class="btn btn-outline-dark">
+                        <i class="fal fa-file-chart-line">
+                        </i> &nbsp; Relatório
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock{
+
+    <script>
+
+        $(document).ready(function () {
+            $("#btneditar").hide();
+            $("#btn-delete").hide();
+
+
+            $(document).on('click', '#btn-delete', function () {
+                var id = $(this).data('id');
+                console.log(id);
+
+                swal({
+                    title: "Você tem certeza que deseja apagar este setor?",
+                    text: "Não será possível recuperar os dados eliminados!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        cancel: "Cancelar",
+                        confirm: "Excluir"
+                    }
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        var dataToPost = JSON.stringify({ 'SetorSolicitanteId': id });
+                        var url = '/api/SetorSolicitante/Delete';
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: dataToPost,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.success) {
+                                    toastr.success(data.message);
+                                    location.reload();
+                                }
+                                else {
+                                    toastr.error(data.message);
+                                }
+                            },
+                            error: function (err) {
+                                console.log(err)
+                                alert('something went wrong')
+                            }
+                        });
+
+                    }
+                });
+            });
+        });
+
+        function rowSelected(args) {
+
+            $("#btneditar").attr("href", "/SetorSolicitante/Upsert?id=" + args.data['SetorSolicitanteId']);
+            $("#btn-delete").attr("data-id", args.data['SetorSolicitanteId']);
+
+            $("#btneditar").show();
+            $("#btn-delete").show();
+        }
+
+        function rowDeselecting(args) {
+            $("#btneditar").attr("href", "");
+            $("#btn-delete").attr("data-id", "");
+
+            $("#btneditar").hide();
+            $("#btn-delete").hide();
+        }
+
+    </script>
+
+    <script>
+        var L10n = ej.base.L10n;
+        L10n.load({
+            'pt-BR': {
+                'treegrid': {
+                    'EmptyRecord': 'Registro Vazio',
+                    'Expand All': 'Expandir Tudo',
+                    'Collapse All': 'Recolher Tudo',
+                    "Print": "Imprimir",
+                    "Pdfexport": "Exportar para PDF",
+                    "Excelexport": "Exportar para Excel",
+                    "Wordexport": "Exportar para Word",
+                    "FilterButton": "Filtrar",
+                    "ClearButton": "Botão Limpar",
+                    "StartsWith": "Começa Com",
+                    "EndsWith": "Endet mit",
+                    "Contains": "Enthält",
+                    "Equal": "Igual",
+                    "NotEqual": "Não Igual",
+                    "LessThan": "Menor que",
+                    "LessThanOrEqual": "Menor ou igual a",
+                    "GreaterThan": "Maior que",
+                    "GreaterThanOrEqual": "Maior ou igual a",
+                    "EnterValue": "Entre valor",
+                    "FilterMenu": "Filtro"
+                },
+                'pager': {
+                    'currentPageInfo': '{0} a {1} Página(s)',
+                    'totalItemsInfo': '({0} Iten(s))',
+                    'firstPageTooltip': 'Primeira Página',
+                    'lastPageTooltip': 'Última Página',
+                    'nextPageTooltip': 'Próxima Página',
+                    'previousPageTooltip': 'Página Anterior',
+                    'nextPagerTooltip': 'Zum nächsten Pager',
+                    'previousPagerTooltip': 'Zum vorherigen Pager'
+                },
+                "dropdowns": {
+                    "noRecordsTemplate": "Keine Aufzeichnungen gefunden"
+                },
+                "datepicker": {
+                    "placeholder": "Wählen Sie ein Datum",
+                    "today": "heute"
+                }
+            }
+        })
+    </script>
+
+
+}

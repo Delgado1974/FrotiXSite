@@ -1,0 +1,241 @@
+﻿@page
+@model FrotiX.Pages.Agenda.Datepicker_SyncfusionModel
+@using FrotiX.Models
+@using Syncfusion.EJ2
+@using Syncfusion.EJ2.Buttons
+@using Syncfusion.EJ2.Notifications
+@using Syncfusion.EJ2.Calendars
+@using Syncfusion.EJ2.DropDowns
+
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Calendar with ListBox</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+	<!-- Syncfusion CSS -->
+	<link href="https://cdn.syncfusion.com/ej2/27.1.51/material.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/bootstrap5.css" />
+
+	<style>
+		body {
+			margin-top: 5cm;
+			font-family: 'Poppins', sans-serif;
+		}
+
+		.container {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			margin-top: 20px;
+		}
+
+		.calendar-container {
+			margin-right: 20px;
+		}
+
+		.listbox-container {
+			position: relative;
+			width: 300px;
+		}
+
+		.badge-overlay {
+			position: absolute;
+			top: -10px;
+			right: -10px;
+			z-index: 2;
+			font-size: 0.8rem;
+			background-color: #E55B13;
+			color: white;
+			padding: 0.3em 0.45em;
+			border-radius: 0.25rem;
+		}
+
+		/* Custom styles for the Syncfusion Calendar */
+		.e-calendar {
+			font-family: 'Poppins', sans-serif;
+		}
+
+		/* Adjust the remove button within ListBox items */
+		.remove-btn {
+			margin-left: 10px;
+			padding: 0.25rem 0.5rem;
+			font-size: 0.8rem;
+		}
+
+		/* Define your custom orange color */
+		:root {
+			--calendar-primary-color: #E55B13;
+		}
+
+		/* Apply styles to the calendar headers */
+		.e-header-title,
+		.e-prev-button,
+		.e-next-button {
+			color: var(--calendar-primary-color);
+		}
+
+		/* Active date */
+		.e-selected-date {
+			background-color: var(--calendar-primary-color) !important;
+			color: #fff !important;
+		}
+
+		/* Hover state */
+		.e-day:hover {
+			background-color: rgba(229, 91, 19, 0.1) !important;
+			border-radius: 0.25rem;
+		}
+
+		/* Today's date highlight */
+		.e-today {
+			border: 1px solid var(--calendar-primary-color) !important;
+		}
+
+		/* Weekdays */
+		.e-week-day {
+			color: var(--calendar-primary-color) !important;
+		}
+
+		/* Remove focus outline */
+		.e-calendar, .e-calendar * {
+			outline: none !important;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<!-- Calendar Control -->
+		<div class="calendar-container">
+			<div id="calendar"></div>
+		</div>
+
+		<!-- ListBox Container -->
+		<div class="listbox-container">
+			<!-- Badge Overlay -->
+			<span id="itemCount" class="badge badge-overlay">Dias: 0</span>
+			<!-- Card for ListBox -->
+			<div class="card">
+				<div class="card-header">
+					Dias Selecionados
+				</div>
+				<div class="card-body">
+					<div id="dateList"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			// Initialize selectedDates array
+			let selectedDates = [];
+
+			// Initialize ListBox with empty dataSource and custom template
+			const listBox = new ej.dropdowns.ListBox({
+				dataSource: selectedDates,
+				height: '250px',
+				fields: { text: 'text', value: 'value' },
+				// Define the template for list items
+				template: '<div class="d-flex justify-content-between align-items-center"><span>${text}</span><button class="btn btn-sm btn-danger remove-btn" onclick="removeDate(${value})">Excluir</button></div>',
+				noRecordsTemplate: 'Sem dias escolhidos..'
+			});
+			listBox.appendTo('#dateList');
+			console.log('ListBox initialized:', listBox);
+
+			// Function to update the Badge (Bootstrap Badge)
+			function updateBadge() {
+				const badge = document.getElementById('itemCount');
+				badge.textContent = 'Dias: ' + selectedDates.length;
+				console.log('Badge updated to:', badge.textContent);
+			}
+
+			// Function to format Date to dd/mm/yyyy
+			function formatDate(dateObj) {
+				const day = ('0' + dateObj.getDate()).slice(-2);
+				const month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+				const year = dateObj.getFullYear();
+				return `${day}/${month}/${year}`;
+			}
+
+			// Function to add a date
+			function addDate(dateObj) {
+				const normalizedDate = new Date(dateObj).setHours(0, 0, 0, 0); // Normalize time
+				if (!selectedDates.some(d => d.value === normalizedDate)) {
+					const formattedDate = formatDate(new Date(normalizedDate));
+					selectedDates.push({ value: normalizedDate, text: formattedDate });
+					selectedDates.sort((a, b) => a.value - b.value);
+					listBox.dataSource = selectedDates;
+					listBox.dataBind(); // Update the ListBox
+					updateBadge();
+					console.log('Date added:', formattedDate);
+				} else {
+					console.log('Date already selected:', formatDate(new Date(normalizedDate)));
+				}
+			}
+
+			// Function to remove a date
+			window.removeDate = function(timestamp) {
+				console.log('Removing date with timestamp:', timestamp); // Debugging
+				selectedDates = selectedDates.filter(d => d.value !== timestamp);
+				listBox.dataSource = selectedDates;
+				listBox.dataBind();
+				updateBadge();
+
+				// Update Calendar selection
+				const calendarObj = document.getElementById('calendar').ej2_instances[0];
+				const dateToRemove = new Date(timestamp);
+				calendarObj.removeSelectedDate(dateToRemove);
+				console.log('Date removed:', formatDate(dateToRemove));
+			};
+
+			// Initialize Calendar with multi-selection
+			const calendar = new ej.calendars.Calendar({
+				isMultiSelection: true,
+				// Set locale to Portuguese (Brazil)
+				locale: 'pt-BR',
+				// Event handler for date selection
+				select: function(args) {
+					console.log('Calendar select event triggered. Selected dates:', args.dates); // Debugging
+					const selectedDatesArray = args.dates; // Array of selected dates
+					// Rebuild selectedDates based on current selection
+					selectedDates = selectedDatesArray.map(d => {
+						const normalizedTimestamp = new Date(d).setHours(0, 0, 0, 0);
+						const formattedDate = formatDate(new Date(normalizedTimestamp));
+						return { value: normalizedTimestamp, text: formattedDate };
+					});
+					// Remove duplicates by using a Set
+					const uniqueTimestamps = new Set();
+					selectedDates = selectedDates.filter(d => {
+						if (uniqueTimestamps.has(d.value)) {
+							return false;
+						} else {
+							uniqueTimestamps.add(d.value);
+							return true;
+						}
+					});
+					// Sort the selectedDates
+					selectedDates.sort((a, b) => a.value - b.value);
+					// Update ListBox dataSource
+					listBox.dataSource = selectedDates;
+					listBox.dataBind();
+					// Update the Badge
+					updateBadge();
+					console.log('selectedDates:', selectedDates);
+				}
+			});
+			calendar.appendTo('#calendar');
+			console.log('Calendar initialized:', calendar);
+		});
+	</script>
+</body>
+</html>

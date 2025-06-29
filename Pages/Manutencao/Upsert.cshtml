@@ -1,0 +1,2724 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Manutencao.UpsertModel
+
+@using Kendo.Mvc.UI
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@Html.AntiForgeryToken()
+
+@{ ViewData["Title"] = "Manutenção";
+    ViewData["PageName"] = "manutencao_upsert";
+    ViewData["Heading"] = "<i class='fa-duotone fa-users-gear'></i> Manutenção: <span class='fw-300'>Registro de Ordens de Serviço</span>";
+    ViewData["Category1"] = "Manutenção";
+    ViewData["PageIcon"] = "fad fa-users-gear";
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    escondido {
+        visibility: hidden;
+    }
+
+    .input-icons i {
+        position: absolute;
+    }
+
+    .input-icons {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .icon {
+        padding: 10px;
+        min-width: 40px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .disable-element {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    .wrapper {
+        cursor: not-allowed;
+    }
+
+    .e-grid * {
+        font-size: 12px !important;
+    }
+
+    .fundo-chocolate {
+        background-color: #7B3F00;
+        color: white;
+    }
+
+    .fundo-ebony {
+        background-color: #555D50;
+        color: white;
+    }
+
+    .btn_margem {
+        margin-top: 2px;
+        margin-left: 2px;
+        margin-right: 2px;
+        margin-bottom: 2px;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.ManutencaoObj.Manutencao.ManutencaoId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="ManutencaoObj.Manutencao.ManutencaoId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.ManutencaoObj.Manutencao.ManutencaoId != Guid.Empty ? "Atualizar " : "Criar ") Registro de Manutenção  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.NumOS"></label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.NumOS"></span>
+                                        <input id="txtOS" class="form-control form-control-xs" asp-for="ManutencaoObj.Manutencao.NumOS" disabled="disabled" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataSolicitacao">
+                                        </label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataSolicitacao"></span>
+                                        <input id="txtDataSolicitacao" class="form-control form-control-xs" type="date"
+                                               asp-for="ManutencaoObj.Manutencao.DataSolicitacao" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.StatusOS"></label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.StatusOS"></span>
+                                        <select id="lstStatus" class="form-control form-control-xs"
+                                                asp-for="ManutencaoObj.Manutencao.StatusOS">
+                                            <option value="Aberta">Aberta</option>
+                                            <option value="Fechada">Fechada</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataEntrega">
+                                        </label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataEntrega"></span>
+                                        <input id="txtDataEntrega" class="form-control form-control-xs" type="date"
+                                               asp-for="ManutencaoObj.Manutencao.DataEntrega" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataRecolhimento">
+                                        </label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataRecolhimento">
+                                        </span>
+                                        <input id="txtDataRecolhimento" class="form-control form-control-xs" type="date"
+                                               asp-for="ManutencaoObj.Manutencao.DataRecolhimento" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataDevolucao"></label>
+                                        <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataDevolucao"></span>
+                                        <input id="txtDataDevolucao" class="form-control form-control-xs" type="date"
+                                               asp-for="ManutencaoObj.Manutencao.DataDevolucao" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">
+                                                Man.Preventiva (kms)
+                                                <input id="chkManutencaoPreventiva" type="checkbox" />
+                                            </label>
+                                            <input id="txtQuilometragemManutencao" class="form-control form-control-xs" type="number"
+                                                   asp-for="ManutencaoObj.Manutencao.QuilometragemManutencao" style="display:none" />
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.ReservaEnviado"></label>
+                                            <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.ReservaEnviado"></span>
+                                            <select id="lstReserva" class="form-control form-control-xs" asp-for="ManutencaoObj.Manutencao.ReservaEnviado" onchange="fnExibeReserva()">
+                                                <option value="1">Enviado</option>
+                                                <option value="0" selected>Não Enviado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div id="divReserva" style="display:none">
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-6 col-xl-4">
+                                                <label class="label font-weight-bold">Veículo Reserva</label>
+                                                <ejs-combobox id="lstVeiculoReserva" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataVeiculoReserva"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.ManutencaoObj.Manutencao.VeiculoReservaId">
+                                                    <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                                </ejs-combobox>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="form-group">
+                                                    <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataRecebimentoReserva"></label>
+                                                    <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataRecebimentoReserva"></span>
+                                                    <input id="txtDataRecebimentoReserva" class="form-control form-control-xs" type="date" asp-for="ManutencaoObj.Manutencao.DataRecebimentoReserva" />
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="form-group">
+                                                    <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.DataDevolucaoReserva"></label>
+                                                    <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.DataDevolucaoReserva"></span>
+                                                    <input id="txtDataDevolucaoReserva" class="form-control form-control-xs" type="date" asp-for="ManutencaoObj.Manutencao.DataDevolucaoReserva" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ManutencaoObj.Manutencao.ResumoOS"></label>
+                                            <span class="text-danger" asp-validation-for="ManutencaoObj.Manutencao.ResumoOS"></span>
+                                            <input id="txtResumoOS" class="form-control form-control-xs" asp-for="ManutencaoObj.Manutencao.ResumoOS" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="LinhaVeiculo">
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <label class="label font-weight-bold">Veículo</label>
+                                        <ejs-combobox id="lstVeiculo" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataVeiculo"]" popupHeight="200px" width="100%" showClearButton="true" ejs-for="@Model.ManutencaoObj.Manutencao.VeiculoId" change="VeiculoChange">
+                                            <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                @*Tabela de Ocorrências do Veículo*@
+                                <div class="row">
+                                    <div id="divOcorrencias" style="display:none">
+                                        <h3>Ocorrências Disponíveis para o Veículo</h3>
+                                        <table id="tblOcorrencia" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ficha</th>
+                                                    <th>Data</th>
+                                                    <th>Motorista</th>
+                                                    <th>Resumo Ocorrência</th>
+                                                    <th>Ação</th>
+                                                    <th>Descricao</th>
+                                                    <th>MotoristaId</th>
+                                                    <th>CaminhoImagem</th>
+                                                    <th>ItemManutençãoId</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                @*Tabela de Pendências do Veículo*@
+                                <div class="row">
+                                    <div id="divPendencias" style="display:none">
+                                        <h3>Pendências em aberto para o Veículo</h3>
+                                        <table id="tblPendencia" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ficha</th>
+                                                    <th>Data</th>
+                                                    <th>Motorista</th>
+                                                    <th>Resumo Ocorrência</th>
+                                                    <th>Ação</th>
+                                                    <th>Descricao</th>
+                                                    <th>MotoristaId</th>
+                                                    <th>CaminhoImagem</th>
+                                                    <th>ItemManutençãoId</th>
+                                                    <th>ViagemId</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                @*Tabela de Itens da OS*@
+                                <div class="row">
+                                    <div id="divItens" style="display:none">
+                                        <h3>Ìtens selecionados para manutenção no veículo</h3>
+                                        <button id="btnAdicionaItem" data-toggle="modal" data-target="#modalManutencao" type="button" class="btn btn-sm fundo-chocolate"><i class="fa-light fa-file-plus-minus"></i>&nbsp;Adicionar Item</button>
+                                        <table id="tblItens" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tipo</th>
+                                                    <th>Ficha</th>
+                                                    <th>Data</th>
+                                                    <th>Motorista</th>
+                                                    <th>Resumo Ocorrência</th>
+                                                    <th>Ação</th>
+                                                    <th>ItemManutençãoID</th>
+                                                    <th>Descrição</th>
+                                                    <th>Resumo Limpo</th>
+                                                    <th>MotoristaId</th>
+                                                    <th>CaminhoImagem</th>
+                                                    <th>ViagemId</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                <div class="form-group row">
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                @if (Model.ManutencaoObj.Manutencao.ManutencaoId != Guid.Empty)
+                                                {
+                                                    <button id="btnEdita" method="post" asp-page-handler="Edit" asp-route-id=@Model.ManutencaoObj.Manutencao.ManutencaoId class="btn btn-primary form-control">Atualizar</button>
+                                                }
+                                                else
+                                                {
+                                                    <button id="btnAdiciona" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                                }
+
+                                            </div>
+                                            <div class="col-6">
+                                                <a asp-page="./ListaManutencao" class="btn btn-success form-control">Voltar à Lista</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</form>
+
+@*----------------------- Modal de Inserção de Novo Item de Manutenção -------------------------------------------
+    ================================================================================================================*@
+<div class="modal fade" id="modalManutencao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" enctype="multipart/form-data">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Novo Item de Manutenção</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmManutencao">
+                    <input type="hidden" id="txtId" />
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <div class="col-3">
+                                    <label class="label font-weight-bold">Data</label>
+                                    <input id="txtData" class="form-control form-control-xs" type="date" />
+                                </div>
+                                <div class="col-9">
+                                    <label class="label font-weight-bold">Resumo</label>
+                                    <input id="txtResumo" class="form-control form-control-xs" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="label font-weight-bold">Descrição do Item</label>
+                    <ejs-richtexteditor id="rteManutencao" created="onCreate" locale="pt-BR" height="200px">
+                        <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensOcorrencias/"></e-richtexteditor-insertimagesettings>
+                    </ejs-richtexteditor>
+
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-xl-12">
+                            <label class="label font-weight-bold">Motorista</label>
+                            <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataMotorista"]" popupHeight="200px" width="100%" showClearButton="true">
+                                <e-combobox-fields text="Nome" value="MotoristaId"></e-combobox-fields>
+                            </ejs-combobox>
+                        </div>
+                    </div>
+
+                    <div class="row float-left">
+                        <div class="col-12 float-left">
+                            <label class="label font-weight-bold">Seleciona Imagem do Item</label>
+                            <input class="form-control" type="file" id="txtFileItem" name="files">
+                        </div>
+                    </div>
+                    <img class="img" id="imgViewerItem" width="350" style="border: 1px solid #000000; margin-top: 35px; margin-left: 30px;" />
+
+                </form>
+                <div class="modal-footer">
+                    <button id="btnInsereItem" class="btn btn-primary" type="submit" value="SUBMIT">Inserir o Item</button>
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* -------------- Modal da Foto do Item de Ocorrência -------------- *@
+@* ================================================================= *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalFotoOcorrencia">
+        <div class="modal-dialog modal-xl" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Foto da Ocorrência</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+
+                    <img class="img" id="imgViewerOcorrencia" style="border: 1px solid #000000; margin-top: 10px; height: 400px" />
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@* -------------- Modal da Foto do Item de Ocorrência -------------- *@
+@* ================================================================= *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalFotoPendencia">
+        <div class="modal-dialog modal-xl" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Foto da Pendência</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+
+                    <img class="img" id="imgViewerPendencia" style="border: 1px solid #000000; margin-top: 10px; height: 400px" />
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+@* -------------- Modal da Foto do Item de Manutenção -------------- *@
+@* ================================================================= *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalFotoManutencao">
+        <div class="modal-dialog modal-xl" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Foto do Item de Manutenção</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    <button id="btnAdicionarFoto" type="button" class="btn btn-primary form-control" style="width:200px">Inserir Foto</button>
+                </div>
+                <div class="modal-body table-bordered container-fluid">
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="row float-left">
+                                    <div class="col-12 float-left">
+                                        <label class="label font-weight-bold">Seleciona Foto</label>
+                                        <input class="form-control" type="file" id="txtFileItemNovo" name="filesnovo">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-8">
+                                <div>
+                                    <img class="img" id="imgViewerNovo" style="border: 1px solid #000000; margin-top: 10px; height: 400px" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+@section ScriptsBlock
+{
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    @*<script src="https://cdn.kendostatic.com/2022.1.412/js/jquery.min.js"></script>*@
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script>
+
+    var ManutencaoId = "";
+
+
+    function removeHTML(str) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = str;
+        return tmp.textContent || tmp.innerText || "";
+    }
+
+    //Executa as configurações Iniciais da Tela
+    //=========================================
+    $(document).ready(function ()
+    {
+
+        document.getElementById("divOcorrencias").style.display = "none"
+        document.getElementById("divPendencias").style.display = "none"
+        document.getElementById("divItens").style.display = "none"
+
+
+        if ('@Model.ManutencaoObj.Manutencao.ManutencaoId' != null && '@Model.ManutencaoObj.Manutencao.ManutencaoId' != '00000000-0000-0000-0000-000000000000') {
+
+            //Pega ID da Manutenção
+            ManutencaoId = '@Model.ManutencaoObj.Manutencao.ManutencaoId';
+
+            //Impede mudança do Veículo
+            var lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
+            lstVeiculo.enabled = false;
+
+            //Preenche a Lista de Itens da OS
+            //===============================
+            VeiculoChange();
+
+            var ReservaEnviado = '@Model.ManutencaoObj.Manutencao.ReservaEnviado';
+
+            //debugger;
+
+            if (ReservaEnviado === 'True') {
+                document.getElementById("lstReserva").value = "1";
+                fnExibeReserva();
+            }
+            else if (ReservaEnviado === 'False')
+            {
+                document.getElementById("lstReserva").value = "0";
+            }
+
+            //Habilita Quilometragem Manutencao
+            var ManutencaoPreventiva = '@Model.ManutencaoObj.Manutencao.ManutencaoPreventiva';
+            if (ManutencaoPreventiva === 'True') {
+                document.getElementById("chkManutencaoPreventiva").checked = true
+                document.getElementById("txtQuilometragemManutencao").style.display = "block";
+            }
+
+            //------------------- Desabilita tudo se estiver Fechada ---------------------
+            var StatusOS = '@Model.ManutencaoObj.Manutencao.StatusOS';
+            if (StatusOS === "Fechada") {
+                document.getElementById("btnEdita").style.display = "none";
+                document.getElementById("btnAdicionaItem").style.display = "none";
+                document.getElementById("divItens").disabled = true;
+                document.getElementById("divPendencias").disabled = true;
+            }
+
+        }
+        else
+        {
+            document.getElementById("txtDataSolicitacao").value = moment(Date()).format("YYYY-MM-DD");
+        }
+
+        $('#chkManutencaoPreventiva').on('change', function ()
+        {
+            //debugger;
+
+            if (document.getElementById("chkManutencaoPreventiva").checked === true)
+            {
+                document.getElementById("txtQuilometragemManutencao").style.display = "block";
+            }
+            else
+            {
+                document.getElementById("txtQuilometragemManutencao").style.display = "none";
+                document.getElementById("txtQuilometragemManutencao").value = "";
+            }
+        });
+    });
+
+
+    $("#btnAdiciona").click(function (event) {
+
+        event.preventDefault();
+
+        InsereRegistro();
+
+    });
+
+    $("#btnEdita").click(function (event) {
+
+        event.preventDefault();
+
+        InsereRegistro();
+
+    });
+
+
+    function InsereRegistro() {
+
+        if (document.getElementById("txtOS").value === "") {
+            swal({
+                title: "Informação Ausente",
+                text: "O número da OS é obrigatório",
+                icon: "error",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    ok: "Ok"
+                }
+            })
+            return;
+        }
+
+        if (document.getElementById("txtDataSolicitacao").value === "") {
+            swal({
+                title: "Informação Ausente",
+                text: "A data de solicitação é obrigatória",
+                icon: "error",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    ok: "Ok"
+                }
+            })
+            return;
+        }
+
+        if (document.getElementById("lstStatus").value === "") {
+            swal({
+                title: "Informação Ausente",
+                text: "O status é obrigatório",
+                icon: "error",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    ok: "Ok"
+                }
+            })
+            return;
+        }
+
+        //debugger;
+        if (document.getElementById("txtDataRecolhimento").value != '' && document.getElementById("txtDataRecolhimento").value != null)
+        {
+            if (document.getElementById("txtDataSolicitacao").value > document.getElementById("txtDataRecolhimento").value) {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Data de Recolhimento não pode ser inferior à Data de Solicitação",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+        }
+
+        var dtItens = $('#tblItens').DataTable();
+        if (dtItens.rows().count() === 0) {
+            swal({
+                title: "Informação Ausente",
+                text: "É preciso informar ao menos um item para manutenção",
+                icon: "error",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    ok: "Ok"
+                }
+            })
+            return;
+        }
+
+        $("#btnEdita").prop("disabled", true);
+        $("#btnAdiciona").prop("disabled", true);
+
+        var veiculo = document.getElementById('lstVeiculo').ej2_instances[0];
+        var veiculoreserva = document.getElementById('lstVeiculoReserva').ej2_instances[0];
+
+        if ('@Model.ManutencaoObj.Manutencao.ManutencaoId' === null || '@Model.ManutencaoObj.Manutencao.ManutencaoId' === '00000000-0000-0000-0000-000000000000')
+        {
+            ManutencaoId = '00000000-0000-0000-0000-000000000000';
+        }
+
+        var objManutencao = JSON.stringify({
+            "ManutencaoId": ManutencaoId,
+            "NumOS": $('#txtOS').val(),
+            "DataSolicitacao": $('#txtDataSolicitacao').val(),
+            "DataEntrega": $('#txtDataEntrega').val(),
+            "VeiculoId": veiculo.value,
+            "ResumoOS": $('#txtResumoOS').val(),
+            "DataDevolucao": $('#txtDataDevolucao').val(),
+            "DataRecolhimento": $('#txtDataRecolhimento').val(),
+            "StatusOS": $('#lstStatus').val(),
+            "ReservaEnviado": parseInt($('#lstReserva').val()),
+            "VeiculoReservaId": veiculoreserva.value,
+            "DataRecebimentoReserva": $('#txtDataRecebimentoReserva').val(),
+            "DataDevolucaoReserva": $('#txtDataDevolucaoReserva').val(),
+            "ManutencaoPreventiva": document.getElementById("chkManutencaoPreventiva").checked,
+            "QuilometragemManutencao": $('#txtQuilometragemManutencao').val()
+        })
+
+        var StatusManutencao = $('#lstStatus').val();
+        var NumOS = $('#txtOS').val();
+        var DataOS = $('#txtDataSolicitacao').val();
+
+
+        //----------------- Adiciona Manutenção Nova -----------------------
+        //==========================================--======================
+        if ('@Model.ManutencaoObj.Manutencao.ManutencaoId' === null || '@Model.ManutencaoObj.Manutencao.ManutencaoId' === '00000000-0000-0000-0000-000000000000') {
+
+            debugger;
+
+            $.ajax({
+                type: "post",
+                url: "api/Manutencao/InsereOS",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objManutencao,
+
+                success: function (data) {
+
+                    var ManutencaoId = data.data;
+                    Linhas = dtItens.rows().count()
+
+                    // ----- Insere o Item de Manutenção para cada OS
+                    for (var i = 0; i < Linhas; i++) {
+
+
+                        // ----- Pega os dados da linha
+                        var dataOS = $('#tblItens').DataTable().row(i).data();
+
+                        var StatusItem = "";
+                        if (StatusManutencao === "Fechada")
+                        {
+                            StatusItem = "Baixada"
+                        }
+                        else
+                        {
+                            StatusItem = "Manutenção"
+                        }
+
+                        var objItemOS = JSON.stringify({
+                            "ManutencaoId": ManutencaoId,
+                            "TipoItem": dataOS['tipoItem'],
+                            "NumFicha": dataOS['numFicha'],
+                            "DataItem": dataOS['dataItem'].substring(6, 10) + "-" + dataOS['dataItem'].substring(3, 5) + "-" + dataOS['dataItem'].substring(0, 2),
+                            "Resumo": dataOS['resumo'],
+                            "Descricao": dataOS['descricao'],
+                            "Status": StatusItem,
+                            "MotoristaId": dataOS['motoristaId'],
+                            "ViagemId": dataOS['viagemId'],
+                            "ImagemOcorrencia": dataOS['imagemOcorrencia'],
+                            "NumOS": NumOS,
+                            "DataOS": DataOS
+                        })
+
+                        $.ajax({
+                            type: "post",
+                            url: "api/Manutencao/InsereItemOS",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: objItemOS,
+                            success: function (data) {
+                            },
+                            error: function (data) {
+                                toastr.error(data.message);
+                                console.log(data);
+                                debugger;
+                            }
+                        });
+
+                    }
+
+                    location.replace("/manutencao/listamanutencao");
+                    toastr.success("OS de Manutenção Adicionada com Sucesso!");
+                },
+                error: function (data) {
+                    toastr.error(data.message);
+                    console.log(data);
+                }
+            });
+        }
+        else
+        {
+        //----------------- Edita Manutenção Existente ---------------------
+        //==================================================================
+
+            $.ajax({
+                type: "post",
+                url: "api/Manutencao/InsereOS",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objManutencao,
+
+                success: function (data) {
+
+                    // ----- Remove a associação de cada ocorrência com a OS, caso haja
+                    //========================================================================
+                    LinhasOcorrencias = dataTableOcorrencias.rows().count()
+                    for (var i = 0; i < LinhasOcorrencias; i++) {
+
+
+                        // ----- Pega os dados da linha
+                        var dataOcorrencia = $('#tblOcorrencia').DataTable().row(i).data();
+
+                        debugger;
+
+                        // -------- Chama a Função somente se a Ocorrência tenha estado ligada à OS
+                        if (dataOcorrencia['itemManutencaoId'] != null && dataOcorrencia['itemManutencaoId'] != '') {
+
+                            var objItemOcorrencia = JSON.stringify({
+                                "ItemManutencaoId": dataOcorrencia['itemManutencaoId']
+                            });
+
+                            console.log(objItemOcorrencia);
+
+                            debugger;
+
+                            $.ajax({
+                                type: "post",
+                                url: "api/Manutencao/ApagaConexaoOcorrencia",
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                data: objItemOcorrencia,
+                                success: function (data) {
+                                },
+                                error: function (data) {
+                                    toastr.error(data.message);
+                                    console.log(data);
+                                }
+                            });
+
+                        }
+                    }
+
+
+                    // ----- Remove a associação de cada Pendência com a OS, caso haja
+                    //================================================================
+                    LinhasPendencias = dataTablePendencias.rows().count()
+                    for (var i = 0; i < LinhasPendencias; i++) {
+
+
+                        // ----- Pega os dados da linha
+                        var dataPendencia = $('#tblPendencia').DataTable().row(i).data();
+
+                        //debugger;
+
+                        // -------- Chama a Função somente se a Ocorrência tenha estado ligada à OS
+                        if (dataPendencia['itemManutencaoId'] != null && dataPendencia['itemManutencaoId'] != '') {
+
+                            var objItemPendencia = JSON.stringify({
+                                "ItemManutencaoId": dataPendencia['itemManutencaoId']
+                            });
+
+                            $.ajax({
+                                type: "post",
+                                url: "api/Manutencao/ApagaConexaoPendencia",
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                data: objItemPendencia,
+                                success: function (data) {
+                                },
+                                error: function (data) {
+                                    toastr.error(data.message);
+                                    console.log(data);
+                                }
+                            });
+
+                        }
+                    }
+
+
+                    // ----- Apaga todos os Itens de Manutenção da OS para inserção dos novos
+                    //========================================================================
+                    var objManutencao = JSON.stringify({
+                        "ManutencaoId": ManutencaoId
+                    });
+
+                    $.ajax({
+                        type: "post",
+                        url: "api/Manutencao/ApagaItens",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: objManutencao,
+                        success: function (data) {
+                        },
+                        error: function (data) {
+                            toastr.error(data.message);
+                            console.log(data);
+                        }
+                    });
+
+
+
+
+                    // ----- Insere os Itens da OS
+                    //=================================================
+                     Linhas = dtItens.rows().count()
+
+                    // ----- Insere o Item de Manutenção para cada OS
+                    for (var i = 0; i < Linhas; i++) {
+
+                        // ----- Pega os dados da linha
+                        var dataOS = $('#tblItens').DataTable().row(i).data();
+
+
+                        var objItemOS = JSON.stringify({
+                            "ManutencaoId": ManutencaoId,
+                            "TipoItem": dataOS['tipoItem'],
+                            "NumFicha": dataOS['numFicha'],
+                            "DataItem": dataOS['dataItem'].substring(6, 10) + "-" + dataOS['dataItem'].substring(3, 5) + "-" + dataOS['dataItem'].substring(0, 2),
+                            "Resumo": dataOS['resumo'],
+                            "Descricao": dataOS['descricao'],
+                            "Status": "Manutenção",
+                            "MotoristaId": dataOS['motoristaId'],
+                            "ViagemId": dataOS['viagemId'],
+                            "ImagemOcorrencia": dataOS['imagemOcorrencia']
+                        })
+
+                        console.log(objItemOS);
+
+                        //debugger;
+
+                        $.ajax({
+                            type: "post",
+                            url: "api/Manutencao/InsereItemOS",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: objItemOS,
+                            success: function (data) {
+                            },
+                            error: function (data) {
+                                toastr.error(data.message);
+                                console.log(data);
+                            }
+                        });
+
+                    }
+
+
+                    location.replace("/manutencao/listamanutencao");
+                    toastr.success("OS de Manutenção Registrada com Sucesso!");
+                },
+                error: function (data) {
+                    toastr.error(data.message);
+                    console.log(data);
+                }
+            });
+
+        }
+    }
+
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js" integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            loadCultureFiles('pt');
+            ej.base.setCulture('pt');
+            ej.base.setCurrencyCode('BRL');
+
+            ej.base.L10n.load({
+                'pt': {
+                    "grid": {
+                        "EmptyRecord": "Não há registros a serem exibidos",
+                        "True": "verdade",
+                        "False": "falso",
+                        "InvalidFilterMessage": "Dados de filtro inválidos",
+                        "GroupDropArea": "Arraste um cabeçalho de coluna aqui para agrupar sua coluna",
+                        "UnGroup": "Clique aqui para desagrupar",
+                        "GroupDisable": "O agrupamento está desativado para esta coluna",
+                        "FilterbarTitle": "célula da barra de filtro",
+                        "EmptyDataSourceError": "O DataSource não deve estar vazio no carregamento inicial, pois as colunas são geradas a partir do dataSource no AutoGenerate Column Grid",
+                        "Add": "Adicionar",
+                        "Edit": "Editar",
+                        "Cancel": "Cancelar",
+                        "Update": "Atualizar",
+                        "Delete": "Excluir",
+                        "Print": "Impressão",
+                        "Pdfexport": "Exportação de PDF",
+                        "Excelexport": "Exportação Excel",
+                        "Wordexport": "Exportação de palavras",
+                        "Csvexport": "Exportação de CSV",
+                        "Search": "Procurar",
+                        "Columnchooser": "Colunas",
+                        "Save": "Salve ",
+                        "Item": "item",
+                        "Items": "Itens",
+                        "EditOperationAlert": "Nenhum registro selecionado para operação de edição",
+                        "DeleteOperationAlert": "Nenhum registro selecionado para operação de exclusão",
+                        "SaveButton": "Salve ",
+                        "OKButton": "Está bem",
+                        "CancelButton": "Cancelar",
+                        "EditFormTitle": "Detalhes de",
+                        "AddFormTitle": "Adicionar novo registro",
+                        "BatchSaveConfirm": "Tem certeza de que deseja salvar as alterações?",
+                        "BatchSaveLostChanges": "Alterações não salvas serão perdidas. Você tem certeza que quer continuar?",
+                        "ConfirmDelete": "Tem certeza de que deseja excluir o registro?",
+                        "CancelEdit": "Tem certeza de que deseja cancelar as alterações?",
+                        "ChooseColumns": "Escolher coluna",
+                        "SearchColumns": "colunas de pesquisa",
+                        "Matchs": "Nenhuma equivalência encontrada",
+                        "FilterButton": "Filtro",
+                        "ClearButton": "Claro",
+                        "StartsWith": "Começa com",
+                        "EndsWith": "Termina com",
+                        "Contains": "Contém",
+                        "Equal": "Igual",
+                        "NotEqual": "Não igual",
+                        "LessThan": "Menor que",
+                        "LessThanOrEqual": "Menor ou igual",
+                        "GreaterThan": "Maior que",
+                        "GreaterThanOrEqual": "Maior que ou igual",
+                        "ChooseDate": "Escolha uma data",
+                        "EnterValue": "Digite o valor",
+                        "Copy": "cópia de",
+                        "Group": "Agrupar por esta coluna",
+                        "Ungroup": "Desagrupar por esta coluna",
+                        "autoFitAll": "Ajustar automaticamente a todas as colunas",
+                        "autoFit": "Ajustar automaticamente a esta coluna",
+                        "Export": "Exportação",
+                        "FirstPage": "Primeira página",
+                        "LastPage": "Última página",
+                        "PreviousPage": "Página anterior",
+                        "NextPage": "Próxima página",
+                        "SortAscending": "Ordernar ascendente",
+                        "SortDescending": "Classificar em ordem decrescente",
+                        "EditRecord": "Editar registro",
+                        "DeleteRecord": "Apagar registro",
+                        "FilterMenu": "Filtro",
+                        "SelectAll": "Selecionar tudo",
+                        "Blanks": "Espaços em branco",
+                        "FilterTrue": "Verdade",
+                        "FilterFalse": "Falso",
+                        "NoResult": "Nenhuma equivalência encontrada",
+                        "ClearFilter": "Filtro limpo",
+                        "NumberFilter": "Filtros numéricos",
+                        "TextFilter": "Filtros de texto",
+                        "DateFilter": "Filtros de data",
+                        "DateTimeFilter": "Filtros DateTime",
+                        "MatchCase": "Caso de compatibilidade",
+                        "Between": "Entre",
+                        "CustomFilter": "Filtro customizado",
+                        "CustomFilterPlaceHolder": "Digite o valor",
+                        "CustomFilterDatePlaceHolder": "Escolha uma data",
+                        "AND": "E",
+                        "OR": "OU",
+                        "ShowRowsWhere": "Mostrar linhas onde:"
+                    },
+                    "pager": {
+                        "currentPageInfo": "{0} de {1} páginas",
+                        "totalItemsInfo": "({0} itens)",
+                        "firstPageTooltip": "Ir para a primeira página",
+                        "lastPageTooltip": "Ir para a última página",
+                        "nextPageTooltip": "Ir para a próxima página",
+                        "previousPageTooltip": "Ir para a página anterior",
+                        "nextPagerTooltip": "Ir para o próximo pager",
+                        "previousPagerTooltip": "Ir para o pager anterior",
+                        "pagerDropDown": "itens por página",
+                        "pagerAllDropDown": "Itens",
+                        "All": "Todos",
+                        "totalItemInfo": "({0} item)"
+                    }
+                }
+            });
+        });
+
+        function loadCultureFiles(name) {
+
+            var files = ['ca-gregorian.json', 'numbers.json', 'currencies.json', 'timeZoneNames.json'];
+            if (name === 'pt') {
+                files.push('numberingSystems.json');
+            }
+            var loader = ej.base.loadCldr;
+            var loadCulture = function (prop) {
+                var val, ajax;
+                if (name === 'pt' && prop === files.length - 1) {
+                    ajax = new ej.base.Ajax(location.origin + location.pathname + '/../../js/cldr-data/supplemental/' + files[prop], 'GET', false);
+                }
+                else {
+                    ajax = new ej.base.Ajax(location.origin + location.pathname + '/../../js/cldr-data/main/' + name + '/' + files[prop], 'GET', false);
+                }
+                ajax.onSuccess = function (value) {
+                    val = value;
+                    loader(JSON.parse(val));
+                };
+                ajax.send();
+
+            };
+            for (var prop = 0; prop < files.length; prop++) {
+                loadCulture(prop);
+            }
+        }
+
+    </script>
+
+    @* ------------ Controla o Preenchimento da Tabela de Ocorrências --------
+        =======================================================================*@
+    <script>
+
+        var dataTableOcorrencias;
+        var dataTablePendencias;
+
+        function VeiculoChange() {
+
+            @*if ('@Model.ManutencaoObj.Manutencao.ManutencaoId' != null && '@Model.ManutencaoObj.Manutencao.ManutencaoId' != '00000000-0000-0000-0000-000000000000')
+            {
+                return;
+            }*@
+
+            VeiculoId = document.getElementById('lstVeiculo').ej2_instances[0].value;
+
+            if (VeiculoId != "" && VeiculoId != null) {
+                document.getElementById("divOcorrencias").style.display = "block"
+                document.getElementById("divPendencias").style.display = "block"
+                document.getElementById("divItens").style.display = "block"
+
+                //Cria Nº da OS
+                //=============
+                DataOS = document.getElementById("txtDataSolicitacao").value
+                DataOS = DataOS.substring(0, 4) + "." + DataOS.substring(5, 7) + "." + DataOS.substring(8, 10) + "-";
+                VeiculoPlaca = document.getElementById('lstVeiculo').ej2_instances[0].text;
+                let indiceEspaco = VeiculoPlaca.indexOf(" ");
+                VeiculoPlaca = VeiculoPlaca.substring(0, indiceEspaco);
+                VeiculoPlaca = VeiculoPlaca.replace('-', '');
+                VeiculoPlaca = VeiculoPlaca.replace(' ', '');
+                $('#txtOS').attr('value', DataOS + VeiculoPlaca);
+                //===============================================
+
+                DataTable.datetime('DD/MM/YYYY');
+
+
+                //Preenche a tabela de Ocorrências
+                //================================
+                dataTableOcorrencias = $('#tblOcorrencia').DataTable();
+                dataTableOcorrencias.destroy();
+                $('#tblOcorrencia tbody').empty();
+
+                dataTableOcorrencias = $('#tblOcorrencia').DataTable({
+
+                    autoWidth: false,
+
+                    dom: 'Bfrtip',
+
+                    bFilter: false,
+
+                    buttons: [],
+
+                    "aaSorting": [],
+
+                    'columnDefs': [
+                        {
+                            "targets": 0, //Ficha de Vistoria
+                            "className": "text-center",
+                            "width": "4%",
+                        },
+                        {
+                            "targets": 1, //Data Ocorrência
+                            "className": "text-center",
+                            "width": "4%",
+                        },
+                        {
+                            "targets": 2, //Motorista
+                            "className": "text-left",
+                            "width": "20%",
+                        },
+                        {
+                            "targets": 3, //Resumo Ocorrência
+                            "className": "text-center",
+                            "width": "30%",
+                            "render": function (data, type, full, meta) {
+                                return `<div class="text-center">
+                                            <a aria-label="&#9881; (${removeHTML(full.descricaoOcorrencia)})" data-microtip-position="top" role="tooltip" data-microtip-size="medium" style="cursor:pointer;"
+                                            data-id='${data}'>${full.resumoOcorrencia}</a></div>`;
+                            },
+                        },
+                        {
+                            "targets": 4, //Ação
+                            "className": "text-center",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 5, //Descricao
+                            "className": "text-center",
+                            "width": "5%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 6, //MotoristaId
+                            "className": "text-center",
+                            "width": "5%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 7, //CaminhoImagem
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 8, //ItemManutençãoId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 9, //RowNumber
+                            "className": "text-center",
+                            "width": "1%",
+                        }
+                    ],
+                    responsive: true,
+                    "ajax": {
+                        "url": "/api/manutencao/OcorrenciasVeiculosManutencao",
+                        "data": { id: VeiculoId },
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "noFichaVistoria" },
+                        { "data": "dataInicial" },
+                        { "data": "nomeMotorista" },
+                        { "data": "resumoOcorrencia" },
+                        {
+                            "data": "viagemId",
+                            "render": function (data, type, full, meta) {
+                                return `<div class="text-center">
+                                                                                    <a class="btn btn-primary btn-xs text-white btnSeleciona btn_margem"
+                                                                                              onclick="SelecionaLinha('${full.viagemId}',
+                                                                                                                                      '${full.noFichaVistoria}',
+                                                                                                                                      '${full.dataInicial}',
+                                                                                                                                      '${full.nomeMotorista}' ,
+                                                                                                                                      '${full.resumoOcorrencia}',
+                                                                                                                                      '${removeHTML(full.descricaoOcorrencia)}',
+                                                                                                                                      '${full.motoristaId}',
+                                                                                                                                      '${full.imagemOcorrencia}',
+                                                                                                                                      '${full.itemManutencaoId}');" id="btnSeleciona" aria-label="Transfere a Ocorrência!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                        <i class="fa-regular fa-arrow-down-to-square"></i>
+                                                                                    <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoOcorrencia" id="btnFoto" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                        <i class="fa-regular fa-camera-polaroid"></i>
+                                                                                    </div>`;
+                            }
+                        },
+                        { "data": "descricaoOcorrencia" },
+                        { "data": "motoristaId" },
+                        { "data": "imagemOcorrencia" },
+                        { "data": "itemManutencaoId" },
+                        {
+                            "data": null,
+                            render: function (data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                    ],
+                    "language": {
+                        "emptyTable": "Nenhum registro encontrado",
+                        "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "infoFiltered": "(Filtrados de _MAX_ registros)",
+                        "infoThousands": ".",
+                        "loadingRecords": "Carregando...",
+                        "processing": "Processando...",
+                        "zeroRecords": "Nenhum registro encontrado",
+                        "search": "Pesquisar",
+                        "paginate": {
+                            "next": "Próximo",
+                            "previous": "Anterior",
+                            "first": "Primeiro",
+                            "last": "Último"
+                        },
+                        "aria": {
+                            "sortAscending": ": Ordenar colunas de forma ascendente",
+                            "sortDescending": ": Ordenar colunas de forma descendente"
+                        },
+                        "select": {
+                            "rows": {
+                                "_": "Selecionado %d linhas",
+                                "1": "Selecionado 1 linha"
+                            },
+                            "cells": {
+                                "1": "1 célula selecionada",
+                                "_": "%d células selecionadas"
+                            },
+                            "columns": {
+                                "1": "1 coluna selecionada",
+                                "_": "%d colunas selecionadas"
+                            }
+                        },
+                        "buttons": {
+                            "copySuccess": {
+                                "1": "Uma linha copiada com sucesso",
+                                "_": "%d linhas copiadas com sucesso"
+                            },
+                            "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                            "colvis": "Visibilidade da Coluna",
+                            "colvisRestore": "Restaurar Visibilidade",
+                            "copy": "Copiar",
+                            "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                            "copyTitle": "Copiar para a Área de Transferência",
+                            "csv": "CSV",
+                            "excel": "Excel",
+                            "pageLength": {
+                                "-1": "Mostrar todos os registros",
+                                "_": "Mostrar %d registros"
+                            },
+                            "pdf": "PDF",
+                            "print": "Imprimir"
+                        },
+                        "autoFill": {
+                            "cancel": "Cancelar",
+                            "fill": "Preencher todas as células com",
+                            "fillHorizontal": "Preencher células horizontalmente",
+                            "fillVertical": "Preencher células verticalmente"
+                        },
+                        "lengthMenu": "Exibir _MENU_ resultados por página",
+                        "searchBuilder": {
+                            "add": "Adicionar Condição",
+                            "button": {
+                                "0": "Construtor de Pesquisa",
+                                "_": "Construtor de Pesquisa (%d)"
+                            },
+                            "clearAll": "Limpar Tudo",
+                            "condition": "Condição",
+                            "conditions": {
+                                "date": {
+                                    "after": "Depois",
+                                    "before": "Antes",
+                                    "between": "Entre",
+                                    "empty": "Vazio",
+                                    "equals": "Igual",
+                                    "not": "Não",
+                                    "notBetween": "Não Entre",
+                                    "notEmpty": "Não Vazio"
+                                },
+                                "number": {
+                                    "between": "Entre",
+                                    "empty": "Vazio",
+                                    "equals": "Igual",
+                                    "gt": "Maior Que",
+                                    "gte": "Maior ou Igual a",
+                                    "lt": "Menor Que",
+                                    "lte": "Menor ou Igual a",
+                                    "not": "Não",
+                                    "notBetween": "Não Entre",
+                                    "notEmpty": "Não Vazio"
+                                },
+                                "string": {
+                                    "contains": "Contém",
+                                    "empty": "Vazio",
+                                    "endsWith": "Termina Com",
+                                    "equals": "Igual",
+                                    "not": "Não",
+                                    "notEmpty": "Não Vazio",
+                                    "startsWith": "Começa Com"
+                                },
+                                "array": {
+                                    "contains": "Contém",
+                                    "empty": "Vazio",
+                                    "equals": "Igual à",
+                                    "not": "Não",
+                                    "notEmpty": "Não vazio",
+                                    "without": "Não possui"
+                                }
+                            },
+                            "data": "Data",
+                            "deleteTitle": "Excluir regra de filtragem",
+                            "logicAnd": "E",
+                            "logicOr": "Ou",
+                            "title": {
+                                "0": "Construtor de Pesquisa",
+                                "_": "Construtor de Pesquisa (%d)"
+                            },
+                            "value": "Valor",
+                            "leftTitle": "Critérios Externos",
+                            "rightTitle": "Critérios Internos"
+                        },
+                        "searchPanes": {
+                            "clearMessage": "Limpar Tudo",
+                            "collapse": {
+                                "0": "Painéis de Pesquisa",
+                                "_": "Painéis de Pesquisa (%d)"
+                            },
+                            "count": "{total}",
+                            "countFiltered": "{shown} ({total})",
+                            "emptyPanes": "Nenhum Painel de Pesquisa",
+                            "loadMessage": "Carregando Painéis de Pesquisa...",
+                            "title": "Filtros Ativos"
+                        },
+                        "thousands": ".",
+                        "datetime": {
+                            "previous": "Anterior",
+                            "next": "Próximo",
+                            "hours": "Hora",
+                            "minutes": "Minuto",
+                            "seconds": "Segundo",
+                            "amPm": [
+                                "am",
+                                "pm"
+                            ],
+                            "unknown": "-",
+                            "months": {
+                                "0": "Janeiro",
+                                "1": "Fevereiro",
+                                "10": "Novembro",
+                                "11": "Dezembro",
+                                "2": "Março",
+                                "3": "Abril",
+                                "4": "Maio",
+                                "5": "Junho",
+                                "6": "Julho",
+                                "7": "Agosto",
+                                "8": "Setembro",
+                                "9": "Outubro"
+                            },
+                            "weekdays": [
+                                "Domingo",
+                                "Segunda-feira",
+                                "Terça-feira",
+                                "Quarta-feira",
+                                "Quinte-feira",
+                                "Sexta-feira",
+                                "Sábado"
+                            ]
+                        },
+                        "editor": {
+                            "close": "Fechar",
+                            "create": {
+                                "button": "Novo",
+                                "submit": "Criar",
+                                "title": "Criar novo registro"
+                            },
+                            "edit": {
+                                "button": "Editar",
+                                "submit": "Atualizar",
+                                "title": "Editar registro"
+                            },
+                            "error": {
+                                "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                            },
+                            "multi": {
+                                "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                                "restore": "Desfazer alterações",
+                                "title": "Multiplos valores",
+                                "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                            },
+                            "remove": {
+                                "button": "Remover",
+                                "confirm": {
+                                    "_": "Tem certeza que quer deletar %d linhas?",
+                                    "1": "Tem certeza que quer deletar 1 linha?"
+                                },
+                                "submit": "Remover",
+                                "title": "Remover registro"
+                            }
+                        },
+                        "decimal": ","
+                    },
+                    "width": "100%"
+                });
+
+                //Preenche a tabela de Pendências
+                //===============================
+                dataTablePendencias = $('#tblPendencia').DataTable();
+                dataTablePendencias.destroy();
+                $('#tblPendencia tbody').empty();
+
+                dataTablePendencias = $('#tblPendencia').DataTable({
+
+                    autoWidth: false,
+
+                    dom: 'Bfrtip',
+
+                    bFilter: false,
+
+                    buttons: [],
+
+                    "aaSorting": [],
+
+                    'columnDefs': [
+                        {
+                            "targets": 0, //Ficha de Vistoria
+                            "className": "text-center",
+                            "width": "4%",
+                        },
+                        {
+                            "targets": 1, //Data Ocorrência
+                            "className": "text-center",
+                            "width": "4%",
+                        },
+                        {
+                            "targets": 2, //Motorista
+                            "className": "text-left",
+                            "width": "20%",
+                        },
+                        {
+                            "targets": 3, //Resumo Ocorrência
+                            "className": "text-center",
+                            "width": "30%",
+                            "render": function (data, type, full, meta) {
+                                return `<div class="text-center">
+                                            <a aria-label="&#9881; (${removeHTML(full.descricao)})" data-microtip-position="top" role="tooltip" data-microtip-size="medium" style="cursor:pointer;"
+                                            data-id='${data}'>${full.resumo}</a></div>`;
+                            },
+                        },
+                        {
+                            "targets": 4, //Ação
+                            "className": "text-center",
+                            "width": "5%",
+                        },
+                        {
+                            "targets": 5, //Descricao
+                            "className": "text-center",
+                            "width": "5%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 6, //MotoristaId
+                            "className": "text-center",
+                            "width": "5%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 7, //CaminhoImagem
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 8, //ItemManutençãoId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 9, //ViagemId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 10, //RowNumber
+                            "className": "text-center",
+                            "width": "1%",
+                        }
+                    ],
+                    responsive: true,
+                    "ajax": {
+                        "url": "/api/manutencao/OcorrenciasVeiculosPendencias",
+                        "data": { id: VeiculoId },
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "numFicha" },
+                        { "data": "dataItem" },
+                        { "data": "nome" },
+                        { "data": "resumo" },
+                        {
+                            "data": "itemManutencaoId",
+                            "render": function (data, type, full, meta) {
+                                return `<div class="text-center">                                                                            <a class="btn btn-primary btn-xs text-white btnSeleciona btn_margem"
+                                        onclick="SelecionaLinhaPendencia('${full.viagemId}',
+                                                                '${full.numFicha}',
+                                                                '${full.dataItem}',
+                                                                '${full.nome}' ,
+                                                                '${full.resumo}',
+                                                                '${full.descricao}',
+                                                                '${full.motoristaId}',
+                                                                '${full.imagemOcorrencia}',
+                                                                '${full.itemManutencaoId}');" id="btnSelecionaPendencia" aria-label="Transfere a Pendência!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                        <i class="fa-regular fa-arrow-down-to-square"></i>
+                                                                                    <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoPendencia" id="btnFotoPendência" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                        <i class="fa-regular fa-camera-polaroid"></i>
+                                                                                    </div>`;
+                            }
+                        },
+                        { "data": "descricao" },
+                        { "data": "motoristaId" },
+                        { "data": "imagemOcorrencia" },
+                        { "data": "itemManutencaoId" },
+                        { "data": "viagemId" },
+                        {
+                            "data": null,
+                            render: function (data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                    ],
+                    "language": {
+                        "emptyTable": "Nenhum registro encontrado",
+                        "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                        "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                        "infoFiltered": "(Filtrados de _MAX_ registros)",
+                        "infoThousands": ".",
+                        "loadingRecords": "Carregando...",
+                        "processing": "Processando...",
+                        "zeroRecords": "Nenhum registro encontrado",
+                        "search": "Pesquisar",
+                        "paginate": {
+                            "next": "Próximo",
+                            "previous": "Anterior",
+                            "first": "Primeiro",
+                            "last": "Último"
+                        },
+                        "aria": {
+                            "sortAscending": ": Ordenar colunas de forma ascendente",
+                            "sortDescending": ": Ordenar colunas de forma descendente"
+                        },
+                        "select": {
+                            "rows": {
+                                "_": "Selecionado %d linhas",
+                                "1": "Selecionado 1 linha"
+                            },
+                            "cells": {
+                                "1": "1 célula selecionada",
+                                "_": "%d células selecionadas"
+                            },
+                            "columns": {
+                                "1": "1 coluna selecionada",
+                                "_": "%d colunas selecionadas"
+                            }
+                        },
+                        "buttons": {
+                            "copySuccess": {
+                                "1": "Uma linha copiada com sucesso",
+                                "_": "%d linhas copiadas com sucesso"
+                            },
+                            "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                            "colvis": "Visibilidade da Coluna",
+                            "colvisRestore": "Restaurar Visibilidade",
+                            "copy": "Copiar",
+                            "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                            "copyTitle": "Copiar para a Área de Transferência",
+                            "csv": "CSV",
+                            "excel": "Excel",
+                            "pageLength": {
+                                "-1": "Mostrar todos os registros",
+                                "_": "Mostrar %d registros"
+                            },
+                            "pdf": "PDF",
+                            "print": "Imprimir"
+                        },
+                        "autoFill": {
+                            "cancel": "Cancelar",
+                            "fill": "Preencher todas as células com",
+                            "fillHorizontal": "Preencher células horizontalmente",
+                            "fillVertical": "Preencher células verticalmente"
+                        },
+                        "lengthMenu": "Exibir _MENU_ resultados por página",
+                        "searchBuilder": {
+                            "add": "Adicionar Condição",
+                            "button": {
+                                "0": "Construtor de Pesquisa",
+                                "_": "Construtor de Pesquisa (%d)"
+                            },
+                            "clearAll": "Limpar Tudo",
+                            "condition": "Condição",
+                            "conditions": {
+                                "date": {
+                                    "after": "Depois",
+                                    "before": "Antes",
+                                    "between": "Entre",
+                                    "empty": "Vazio",
+                                    "equals": "Igual",
+                                    "not": "Não",
+                                    "notBetween": "Não Entre",
+                                    "notEmpty": "Não Vazio"
+                                },
+                                "number": {
+                                    "between": "Entre",
+                                    "empty": "Vazio",
+                                    "equals": "Igual",
+                                    "gt": "Maior Que",
+                                    "gte": "Maior ou Igual a",
+                                    "lt": "Menor Que",
+                                    "lte": "Menor ou Igual a",
+                                    "not": "Não",
+                                    "notBetween": "Não Entre",
+                                    "notEmpty": "Não Vazio"
+                                },
+                                "string": {
+                                    "contains": "Contém",
+                                    "empty": "Vazio",
+                                    "endsWith": "Termina Com",
+                                    "equals": "Igual",
+                                    "not": "Não",
+                                    "notEmpty": "Não Vazio",
+                                    "startsWith": "Começa Com"
+                                },
+                                "array": {
+                                    "contains": "Contém",
+                                    "empty": "Vazio",
+                                    "equals": "Igual à",
+                                    "not": "Não",
+                                    "notEmpty": "Não vazio",
+                                    "without": "Não possui"
+                                }
+                            },
+                            "data": "Data",
+                            "deleteTitle": "Excluir regra de filtragem",
+                            "logicAnd": "E",
+                            "logicOr": "Ou",
+                            "title": {
+                                "0": "Construtor de Pesquisa",
+                                "_": "Construtor de Pesquisa (%d)"
+                            },
+                            "value": "Valor",
+                            "leftTitle": "Critérios Externos",
+                            "rightTitle": "Critérios Internos"
+                        },
+                        "searchPanes": {
+                            "clearMessage": "Limpar Tudo",
+                            "collapse": {
+                                "0": "Painéis de Pesquisa",
+                                "_": "Painéis de Pesquisa (%d)"
+                            },
+                            "count": "{total}",
+                            "countFiltered": "{shown} ({total})",
+                            "emptyPanes": "Nenhum Painel de Pesquisa",
+                            "loadMessage": "Carregando Painéis de Pesquisa...",
+                            "title": "Filtros Ativos"
+                        },
+                        "thousands": ".",
+                        "datetime": {
+                            "previous": "Anterior",
+                            "next": "Próximo",
+                            "hours": "Hora",
+                            "minutes": "Minuto",
+                            "seconds": "Segundo",
+                            "amPm": [
+                                "am",
+                                "pm"
+                            ],
+                            "unknown": "-",
+                            "months": {
+                                "0": "Janeiro",
+                                "1": "Fevereiro",
+                                "10": "Novembro",
+                                "11": "Dezembro",
+                                "2": "Março",
+                                "3": "Abril",
+                                "4": "Maio",
+                                "5": "Junho",
+                                "6": "Julho",
+                                "7": "Agosto",
+                                "8": "Setembro",
+                                "9": "Outubro"
+                            },
+                            "weekdays": [
+                                "Domingo",
+                                "Segunda-feira",
+                                "Terça-feira",
+                                "Quarta-feira",
+                                "Quinte-feira",
+                                "Sexta-feira",
+                                "Sábado"
+                            ]
+                        },
+                        "editor": {
+                            "close": "Fechar",
+                            "create": {
+                                "button": "Novo",
+                                "submit": "Criar",
+                                "title": "Criar novo registro"
+                            },
+                            "edit": {
+                                "button": "Editar",
+                                "submit": "Atualizar",
+                                "title": "Editar registro"
+                            },
+                            "error": {
+                                "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                            },
+                            "multi": {
+                                "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                                "restore": "Desfazer alterações",
+                                "title": "Multiplos valores",
+                                "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                            },
+                            "remove": {
+                                "button": "Remover",
+                                "confirm": {
+                                    "_": "Tem certeza que quer deletar %d linhas?",
+                                    "1": "Tem certeza que quer deletar 1 linha?"
+                                },
+                                "submit": "Remover",
+                                "title": "Remover registro"
+                            }
+                        },
+                        "decimal": ","
+                    },
+                    "width": "100%"
+                });
+
+
+            }
+        }
+
+    </script>
+
+    <script>
+
+        function SelecionaLinha(ViagemId, Ficha, DataOcorrencia, Motorista, Resumo, Descricao, MotoristaId, ImagemOcorrencia, ItemManutencaoId) {
+
+            Descricao = removeHTML(Descricao);
+
+            $('#tblItens').DataTable().row.add({
+                "tipoItem": "Ocorrência",
+                "numFicha": Ficha,
+                "dataItem": DataOcorrencia,
+                "nomeMotorista": Motorista,
+                "resumo": `<div class='text-center'><a aria-label='&#9881; (${Descricao})' data-microtip-position='top' role='tooltip' data-microtip-size='medium' style='cursor:pointer;'>${Resumo}</a></div>`,
+                "itemManutencaoId": `<a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Remover o Item!" data-microtip-position="top" role="tooltip" style="cursor: pointer; "><i class="far fa - trash - alt"></i></a>
+                                                         <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoManutencao" id="btnFoto" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"'>
+                                                         <i class="fa-regular fa-camera-polaroid"></i></div>`,
+                "itemManutencaoId": ItemManutencaoId,
+                "descricao": Descricao,
+                "resumo": Resumo,
+                "motoristaId": MotoristaId,
+                "imagemOcorrencia": ImagemOcorrencia,
+                "viagemId": ViagemId
+            }).draw(false);
+
+        }
+
+        function SelecionaLinhaPendencia(ViagemId, Ficha, DataOcorrencia, Motorista, Resumo, Descricao, MotoristaId, ImagemOcorrencia, ItemManutencaoId) {
+
+            Descricao = removeHTML(Descricao);
+
+
+            $('#tblItens').DataTable().row.add({
+                "tipoItem": "Pendência",
+                "numFicha": Ficha,
+                "dataItem": DataOcorrencia,
+                "nomeMotorista": Motorista,
+                "resumo": `<div class='text-center'><a aria-label='&#9881; (${Descricao})' data-microtip-position='top' role='tooltip' data-microtip-size='medium' style='cursor:pointer;'>${Resumo}</a></div>`,
+                "itemManutencaoId": `<a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Remover o Item!" data-microtip-position="top" role="tooltip" style="cursor: pointer; "><i class="far fa-trash-alt"></i></a>
+                                                         <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoManutencao" id="btnFoto" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"'>
+                                                         <i class="fa-regular fa-camera-polaroid"></i></div>`,
+                "itemManutencaoId": ItemManutencaoId,
+                "descricao": Descricao,
+                "resumo": Resumo,
+                "motoristaId": MotoristaId,
+                "imagemOcorrencia": ImagemOcorrencia,
+                "viagemId": ViagemId
+            }).draw(false);
+
+        }
+
+
+
+    </script>
+
+
+    @*--------------- Cria a tabela de Itens da OS -----------------
+        ==============================================================*@
+    <script>
+
+        var dataTableItens;
+
+        $(document).ready(function () {
+
+            DataTable.datetime('DD/MM/YYYY');
+
+            dataTableItens = $('#tblItens').DataTable({
+
+                autoWidth: false,
+
+                dom: 'Bfrtip',
+
+                bFilter: false,
+
+                buttons: [],
+
+                "aaSorting": [],
+
+                'columnDefs': [
+                    {
+                        "targets": 0, //Tipo de Ocorrência
+                        "className": "text-center",
+                        "width": "5%",
+                    },
+                    {
+                        "targets": 1, //Ficha de Vistoria
+                        "className": "text-center",
+                        "width": "4%",
+                    },
+                    {
+                        "targets": 2, //Data Ocorrência
+                        "className": "text-center",
+                        "width": "4%",
+                    },
+                    {
+                        "targets": 3, //Motorista
+                        "className": "text-left",
+                        "width": "20%",
+                    },
+                    {
+                        "targets": 4, //Resumo Ocorrência
+                        "className": "text-center",
+                        "width": "30%",
+                        "render": function (data, type, full, meta) {
+                            return `<div class="text-center">
+                                                <a aria-label="&#9881; (${full.descricao})" data-microtip-position="top" role="tooltip" data-microtip-size="medium" style="cursor:pointer;"
+                                                data-id='${data}'>${full.resumo}</a></div>`;
+                        },
+                    },
+                    {
+                        "targets": 5, //Ação
+                        "className": "text-center",
+                        "width": "5%",
+                    },
+                    {
+                        "targets": 6, //Item Manutenção ID
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    },
+                    {
+                        "targets": 7, //Descrição
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    },
+                    {
+                        "targets": 8, //Resumo Limpo
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    },
+                    {
+                        "targets": 9, //MotoristaID
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    },
+                    {
+                        "targets": 10, //ImagemOcorrencia
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    },
+                    {
+                        "targets": 11, //ViagemId
+                        "className": "text-center",
+                        "width": "10%",
+                        "visible": false
+                    }
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": "/api/manutencao/ItensOS",
+                    "data": { Id: ManutencaoId },
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "tipoItem" },
+                    { "data": "numFicha" },
+                    { "data": "dataItem" },
+                    { "data": "nomeMotorista" },
+                    { "data": "resumo" },
+                    {
+                        "data": "itemManutencaoId",
+                        "render": function (data, type, full, meta) {
+                            return `<a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Remover o Item!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"><i class="far fa-trash-alt"></i></a>
+                                                         <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoManutencao" id="btnFoto" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"'>
+                                                         <i class="fa-regular fa-camera-polaroid"></i></div>`;
+                        }
+                    },
+                    { "data": "itemManutencaoId" },
+                    { "data": "descricao" },
+                    { "data": "resumo" },
+                    { "data": "motoristaId" },
+                    { "data": "imagemOcorrencia" },
+                    { "data": "viagemId" },
+                ],
+                "language": {
+                    "emptyTable": "Nenhum registro encontrado",
+                    "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "infoFiltered": "(Filtrados de _MAX_ registros)",
+                    "infoThousands": ".",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "search": "Pesquisar",
+                    "paginate": {
+                        "next": "Próximo",
+                        "previous": "Anterior",
+                        "first": "Primeiro",
+                        "last": "Último"
+                    },
+                    "aria": {
+                        "sortAscending": ": Ordenar colunas de forma ascendente",
+                        "sortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "1": "Selecionado 1 linha"
+                        },
+                        "cells": {
+                            "1": "1 célula selecionada",
+                            "_": "%d células selecionadas"
+                        },
+                        "columns": {
+                            "1": "1 coluna selecionada",
+                            "_": "%d colunas selecionadas"
+                        }
+                    },
+                    "buttons": {
+                        "copySuccess": {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        },
+                        "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                        "colvis": "Visibilidade da Coluna",
+                        "colvisRestore": "Restaurar Visibilidade",
+                        "copy": "Copiar",
+                        "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                        "copyTitle": "Copiar para a Área de Transferência",
+                        "csv": "CSV",
+                        "excel": "Excel",
+                        "pageLength": {
+                            "-1": "Mostrar todos os registros",
+                            "_": "Mostrar %d registros"
+                        },
+                        "pdf": "PDF",
+                        "print": "Imprimir"
+                    },
+                    "autoFill": {
+                        "cancel": "Cancelar",
+                        "fill": "Preencher todas as células com",
+                        "fillHorizontal": "Preencher células horizontalmente",
+                        "fillVertical": "Preencher células verticalmente"
+                    },
+                    "lengthMenu": "Exibir _MENU_ resultados por página",
+                    "searchBuilder": {
+                        "add": "Adicionar Condição",
+                        "button": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "clearAll": "Limpar Tudo",
+                        "condition": "Condição",
+                        "conditions": {
+                            "date": {
+                                "after": "Depois",
+                                "before": "Antes",
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "number": {
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "gt": "Maior Que",
+                                "gte": "Maior ou Igual a",
+                                "lt": "Menor Que",
+                                "lte": "Menor ou Igual a",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "string": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "endsWith": "Termina Com",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notEmpty": "Não Vazio",
+                                "startsWith": "Começa Com"
+                            },
+                            "array": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "equals": "Igual à",
+                                "not": "Não",
+                                "notEmpty": "Não vazio",
+                                "without": "Não possui"
+                            }
+                        },
+                        "data": "Data",
+                        "deleteTitle": "Excluir regra de filtragem",
+                        "logicAnd": "E",
+                        "logicOr": "Ou",
+                        "title": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "value": "Valor",
+                        "leftTitle": "Critérios Externos",
+                        "rightTitle": "Critérios Internos"
+                    },
+                    "searchPanes": {
+                        "clearMessage": "Limpar Tudo",
+                        "collapse": {
+                            "0": "Painéis de Pesquisa",
+                            "_": "Painéis de Pesquisa (%d)"
+                        },
+                        "count": "{total}",
+                        "countFiltered": "{shown} ({total})",
+                        "emptyPanes": "Nenhum Painel de Pesquisa",
+                        "loadMessage": "Carregando Painéis de Pesquisa...",
+                        "title": "Filtros Ativos"
+                    },
+                    "thousands": ".",
+                    "datetime": {
+                        "previous": "Anterior",
+                        "next": "Próximo",
+                        "hours": "Hora",
+                        "minutes": "Minuto",
+                        "seconds": "Segundo",
+                        "amPm": [
+                            "am",
+                            "pm"
+                        ],
+                        "unknown": "-",
+                        "months": {
+                            "0": "Janeiro",
+                            "1": "Fevereiro",
+                            "10": "Novembro",
+                            "11": "Dezembro",
+                            "2": "Março",
+                            "3": "Abril",
+                            "4": "Maio",
+                            "5": "Junho",
+                            "6": "Julho",
+                            "7": "Agosto",
+                            "8": "Setembro",
+                            "9": "Outubro"
+                        },
+                        "weekdays": [
+                            "Domingo",
+                            "Segunda-feira",
+                            "Terça-feira",
+                            "Quarta-feira",
+                            "Quinte-feira",
+                            "Sexta-feira",
+                            "Sábado"
+                        ]
+                    },
+                    "editor": {
+                        "close": "Fechar",
+                        "create": {
+                            "button": "Novo",
+                            "submit": "Criar",
+                            "title": "Criar novo registro"
+                        },
+                        "edit": {
+                            "button": "Editar",
+                            "submit": "Atualizar",
+                            "title": "Editar registro"
+                        },
+                        "error": {
+                            "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                        },
+                        "multi": {
+                            "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                            "restore": "Desfazer alterações",
+                            "title": "Multiplos valores",
+                            "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                        },
+                        "remove": {
+                            "button": "Remover",
+                            "confirm": {
+                                "_": "Tem certeza que quer deletar %d linhas?",
+                                "1": "Tem certeza que quer deletar 1 linha?"
+                            },
+                            "submit": "Remover",
+                            "title": "Remover registro"
+                        }
+                    },
+                    "decimal": ","
+                },
+                "width": "100%"
+            });
+
+
+        });
+
+    </script>
+
+    <script>
+
+        //Classe base para o vetor de ocorrências que vai armazenar temporariamente os dados da tabela
+        class Ocorrencia {
+            constructor(noFichaVistoria, data, motorista, resumo, viagemId, descricao, motoristaId, imagemOcorrencia, itemManutencaoId) {
+                this.noFichaVistoria = noFichaVistoria;
+                this.data = data;
+                this.motorista = motorista;
+                this.resumo = resumo;
+                this.viagemId = viagemId;
+                this.descricao = descricao;
+                this.motoristaId = motoristaId;
+                this.imagemOcorrencia = imagemOcorrencia;
+                this.itemManutencaoId = itemManutencaoId;
+            }
+        }
+
+        $('#tblItens').on('click', 'a.btn-delete', function () {
+
+            //debugger;
+
+
+            //Pega os dados da Linha clicada
+            var data = dataTableItens.row($(this).parents('tr')).data();
+            console.log("Dado: " + data[0]);
+
+            //Verifica se é uma ocorrência, e devolve para a tabela de Ocorrências
+            if (data['tipoItem'] === "Ocorrência") {
+
+                let Ocorrencias = [];
+
+                //Armazena a tabela de ocorrrências num vetor
+                if (dataTableOcorrencias.data().count() > 0) {
+                    for (var i = 0; i < dataTableOcorrencias.data().count(); i++) {
+                        let ocorrencia = new Ocorrencia(
+                            dataTableOcorrencias.cell(i, 0).data(),
+                            dataTableOcorrencias.cell(i, 1).data(),
+                            dataTableOcorrencias.cell(i, 2).data(),
+                            dataTableOcorrencias.cell(i, 3).data(),
+                            dataTableOcorrencias.cell(i, 4).data(),
+                            dataTableOcorrencias.cell(i, 5).data(),
+                            dataTableOcorrencias.cell(i, 6).data(),
+                            dataTableOcorrencias.cell(i, 7).data(),
+                            dataTableOcorrencias.cell(i, 8).data());
+
+                        Ocorrencias.push(ocorrencia);
+                        dataTableOcorrencias.rows(i).remove().draw();
+                    }
+                }
+
+                //Retorna o registro para a tabela de ocorrências
+                noFichaVistoria = data['numFicha'];
+                dataOcorrencia = data['dataItem'];
+                motorista = data['nomeMotorista'];
+                resumoOcorrencia = data['resumo'];
+                viagemId = data['viagemId'];
+                descricao = data['descricao'];
+                motoristaId = data['motoristaId'];
+                imagemOcorrencia = data['imagemOcorrencia'];
+                itemManutencaoId = data['itemManutencaoId'];
+
+                $('#tblOcorrencia').DataTable().row.add({
+                    "noFichaVistoria": noFichaVistoria,
+                    "dataInicial": dataOcorrencia,
+                    "nomeMotorista": motorista,
+                    "resumoOcorrencia": resumoOcorrencia,
+                    "viagemId": viagemId,
+                    "descricaoOcorrencia": descricao,
+                    "motoristaId": motoristaId,
+                    "imagemOcorrencia": imagemOcorrencia,
+                    "itemManutencaoId": itemManutencaoId,
+                }).draw(false);
+
+                for (var i = 0; i < Ocorrencias.length; i++) {
+                    $('#tblOcorrencia').DataTable().row.add({
+                        "noFichaVistoria": Ocorrencias[i].noFichaVistoria,
+                        "dataInicial": Ocorrencias[i].data,
+                        "nomeMotorista": Ocorrencias[i].motorista,
+                        "resumoOcorrencia": Ocorrencias[i].resumo,
+                        "viagemId": Ocorrencias[i].viagemId,
+                        "descricaoOcorrencia": Ocorrencias[i].descricao,
+                        "motoristaId": Ocorrencias[i].motoristaId,
+                        "imagemOcorrencia": Ocorrencias[i].imagemOcorrencia,
+                        "itemManutencaoId": Ocorrencias[i].itemManutencaoId,
+                    }).draw(false);
+                }
+
+            }
+
+            else if (data['tipoItem'] === "Pendência") {
+                let Pendencias = [];
+
+                //Armazena a tabela de pendências num vetor
+                if (dataTablePendencias.data().count() > 0) {
+                    for (var i = 0; i < dataTablePendencias.data().count(); i++) {
+                        let pendencia = new Ocorrencia(
+                            dataTablePendencias.cell(i, 0).data(),
+                            dataTablePendencias.cell(i, 1).data(),
+                            dataTablePendencias.cell(i, 2).data(),
+                            dataTablePendencias.cell(i, 3).data(),
+                            dataTablePendencias.cell(i, 4).data(),
+                            dataTablePendencias.cell(i, 5).data(),
+                            dataTablePendencias.cell(i, 6).data(),
+                            dataTablePendencias.cell(i, 7).data(),
+                            dataTablePendencias.cell(i, 8).data(),
+                            dataTablePendencias.cell(i, 9).data());
+
+                        Pendencias.push(pendencia);
+                        dataTablePendencias.rows(i).remove().draw();
+                    }
+                }
+
+                //Retorna o registro para a tabela de pendências
+                noFichaVistoria = data['numFicha'];
+                dataOcorrencia = data['dataItem'];
+                motorista = data['nomeMotorista'];
+                resumoOcorrencia = data['resumo'];
+                itemManutencaoId = data['itemManutencaoId'];
+                descricao = data['descricao'];
+                motoristaId = data['motoristaId'];
+                imagemOcorrencia = data['imagemOcorrencia'];
+                viagemId = data['viagemId'];
+
+
+                $('#tblPendencia').DataTable().row.add({
+                    "numFicha": noFichaVistoria,
+                    "dataItem": dataOcorrencia,
+                    "nome": motorista,
+                    "resumo": resumoOcorrencia,
+                    "itemManutencaoId": itemManutencaoId,
+                    "descricao": descricao,
+                    "motoristaId": motoristaId,
+                    "imagemOcorrencia": imagemOcorrencia,
+                    "itemManutencaoId": itemManutencaoId,
+                    "viagemId": viagemId,
+                }).draw();
+
+                for (var i = 0; i < Pendencias.length; i++) {
+                    $('#tblPendencia').DataTable().row.add({
+                        "numFicha": Pendencias[i].noFichaVistoria,
+                        "dataItem": Pendencias[i].data,
+                        "nome": Pendencias[i].motorista,
+                        "resumo": Pendencias[i].resumo,
+                        "itemManutencaoId": Pendencias[i].itemManutencaoId,
+                        "descricao": Pendencias[i].descricao,
+                        "motoristaId": Pendencias[i].motoristaId,
+                        "imagemOcorrencia": Pendencias[i].imagemOcorrencia,
+                        "itemManutencaoId": Pendencias[i].itemManutencaoId,
+                        "viagemId": Pendencias[i].viagemId,
+                    }).draw();
+                }
+
+                //debugger;
+
+            }
+
+            //Remove a linha excluída
+            dataTableItens
+                .row($(this).parents('tr'))
+                .remove()
+                .draw();
+        });
+
+        $('#tblOcorrencia').on('click', 'a.btnSeleciona', function () {
+            dataTableOcorrencias
+                .row($(this).parents('tr'))
+                .remove()
+                .draw();
+        });
+
+        $('#tblPendencia').on('click', 'a.btnSeleciona', function () {
+            dataTablePendencias
+                .row($(this).parents('tr'))
+                .remove()
+                .draw();
+        });
+
+    </script>
+
+    @*-------------- Gerencia o Modal de Inserção de Itens ----------------
+        =====================================================================*@
+    <script>
+
+        // Botão Fechar do Modal
+        //=============================
+        $("#btnFechar").click(function (e) {
+            $("div").removeClass("modal-backdrop");
+            $('body').removeClass('modal-open');
+
+        });
+
+        var defaultRTE;
+        var ImagemSelecionada = "semimagem.jpg";
+
+        function onCreate() {
+
+            defaultRTE = this;
+
+        }
+
+        $('#modalManutencao').on('shown.bs.modal', function (event) {
+
+            defaultRTE.refreshUI();
+
+            document.getElementById("txtData").value = moment(Date()).format("YYYY-MM-DD");
+
+            //Exibem "Sem Imagem"
+            $('#imgViewerItem').attr('src', "/DadosEditaveis/ImagensOcorrencias/" + "semimagem.jpg");
+
+
+        }).on("hide.bs.modal", function (event) {
+
+            document.getElementById("txtData").value = '';
+            document.getElementById("txtResumo").value = '';
+            var descricao = document.getElementById('rteManutencao').ej2_instances[0];
+            descricao.value = '';
+            var motorista = document.getElementById('lstMotorista').ej2_instances[0];
+            motorista.value = '';
+
+            //Limpa o controle de Upload de arquivos
+            var upload = $("#txtFileItem").data("kendoUpload");
+            upload.clearAllFiles();
+
+        });
+
+        // Botão Inserir Item de Ocorrência do Modal
+        //==========================================
+        $("#btnInsereItem").click(function (e) {
+
+            e.preventDefault();
+
+            //Pega o arquivo de imagem selecionado
+            ImagemOcorrencia = ImagemSelecionada
+
+            //debugger;
+
+            DataItem = $("#txtData").val();
+            Resumo = $("#txtResumo").val();
+
+            DataItem = DataItem.substring(8, 10) + "/" + DataItem.substring(5, 7) + "/" + DataItem.substring(0, 4);
+
+            if (Resumo === '') {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O Resumo do Item é obrigatório",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            var Descricao = document.getElementById('rteManutencao').ej2_instances[0];
+            var Motorista = document.getElementById('lstMotorista').ej2_instances[0];
+
+            $('#tblItens').DataTable().row.add({
+                "tipoItem": "Inserção Manual",
+                "numFicha": "N/A",
+                "dataItem": DataItem,
+                "nomeMotorista": Motorista.text,
+                "resumo": `<div class='text-center'><a aria-label='&#9881; (${removeHTML(Descricao.value)})' data-microtip-position='top' role='tooltip' data-microtip-size='medium' style='cursor:pointer;'>${Resumo}</a></div>`,
+                "itemManutencaoId": `<a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Remover o Item!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"><i class="far fa-trash-alt"></i></a>
+                                                         <a class="btn btn-xs text-white btnFoto fundo-ebony btn_margem" data-toggle="modal" data-target="#modalFotoManutencao" id="btnFoto" aria-label="Exibe Imagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;"'>
+                                                         <i class="fa-regular fa-camera-polaroid"></i></div>`,
+                "itemManutencaoId": "",
+                "descricao": removeHTML(Descricao.value),
+                "resumo": Resumo,
+                "motoristaId": Motorista.value,
+                "imagemOcorrencia": ImagemOcorrencia,
+                "viagemId": ""
+            }).draw(false);
+
+            $('#modalManutencao').hide();
+            $("div").removeClass("modal-backdrop");
+            $('body').removeClass('modal-open');
+
+        });
+    </script>
+
+
+    @*--------------- Controla Carregamento da Foto ------------
+        ==========================================================*@
+    <script>
+
+        var LinhaSelecionada = 0;
+
+
+        $('#tblItens tbody').on('click', 'tr', function () {
+            LinhaSelecionada = dataTableItens.row(this).index();
+        });
+
+        //Modal da Foto da Ocorrência - Não pode Editar
+        //---------------------------------------------
+        $("#modalFotoOcorrencia").modal
+            ({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                var RowNumber = $(event.relatedTarget).closest("tr").find("td:eq(8)").text() - 1;
+
+                $('#imgViewerOcorrencia').removeAttr("src")
+
+                //Exibem Imagem da Ocorrência
+                if (dataTableOcorrencias.cell(RowNumber, 7).data() != null && dataTableOcorrencias.cell(RowNumber, 7).data() != '' && dataTableOcorrencias.cell(RowNumber, 7).data() != 'null') {
+                    $('#imgViewerOcorrencia').attr('src', "/DadosEditaveis/ImagensOcorrencias/" + dataTableOcorrencias.cell(RowNumber, 7).data());
+                }
+                else {
+                    $('#imgViewerOcorrencia').attr('src', "/DadosEditaveis/ImagensOcorrencias/semimagem.jpg");
+                }
+
+                //debugger;
+
+            }).on("hide.bs.modal", function (event) {
+                $('#imgViewerOcorrencia').removeAttr("src")
+            });
+
+
+        //Modal da Foto da Pendência - Não pode Editar
+        //---------------------------------------------
+        $("#modalFotoPendencia").modal
+            ({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                var RowNumber = $(event.relatedTarget).closest("tr").find("td:eq(10)").text() - 1;
+
+                $('#imgViewerPendencia').removeAttr("src")
+
+                //Exibem Imagem da Ocorrência
+                if (dataTablePendencias.cell(RowNumber, 7).data() != null && dataTablePendencias.cell(RowNumber, 7).data() != '' && dataTablePendencias.cell(RowNumber, 7).data() != 'null') {
+                    $('#imgViewerPendencia').attr('src', "/DadosEditaveis/ImagensOcorrencias/" + dataTablePendencias.cell(RowNumber, 7).data());
+                }
+                else {
+                    $('#imgViewerPendencia').attr('src', "/DadosEditaveis/ImagensOcorrencias/semimagem.jpg");
+                }
+
+                //debugger;
+
+            }).on("hide.bs.modal", function (event) {
+                $('#imgViewerPendencia').removeAttr("src")
+            });
+
+
+
+        //Modal da Foto do Item de Manutenção - Pode Editar
+        //-------------------------------------------------
+        $("#modalFotoManutencao").modal
+            ({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                $('#imgViewerNovo').removeAttr("src")
+
+                //Exibem Imagem da Ocorrência
+                if (dataTableItens.cell(LinhaSelecionada, 10).data() != null && dataTableItens.cell(LinhaSelecionada, 10).data() != '' && dataTableItens.cell(LinhaSelecionada, 10).data() != 'null') {
+                    $('#imgViewerNovo').attr('src', "/DadosEditaveis/ImagensOcorrencias/" + dataTableItens.cell(LinhaSelecionada, 10).data());
+                }
+                else {
+                    $('#imgViewerNovo').attr('src', "/DadosEditaveis/ImagensOcorrencias/semimagem.jpg");
+                }
+
+                //debugger;
+
+            }).on("hide.bs.modal", function (event) {
+                $('#imgViewerNovo').removeAttr("src")
+                //Limpa o controle de Upload de arquivos
+                var upload = $("#txtFileItemNovo").data("kendoUpload");
+                upload.clearAllFiles();
+            });
+
+
+        //Carrega a foto no controle e redimensiona o painel
+        //==================================================
+        $("#txtFile").change(function (event) {
+
+            var files = event.target.files;
+            $("#imgViewer").attr("src", window.URL.createObjectURL(files[0]));
+
+        });
+        $("#txtFileItem").change(function (event) {
+
+            var files = event.target.files;
+            //$("#imgViewerItem").attr("src", files[0]);
+
+            ImagemSelecionada = files[0].name;
+
+            var image = document.getElementById('imgViewerItem');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        });
+
+    </script>
+
+    <script>
+
+        //Desabilita o Drop Zone
+        kendo.ui.Upload.fn._supportsDrop = function () { return false; }
+
+        $("#txtFileItem").kendoUpload({
+            async: {
+                saveUrl: "/Uploads/UploadPDF?handler=SaveIMGManutencao",
+                removeUrl: "/Uploads/UploadPDF?handler=RemoveIMGManutencao"
+            },
+            localization: {
+                select: "Selecione a imagem...",
+                headerStatusUploaded: "Arquivo Carregado",
+                uploadSuccess: "Arquivo Carregado com Sucesso"
+            },
+            //validation: {
+            //    allowedExtensions: [".jpg"],
+            //},
+            success: onSuccess
+        });
+
+        function onSuccess(e) {
+        }
+    </script>
+
+    <script>
+
+        //Desabilita o Drop Zone
+        kendo.ui.Upload.fn._supportsDrop = function () { return false; }
+
+        $("#txtFileItemNovo").kendoUpload({
+            async: {
+                saveUrl: "/Uploads/UploadPDF?handler=SaveIMGManutencaoNovo",
+                removeUrl: "/Uploads/UploadPDF?handler=RemoveIMGManutencaoNovo"
+            },
+            localization: {
+                select: "Selecione a imagem...",
+                headerStatusUploaded: "Arquivo Carregado",
+                uploadSuccess: "Arquivo Carregado com Sucesso"
+            },
+            validation: {
+                allowedExtensions: [".jpg"],
+            },
+            success: onSuccess
+        });
+
+        function onSuccess(e) {
+
+            var files = e.files;
+
+            ImagemSelecionada = files[0].name;
+            $('#imgViewerNovo').attr('src', "/DadosEditaveis/ImagensOcorrencias/" + files[0].name);
+
+
+        }
+    </script>
+
+    <script>
+
+        // Botão Inserir Foto Item de Ocorrência do Modal
+        //==========================================
+        $("#btnAdicionarFoto").click(function (e) {
+
+            e.preventDefault();
+
+            //Pega o arquivo de imagem selecionado
+            ImagemOcorrencia = ImagemSelecionada
+
+            dataTableItens.cell(LinhaSelecionada, 10).data(ImagemOcorrencia).draw();
+
+            $('#modalFotoManutencao').hide();
+            $("div").removeClass("modal-backdrop");
+            $('body').removeClass('modal-open');
+
+
+        });
+
+    </script>
+
+    <script>
+
+        function fnExibeReserva() {
+
+            //debugger;
+
+            if (document.getElementById("lstReserva").value === "1") {
+
+                document.getElementById("divReserva").style.display = "block";
+            }
+            else {
+                document.getElementById("divReserva").style.display = "none";
+            }
+        }
+
+    </script>
+
+
+}

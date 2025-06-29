@@ -1,0 +1,174 @@
+﻿@page
+@model FrotiX.Models.Motorista
+
+
+@{
+    ViewData["Title"] = "Motoristas";
+    ViewData["PageName"] = "motorista_index";
+    ViewData["Heading"] = "<i class='fad fa-user-tie'></i> Cadastros: <span class='fw-300'>Motoristas</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-user-tie";
+}
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+
+    .imgViewer {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Motorista/Upsert" class="btn btn-info">
+                        <i class="fal fa-user-tie">
+                        </i> &nbsp; Adicionar Motorista
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblMotorista" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ponto</th>
+                                    <th>CNH</th>
+                                    <th>Categoria</th>
+                                    <th>Celular</th>
+                                    <th>Unidade</th>
+                                    <th>Contrato</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* -------------- Modal da Foto do Motorista -------------- *@
+@* ======================================================== *@
+<div class="modal fade" id="modalFoto">
+    <div class="modal-dialog modal-md" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header d-block">
+                <h4 class="modal-title" id="DynamicModalLabel">Foto do Motorista</h4>
+            </div>
+
+            <div class="modal-body table-bordered container-fluid">
+
+                <img id="imgViewer" width="300" style="border: 1px solid #000000; margin-top: 10px;" />
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock{
+
+
+    <script src="~/js/cadastros/motorista.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            //Configura a Exibição do Modal de Foto
+            //====================================
+
+            // jQuery.noConflict();
+
+            $("#modalFoto").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                var button = $(event.relatedTarget); // button the triggered modal
+
+                var MotoristaId = button.data("id"); //data-id of button which is equal to id (primary key) of person
+
+                console.log(MotoristaId);
+
+                var id = MotoristaId;
+
+                var label = document.getElementById("DynamicModalLabel");
+                label.innerHTML = ("");
+
+                $.ajaxSetup({ async: false });
+
+                $.ajax({
+                    type: "get",
+                    url: "/api/Motorista/PegaFotoModal",
+                    data: { id: id },
+                    success: function (res) {
+
+
+                        console.log(res);
+
+                        var motorista = $(event.relatedTarget).closest("tr").find("td:eq(0)").text();
+                        console.log(motorista);
+
+                        var label = document.getElementById("DynamicModalLabel");
+
+                        console.log(label);
+
+                        $('#imgViewer').removeAttr("src")
+
+                        if (res === false) {
+                            label.innerHTML = ("Motorista sem Foto: <b>" + motorista + "</b>");
+                            $('#imgViewer').attr('src', "/Images/barbudo.jpg");
+                        }
+                        else {
+                            label.innerHTML = ("Foto do Motorista: <b>" + motorista + "</b>");
+                            $('#imgViewer').attr('src', "data:image/jpg;base64," + res);
+                        }
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+            }).on("hide.bs.modal", function (event) {
+                $('#imgViewer').removeAttr("src")
+            });
+
+        });
+
+    </script>
+
+}
+

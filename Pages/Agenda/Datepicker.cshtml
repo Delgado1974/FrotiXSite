@@ -1,0 +1,253 @@
+﻿@page
+@model FrotiX.Pages.Agenda.DatepickerModel
+@using FrotiX.Models
+@using Syncfusion.EJ2
+
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Date Picker with List Box</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+	<!-- Bootstrap Datepicker CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+	<style>
+		body {
+			margin-top: 1cm;
+		}
+
+		.container {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			margin-top: 20px;
+		}
+
+		.date-picker-container {
+			margin-right: 20px;
+		}
+
+		.listbox-container {
+			position: relative;
+			width: 200px;
+		}
+
+		.badge-overlay {
+			position: absolute;
+			top: -10px;
+			right: -10px;
+			z-index: 2;
+			font-size: 0.8rem;
+			padding: 0.3em 0.45em;
+			background-color: #E55B13;
+		}
+
+		.listbox {
+			height: 250px;
+			width: 200px;
+			overflow-y: auto;
+			position: relative;
+			z-index: 1;
+		}
+
+		.list-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		/* Reduce padding and font size for list items */
+		#dateList .list-group-item {
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+			font-size: 0.9rem;
+		}
+		/* Adjust the remove button size */
+		.remove-btn {
+			margin-left: 10px;
+			padding: 0.25rem 0.5rem;
+			font-size: 0.8rem;
+		}
+		/* Define your custom orange color */
+		:root {
+			--datepicker-primary-color: #E55B13;
+		}
+		/* Apply styles to the datepicker */
+		.datepicker {
+			font-family: 'Poppins', sans-serif;
+			color: var(--bs-body-color);
+		}
+			/* Header elements */
+			.datepicker .datepicker-switch,
+			.datepicker .prev,
+			.datepicker .next {
+				font-size: 1rem;
+				color: var(--datepicker-primary-color);
+			}
+			/* Active date */
+			.datepicker .active,
+			.datepicker .active:hover,
+			.datepicker .active:focus {
+				background-color: var(--datepicker-primary-color);
+				color: #fff;
+				border-radius: 0.25rem;
+			}
+			/* Hover state */
+			.datepicker table tr td.day:hover {
+				background-color: rgba(229, 91, 19, 0.1);
+				border-radius: 0.25rem;
+			}
+			/* Today's date highlight */
+			.datepicker table tr td.today {
+				border-color: var(--datepicker-primary-color);
+			}
+			/* Weekdays */
+			.datepicker table tr th {
+				color: var(--datepicker-primary-color);
+			}
+			/* Remove focus outline */
+			.datepicker td, .datepicker th {
+				outline: none;
+			}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<!-- Date Picker Control -->
+		<div class="date-picker-container">
+			<input type="text" id="datePicker" class="form-control" placeholder="Selecione os Dias" />
+		</div>
+
+		<!-- List Box Container -->
+		<div class="listbox-container">
+			<!-- Badge Overlay -->
+			<span class="badge badge-overlay" id="itemCount">Dias: 0</span>
+			<!-- List Box -->
+			<div class="card">
+				<div class="card-header">
+					Dias Selecionados
+				</div>
+				<div class="list-group listbox" id="dateList">
+					<!-- List items will be added here -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- jQuery (Required for Bootstrap Datepicker) -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Bootstrap JS Bundle -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Bootstrap Datepicker JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+	<!-- Bootstrap Datepicker Language (pt-BR) -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js" charset="UTF-8"></script>
+
+	<script>
+		// JavaScript to handle date selection and list management
+		document.addEventListener('DOMContentLoaded', function() {
+			var selectedDates = []; // Store timestamps
+
+			var datePicker = $('#datePicker');
+			var dateList = document.getElementById('dateList');
+			var itemCount = document.getElementById('itemCount');
+
+			function updateBadge() {
+				itemCount.textContent = 'Dias: ' + selectedDates.length;
+			}
+
+			function formatDate(dateObj) {
+				var day = ('0' + dateObj.getDate()).slice(-2);
+				var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+				var year = dateObj.getFullYear();
+				return day + '/' + month + '/' + year;
+			}
+
+			function renderDateList() {
+				dateList.innerHTML = '';
+				selectedDates.forEach(function(timestamp) {
+					var dateObj = new Date(timestamp);
+					var dateText = formatDate(dateObj);
+
+					var listItem = document.createElement('div');
+					listItem.className = 'list-group-item list-item';
+					listItem.setAttribute('data-timestamp', timestamp);
+
+					var span = document.createElement('span');
+					span.textContent = dateText;
+
+					var removeBtn = document.createElement('button');
+					removeBtn.className = 'btn btn-sm btn-danger remove-btn';
+					removeBtn.textContent = 'Excluir';
+					removeBtn.addEventListener('click', function() {
+						removeDate(timestamp);
+						// Update the datepicker selection
+						if (selectedDates.length > 0) {
+							var dateObjects = selectedDates.map(function(t) { return new Date(t); });
+							datePicker.datepicker('setDates', dateObjects);
+						} else {
+							datePicker.datepicker('clearDates');
+						}
+					});
+
+					listItem.appendChild(span);
+					listItem.appendChild(removeBtn);
+
+					dateList.appendChild(listItem);
+				});
+				updateBadge();
+			}
+
+			function addDate(timestamp) {
+				if (!selectedDates.includes(timestamp)) {
+					selectedDates.push(timestamp);
+					selectedDates.sort(function(a, b) { return a - b; });
+					renderDateList();
+				}
+			}
+
+			function removeDate(timestamp) {
+				selectedDates = selectedDates.filter(function(t) { return t !== timestamp; });
+				renderDateList();
+			}
+
+			datePicker.datepicker({
+				multidate: true,
+				format: 'dd/mm/yyyy',
+				language: 'pt-BR',
+				autoclose: false
+			}).on('changeDate', function(e) {
+				var dates = e.dates;
+				var selectedDateTimestamps = dates.map(function(d) {
+					// Set hours to 0 to avoid time zone issues
+					d.setHours(0, 0, 0, 0);
+					return d.getTime();
+				});
+
+				// Remove dates that are in selectedDates but not in selectedDateTimestamps
+				selectedDates.slice().forEach(function(timestamp) {
+					if (!selectedDateTimestamps.includes(timestamp)) {
+						removeDate(timestamp);
+					}
+				});
+
+				// Add dates that are in selectedDateTimestamps but not in selectedDates
+				selectedDateTimestamps.forEach(function(timestamp) {
+					if (!selectedDates.includes(timestamp)) {
+						addDate(timestamp);
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+﻿@page
+@model FrotiX.Models.MarcaVeiculo
+
+@{
+    ViewData["Title"] = "Marcas de Veículos";
+    ViewData["PageName"] = "marcaveiculo_index";
+    ViewData["Heading"] = "<i class='fad fa-car-garage'></i> Cadastros: <span class='fw-300'>Marcas de Veículos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-regular fa-car-garage";
+}
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/MarcaVeiculo/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-car-garage">
+                        </i> &nbsp; Adicionar Marca de Veículo
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblMarcaVeiculo" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Marca do Veículo</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js//cadastros/marcaveiculo.js"></script>
+}

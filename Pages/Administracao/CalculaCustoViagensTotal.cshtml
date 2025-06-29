@@ -1,0 +1,120 @@
+﻿@page
+@model FrotiX.Models.Abastecimento
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@{
+    ViewData["Title"] = "Importa Abastecimentos";
+    ViewData["PageName"] = "importa_abastecimento_index";
+    ViewData["Heading"] = "<i class='fad fa-gas-pump'></i> Importação: <span class='fw-300'>Abastecimentos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-gas-pump";
+
+}
+
+@section HeadBlock {
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
+    <link rel="stylesheet" href="~/css/microtip.css" />
+
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+@*<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>*@
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content">
+
+                    <div class="row">
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">Serviços de Atualização dos Custos das Viagens</h2>
+                        </div>
+                    </div>
+
+                    <button id="btnCalculaCustoViagens" class="btn btn-primary form-control">Calcula Custo das Viagens</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 pt-2">
+        <div class="clearfix" id="divCustos">&nbsp;</div>
+        <div class="row">
+            <div id="divPrint"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section ScriptsBlock{
+
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="js/loading_script.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            document.getElementById("btnCalculaCustoViagens").addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                //------ Aciona o Loading Spinner ------------------
+                //==================================================
+                $('#divCustos').LoadingScript('method_12', {
+                    'background_image': 'img/loading7.png',
+                    'main_width': 60,
+                    'animation_speed': 10,
+                    'additional_style': '',
+                    'after_element': false
+                });
+
+
+                $.ajax({
+                    type: "post",
+                    url: "api/viagem/CalculaCustoViagens",
+                    success: function (data) {
+                        $('#divCustos').LoadingScript('destroy');
+                        toastr.success("Viagens Calculadas");
+                    },
+                    error: function (data) {
+                        alert('error');
+                        console.log(data);
+                    }
+                });
+
+            });
+
+        });
+
+    </script>
+
+}

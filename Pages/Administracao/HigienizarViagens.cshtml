@@ -1,0 +1,257 @@
+﻿@page
+@model FrotiX.Pages.Administracao.HigienizarViagensModel
+@{
+    ViewData["Title"] = "Higienizar Origens/Destinos das Viagens";
+    ViewData["PageName"] = "higienizarviagens_index";
+    ViewData["Heading"] = "<i class='fas fa-broom'></i> Administração: <span class='fw-300'>Higienizar Origens/Destinos da Viagem</span>";
+    ViewData["Category1"] = "Administração";
+    ViewData["PageIcon"] = "fas fa-broom";
+
+}
+
+<style>
+    .section-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .transfer-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 60px;
+    }
+
+        .transfer-buttons button {
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    .right-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        position: relative;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 10px;
+    }
+
+        .input-group input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .input-group button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+    .badge-contador {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        z-index: 10;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        border-radius: 50%;
+        display: none;
+        animation: none;
+    }
+
+
+    .badge-contador {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: bold;
+        border-radius: 50%;
+        background-color: #ff8800;
+        color: white;
+        display: none;
+        box-shadow: 0 0 0 2px white;
+    }
+
+    .ejs-container,
+    .e-listbox {
+        width: 100% !important;
+    }
+
+    .e-list-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .e-custom-listbox {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding: 0.5rem;
+    }
+
+    .e-badge-orange {
+        background-color: #ffa726;
+        color: white;
+    }
+
+    .e-badge-warning {
+        background-color: #ffa726 !important;
+        color: white !important;
+    }
+
+    .e-badge {
+        border-radius: 12px !important; /* ou 999px para deixar tipo "pílula" */
+        padding: 0.35em 0.75em;
+        font-size: 0.85em;
+    }
+
+    .e-badge-rounded {
+        border-radius: 999px !important;
+        padding: 0.3em 0.75em;
+        font-size: 0.85em;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        height: 24px;
+        min-width: 28px;
+        line-height: 1;
+    }
+
+    .e-list-item.entering {
+        animation: fadeSlideIn 0.4s ease;
+    }
+
+    .e-list-item.highlighted {
+        animation: highlight 1s ease;
+    }
+
+    /* foco animado no input */
+    .input-group input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        transition: all 0.3s ease-in-out;
+    }
+
+</style>
+
+@section HeadBlock {
+
+}
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content">
+
+                    <div class="row">
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">Higienizar Origens/Destinos da Viagem</h2>
+                        </div>
+                    </div>
+
+                    <!-- ORIGEM -->
+                    <div class="card p-3 mb-4">
+                        <h4 class="mb-3">
+                            Origem
+                            <span id="badgeOrigens" class="e-badge e-badge-primary e-badge-rounded">@Model.OrigensDistintas?.Count</span>
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <ejs-listbox id="listOrigens" dataSource="@Model.OrigensDistintas" allowDragAndDrop="true"
+                                             scope="origens" height="250px" cssClass="e-custom-listbox w-100">
+                                </ejs-listbox>
+                            </div>
+
+                            <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
+                                <button class="e-btn mb-2 w-100" type="button" onclick="moverSelecionados('listOrigens', 'listOrigensSelecionadas')">→</button>
+                                <button class="e-btn w-100" type="button" onclick="moverSelecionados('listOrigensSelecionadas', 'listOrigens')">←</button>
+                            </div>
+
+                            <div class="col-md-5">
+                                <h5>
+                                    Origens Selecionadas
+                                    <span id="badgeOrigensSelecionadas" class="e-badge e-badge-warning e-badge-rounded">@Model.OrigensParaCorrigir?.Count</span>
+                                </h5>
+                                <ejs-listbox id="listOrigensSelecionadas" dataSource="@Model.OrigensParaCorrigir" allowDragAndDrop="true"
+                                             scope="origens" height="250px" cssClass="e-custom-listbox w-100">
+                                </ejs-listbox>
+
+                                <div class="input-group mt-3">
+                                    <input type="text" id="txtNovaOrigem" class="form-control" placeholder="Novo valor de origem..." />
+                                    <button id="btnGravarOrigem" class="btn btn-success" type="button">Gravar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DESTINO -->
+                    <div class="card p-3">
+                        <h4 class="mb-3">
+                            Destino
+                            <span id="badgeDestinos" class="e-badge e-badge-primary e-badge-rounded">@Model.DestinosDistintos?.Count</span>
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <ejs-listbox id="listDestinos" dataSource="@Model.DestinosDistintos" allowDragAndDrop="true"
+                                             scope="destinos" height="250px" cssClass="e-custom-listbox w-100">
+                                </ejs-listbox>
+                            </div>
+
+                            <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
+                                <button class="e-btn mb-2 w-100" type="button" onclick="moverSelecionados('listDestinos', 'listDestinosSelecionados')">→</button>
+                                <button class="e-btn w-100" type="button" onclick="moverSelecionados('listDestinosSelecionados', 'listDestinos')">←</button>
+                            </div>
+
+                            <div class="col-md-5">
+                                <h5>
+                                    Destinos Selecionados
+                                    <span id="badgeDestinosSelecionados" class="e-badge e-badge-warning e-badge-rounded">@Model.DestinosParaCorrigir?.Count</span>
+                                </h5>
+                                <ejs-listbox id="listDestinosSelecionados" dataSource="@Model.DestinosParaCorrigir" allowDragAndDrop="true"
+                                             scope="destinos" height="250px" cssClass="e-custom-listbox w-100">
+                                </ejs-listbox>
+
+                                <div class="input-group mt-3">
+                                    <input type="text" id="txtNovoDestino" class="form-control" placeholder="Novo valor de destino..." />
+                                    <button id="btnGravarDestino" class="btn btn-success" type="button">Gravar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsBlock {
+    <script src="~/js/higienizarviagens_050.js"></script>
+}

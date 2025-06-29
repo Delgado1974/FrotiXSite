@@ -1,0 +1,1473 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Empenho.UpsertModel
+
+
+@{
+    ViewData["Title"] = "Empenhos";
+    ViewData["PageName"] = "empenho_index";
+    ViewData["Heading"] = "<i class='fad fa-money-check-alt'></i> Cadastros: <span class='fw-300'>Empenhos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-money-check-alt";
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    escondido {
+        visibility: hidden;
+    }
+
+    .input-icons i {
+        position: absolute;
+    }
+
+    .input-icons {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .icon {
+        padding: 10px;
+        min-width: 40px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .campodireita {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    h3 span {
+        color: red;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/microtip.css" />
+
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty)
+                        {
+                            <input id="txtEmpenhoId" type="hidden" asp-for="EmpenhoObj.Empenho.EmpenhoId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty ? "Atualizar " : "Criar ") Empenho  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.NotaEmpenho"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.NotaEmpenho"></span>
+                                        <input id="txtNotaEmpenho" class="form-control form-control-xs" asp-for="EmpenhoObj.Empenho.NotaEmpenho" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.DataEmissao"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.DataEmissao"></span>
+                                        <input id="txtDataEmissao" class="form-control form-control-xs" asp-for="EmpenhoObj.Empenho.DataEmissao" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.VigenciaInicial"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.VigenciaInicial"></span>
+                                        <input id="txtVigenciaInicial" class="form-control form-control-xs" asp-for="EmpenhoObj.Empenho.VigenciaInicial" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.VigenciaFinal"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.VigenciaFinal"></span>
+                                        <input id="txtVigenciaFinal" class="form-control form-control-xs" asp-for="EmpenhoObj.Empenho.VigenciaFinal" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.AnoVigencia"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="EmpenhoObj.Empenho.AnoVigencia"></span>
+                                        <select id="lstVigencia" class="form-control form-control-xs" asp-for="EmpenhoObj.Empenho.AnoVigencia">
+                                            <option value="">-- Ano --</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Contrato/Ata</label>
+                                        <select id="lstInstrumento" class="form-control form-control-xs">
+                                            <option value=""> -- Selecione um Instrumento -- </option>
+                                            <option value=0>Contrato</option>
+                                            <option value=1>Ata de Registro de Preços</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="divContrato" class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.ContratoId"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.ContratoId"></span>
+                                        @Html.DropDownListFor(m => m.EmpenhoObj.Empenho.ContratoId,
+                                                                Model.EmpenhoObj.ContratoList,
+                                                                "- Selecione um Contrato -",
+                                                                new { @class = "form-control form-control-xs" })
+                                    </div>
+                                </div>
+                                <div id="divAta" class="col-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.AtaId"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.AtaId"></span>
+                                        @Html.DropDownListFor(m => m.EmpenhoObj.Empenho.AtaId,
+                                                                Model.EmpenhoObj.AtaList,
+                                                                "- Selecione uma Ata -",
+                                                                new { @class = "form-control form-control-xs" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.SaldoInicial"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.SaldoInicial"></span>
+                                        <input id="SaldoInicial" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="EmpenhoObj.Empenho.SaldoInicial" onKeyPress="return(moeda(this,'.',',',event))" />
+                                        @*<input id="SaldoInicial" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="EmpenhoObj.Empenho.SaldoInicial"/>*@
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EmpenhoObj.Empenho.SaldoFinal"></label>
+                                        <span class="text-danger" asp-validation-for="EmpenhoObj.Empenho.SaldoFinal"></span>
+                                        <input id="SaldoFinal" class="form-control form-control-xs" disabled data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="EmpenhoObj.Empenho.SaldoFinal" onKeyPress="return(moeda(this,'.',',',event))" />
+                                        @*<input id="SaldoFinal" class="form-control form-control-xs" disabled data-inputmask="'alias': 'currency'" style="text-align: right;" asp-for="EmpenhoObj.Empenho.SaldoFinal" />*@
+                                    </div>
+                                </div>
+                                <div class="col-3" float="right">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Notas Fiscais do Empenho</label>
+                                        <input id="SaldoNotas" class="form-control form-control-xs campodireita" data-inputmask="'alias': 'currency'" style="text-align: right;" disabled />
+                                    </div>
+                                </div>
+                                <div>
+                                    <a class="btn btn-nfs btn-primary btn-xs text-white" data-toggle="modal" data-target="#modalNF" id="rowdata" aria-label="Notas Fiscais do Empenho!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin-top: 32px;">
+                                        <i class="fal fa-file-invoice-dollar"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <br />
+                            <br />
+
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div id="divSubmit" class="col-12 col-md-4 pb-2">
+                                            @if (Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty)
+                                            {
+                                                <button id="btnSubmit" method="post" asp-page-handler="Edit" asp-route-id=@Model.EmpenhoObj.Empenho.EmpenhoId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnSubmit" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+                                        </div>
+                                        <div class="col-12" hidden>
+                                            @if (Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty)
+                                            {
+                                                <button id="btnEscondido" method="post" asp-page-handler="Edit" asp-route-id=@Model.EmpenhoObj.Empenho.EmpenhoId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnEscondido" type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+                                        </div>
+
+                                        <div class="col-12 col-md-4">
+                                            <a asp-page="./Index" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>ebug
+
+                                        <br />
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+@*                           <div class="form-group row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @if (Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty)
+                                            {
+                                                <button id="btnEdita" method="post" asp-page-handler="Edit" asp-route-id=@Model.EmpenhoObj.Empenho.EmpenhoId class="btn btn-primary form-control">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnAdiciona"  type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+                                        </div>
+                                        <div class="col-6">
+                                            <a asp-page="./Index" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+ *@                     </div>
+
+                        @if (Model.EmpenhoObj.Empenho.EmpenhoId != Guid.Empty)
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="panel-content ">
+                                        <div class="box-body">
+                                            <br />
+                                            <h3 id="TituloAportes">Aportes/Reforços ao Empenho</h3>
+                                            <br />
+                                            <table id="tblAporte" class="table table-bordered table-striped" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data Aporte</th>
+                                                        <th>Descrição</th>
+                                                        <th>Valor</th>
+                                                        <th>Ação</th>
+                                                        <th>Id</th>
+                                                        <th>Valor Original</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="panel-content ">
+                                        <div class="box-body">
+                                            <br />
+                                            <h3 id="TituloAnulacoes">Anulações do Empenho</h3>
+                                            <br />
+                                            <table id="tblanulacao" class="table table-bordered table-striped" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data Anulação</th>
+                                                        <th>Descrição</th>
+                                                        <th>Valor</th>
+                                                        <th>Ação</th>
+                                                        <th>Id</th>
+                                                        <th>Valor Original</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal Aportar -->
+<div class="modal fade" id="modalAporte">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Aportar Valores ao Empenho</h4>
+                @*<button type="button" class="close" data-dismiss="modal">&times;<span aria-hidden="true"></span></button>*@
+            </div>
+
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                @*<h6 id="modal_body">Corpo do Modal</h6>*@
+                <form id="frmAporte">
+                    <input type="hidden" id="txtEmpenhoId" />
+                    <input type="hidden" id="txtMovimentacaoId" />
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Data do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDataAporte" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Descrição</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDescricaoAporte" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Valor do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtValorAporte" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnAportar" class="btn btn-primary" type="submit" value="SUBMIT">Editar Aporte</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal anulacao -->
+<div class="modal fade" id="modalanulacao">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Anular Valores do Empenho</h4>
+            </div>
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                <form id="frmanulacao">
+                    <input type="hidden" id="txtEmpenhoId" />
+                    <input type="hidden" id="txtMovimentacaoId" />
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Data do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDataanulacao" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Descrição</label>
+                                <span class="text-danger"></span>
+                                <input id="txtDescricaoanulacao" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Valor do Aporte</label>
+                                <span class="text-danger"></span>
+                                <input id="txtValoranulacao" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnAnular" class="btn btn-primary" type="submit" value="SUBMIT">Editar Anulação</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Notas Fiscais -->
+<div class="modal fade" id="modalNF">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Notas Fiscais do Empenho</h4>
+            </div>
+
+            <div class="modal-body table-bordered">
+                <!-- Dynamic Data is displayed in this part of the modal body -->
+                <!-- Modal body id = "modal_body" (note underscore) -->
+                <form id="frmanulacao">
+                    <table id="tblNotaFiscal" class="table table-bordered table-striped" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Número da Nota</th>
+                                <th>Data de Emissão</th>
+                                <th>Valor</th>
+                                <th>Valor de Glosa</th>
+                                <th>Motivo da Glosa</th>
+                                <th>Ação</th>
+                                <th>ContratoId</th>
+                                <th>EmpenhoId</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+
+
+
+@section ScriptsBlock
+{
+    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
+    @* <script src="~/js/formplugins/select2/select2.bundle.js"></script> *@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/js/cadastros/aporte.js"></script>
+    <script src="~/js/cadastros/anulacao.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script>
+        var AporteTable;
+        var anulacaoTable;
+        var Id;
+        $(document).ready(function () {
+
+            document.getElementById("divContrato").style.display = "none"
+            document.getElementById("divAta").style.display = "none"
+
+            if ('@Model.EmpenhoObj.Empenho.EmpenhoId' != null && '@Model.EmpenhoObj.Empenho.EmpenhoId' != '00000000-0000-0000-0000-000000000000') {
+
+                $("#SaldoInicial").attr("disabled", "true");
+
+                console.log("ContratoId: " + '@Model.EmpenhoObj.Empenho.ContratoId');
+                console.log("AtaId: " + '@Model.EmpenhoObj.Empenho.AtaId');
+
+                if ('@Model.EmpenhoObj.Empenho.ContratoId' != null && '@Model.EmpenhoObj.Empenho.ContratoId' != '' ) {
+
+                    document.getElementById("divContrato").style.display = "block";
+                    document.getElementById("lstInstrumento").value = 0;
+                }
+
+                if ('@Model.EmpenhoObj.Empenho.AtaId' != null && '@Model.EmpenhoObj.Empenho.AtaId' != '') {
+
+                    document.getElementById("divAta").style.display = "block";
+                    document.getElementById("lstInstrumento").value = 1;
+                }
+
+
+            }
+
+            console.log('@Model.EmpenhoObj.Empenho.EmpenhoId');
+
+            $('table.display').dataTable(); //Permite múltiplas datatables em uma só página
+
+            $.ajax({
+                type: "get",
+                url: "/api/Empenho/SaldoNotas",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { Id: '@Model.EmpenhoObj.Empenho.EmpenhoId' },
+
+                success: function (data) {
+
+                    $('#SaldoNotas').val(data.saldonotas.toLocaleString({ style: "currency", currency: "BRL" }));
+
+                    var saldoinicial = $('#SaldoInicial').val().replace(",", ".");
+                    saldoinicial = Number(saldoinicial);
+                    $('#SaldoInicial').val(saldoinicial.toLocaleString({ style: "currency", currency: "BRL" }));
+
+                    var saldofinal = $('#SaldoFinal').val().replace(",", ".");
+                    saldofinal = Number(saldofinal);
+                    $('#SaldoFinal').val(saldofinal.toLocaleString({ style: "currency", currency: "BRL" }));
+
+                }
+            });
+        });
+
+        AporteTable = $('#tblAporte').DataTable({
+            "lengthChange": false,
+            "searching": false,
+            "bSort": false,
+            'columnDefs': [
+                {
+                    "targets": 0, // Data do Aporte
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 1, // Descricao
+                    "className": "text-left",
+                    "width": "15%"
+                },
+                {
+                    "targets": 2, // Valor
+                    "className": "text-right",
+                    "width": "10%"
+                },
+                {
+                    "targets": 3, // Ação
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 4, // MovimentacaoId
+                    "className": "text-center",
+                    "visible": false
+                },
+                {
+                    "targets": 5, // Valor não formatado
+                    "className": "text-center",
+                    "visible": false
+                }
+            ],
+            responsive: true,
+            "ajax": {
+                "url": "/api/empenho/listaaporte",
+                "type": "GET",
+                "datatype": "json",
+                "data": { Id: '@Model.EmpenhoObj.Empenho.EmpenhoId' },
+            },
+            "columns": [
+                { "data": "dataFormatada" },
+                { "data": "descricao" },
+                { "data": "valorFormatado" },
+                {
+                    "data": "movimentacaoId",
+                    "render": function (data) {
+                        return `<div class="text-center">
+                                <a class="btn btn-aporte btn-dark btn-xs text-white" data-toggle="modal" data-target="#modalAporte" id="rowdata" aria-label="Editar Aporte!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}' data-backdrop="false">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-deleteaporte btn-danger btn-xs text-white" aria-label="Excluir o Aporte!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}'>
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                    </div>`;
+                    },
+                },
+                { "data": "movimentacaoId" },
+                { "data": "valorOriginal" },
+
+            ],
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                "emptyTable": "Sem Dados para Exibição"
+            },
+            "width": "100%",
+            "footerCallback": function (row, data, start, end, display) {
+                total = this.api()
+                    .column(5)
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseInt(a) + parseInt(b);
+                    }, 0);
+                soma = total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                $("#TituloAportes").html("Aportes/Reforços do Empenho: " + soma);
+            }
+        });
+
+        anulacaoTable = $('#tblanulacao').DataTable({
+            "lengthChange": false,
+            "searching": false,
+            "bSort": false,
+            'columnDefs': [
+                {
+                    "targets": 0, // Data da anulacao
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 1, // Descricao
+                    "className": "text-left",
+                    "width": "15%"
+                },
+                {
+                    "targets": 2, // Valor
+                    "className": "text-right",
+                    "width": "10%",
+                    "createdCell": function (td, cellData, rowData, row, col)
+                        {
+                            $(td).css('color', 'red')
+                        }
+                },
+                {
+                    "targets": 3, // Ação
+                    "className": "text-center",
+                    "width": "10%"
+                },
+                {
+                    "targets": 4, // MovimentacaoId
+                    "className": "text-center",
+                    "visible": false
+                },
+                {
+                    "targets": 5, // Valor não formatado
+                    "className": "text-center",
+                    "visible": false
+                }
+            ],
+            responsive: true,
+            "ajax": {
+                "url": "/api/empenho/listaanulacao",
+                "type": "GET",
+                "data": { Id: '@Model.EmpenhoObj.Empenho.EmpenhoId' },
+                "datatype": "json",
+            },
+            "columns": [
+                { "data": "dataFormatada" },
+                { "data": "descricao" },
+                { "data": "valorFormatado" },
+                {
+                    "data": "movimentacaoId",
+                    "render": function (data) {
+                        return `<div class="text-center">
+                                <a class="btn btn-anulacao btn-dark btn-xs text-white" data-toggle="modal" data-target="#modalanulacao" id="rowdata" aria-label="Editar Anulação!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}' data-backdrop="false">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-deleteanulacao btn-danger btn-xs text-white" aria-label="Excluir a anulacao!" data-microtip-position="top" role="tooltip" style="cursor:pointer; margin: 2px" data-id='${data}'>
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                    </div>`;
+                    },
+                },
+                { "data": "movimentacaoId" },
+                { "data": "valorOriginal" },
+
+            ],
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                "emptyTable": "Sem Dados para Exibição"
+            },
+            "width": "100%",
+            "footerCallback": function (row, data, start, end, display) {
+                total = this.api()
+                    .column(5)
+                    .data()
+                    .reduce(function (a, b) {
+                        return parseInt(a) + parseInt(b);
+                    }, 0);
+                soma = total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                $("#TituloAnulacoes").html("Anulações do Empenho: <span>" + soma + "</span>");
+            }
+
+        });
+    </script>
+
+    <script>
+        function moeda(a, e, r, t) {
+            let n = ""
+                , h = j = 0
+                , u = tamanho2 = 0
+                , l = ajd2 = ""
+                , o = window.Event ? t.which : t.keyCode;
+            if (13 == o || 8 == o)
+                return !0;
+            if (n = String.fromCharCode(o),
+                -1 == "0123456789".indexOf(n))
+                return !1;
+            for (u = a.value.length,
+                h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+                ;
+            for (l = ""; h < u; h++)
+                -1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+            if (l += n,
+                0 == (u = l.length) && (a.value = ""),
+                1 == u && (a.value = "0" + r + "0" + l),
+                2 == u && (a.value = "0" + r + l),
+                u > 2) {
+                for (ajd2 = "",
+                    j = 0,
+                    h = u - 3; h >= 0; h--)
+                    3 == j && (ajd2 += e,
+                        j = 0),
+                        ajd2 += l.charAt(h),
+                        j++;
+                for (a.value = "",
+                    tamanho2 = ajd2.length,
+                    h = tamanho2 - 1; h >= 0; h--)
+                    a.value += ajd2.charAt(h);
+                a.value += r + l.substr(u - 2, u)
+            }
+            return !1
+        }
+    </script>
+
+    <script>
+
+        // Botão APORTAR do Modal
+        //=======================
+        $("#btnAportar").click(function (e) {
+
+            e.preventDefault();
+
+            console.log("txtDescricao.val: (" + $("#txtDescricaoAporte").val() + ")");
+            console.log("txtData.val: (" + $("#txtDescricaoAporte").val() + ")");
+            console.log("txtValor.val: (" + $("#txtDescricaoAporte").val() + ")");
+
+            if ($("#txtDataAporte").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A data do Aporte é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtDescricaoAporte").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A descrição do Aporte é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtValorAporte").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "O valor do Aporte é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var valorAporte = $("#txtValorAporte").val();
+
+            var i = 0;
+            while ((i = valorAporte.indexOf(".", i)) != -1) {
+                valorAporte = valorAporte.replace(".", "");
+            }
+            console.log("Valor: " + valorAporte);
+
+            valorAporte = valorAporte.replace("R$", "");
+            var EmpenhoId = '@Model.EmpenhoObj.Empenho.EmpenhoId.ToString()';
+            var objAporte = JSON.stringify({ "EmpenhoId": EmpenhoId , "MovimentacaoId": $('#txtMovimentacaoId').val(), "Descricao": $('#txtDescricaoAporte').val(), "Valor": valorAporte, "DataMovimentacao": $('#txtDataAporte').val(), "TipoMovimentacao": "A" })
+
+            $.ajax({
+                type: "post",
+                url: "/api/Empenho/EditarAporte",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objAporte,
+
+                success: function (data) {
+                    toastr.success(data.message);
+                    $('#tblAporte').DataTable().ajax.reload(null, false);
+                    $("#modalAporte").hide();
+                    location.reload();
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+        // Botão anular do Modal
+        //=======================
+        $("#btnAnular").click(function (e) {
+
+            e.preventDefault();
+
+            if ($("#txtDataanulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A data da anulacao é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtDescricaoanulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "A descrição da anulacao é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            if ($("#txtValoranulacao").val() === "") {
+                swal({
+                    title: 'Atenção',
+                    text: "O valor da anulacao é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var valoranulacao = $("#txtValoranulacao").val();
+
+            var i = 0;
+            while ((i = valoranulacao.indexOf(".", i)) != -1) {
+                valoranulacao = valoranulacao.replace(".", "");
+            }
+
+            valoranulacao = valoranulacao.replace("R$", "");
+            var EmpenhoId = '@Model.EmpenhoObj.Empenho.EmpenhoId.ToString()';
+            var objanulacao = JSON.stringify({ "EmpenhoId": EmpenhoId, "MovimentacaoId": $('#txtMovimentacaoId').val(), "Descricao": $('#txtDescricaoanulacao').val(), "Valor": valoranulacao, "DataMovimentacao": $('#txtDataanulacao').val(), "TipoMovimentacao": "G" })
+
+            $.ajax({
+                type: "post",
+                url: "/api/Empenho/EditarAnulacao",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objanulacao,
+
+                success: function (data) {
+                    toastr.success(data.message);
+                    $('#tblanulacao').DataTable().ajax.reload(null, false);
+                    $("#modalanulacao").hide();
+                    location.reload();
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+
+            $("#SaldoInicial").focusout(function () {
+                console.log("Entrei no FOCUSOUT");
+                console.log(this.value);
+                $("#SaldoFinal").val(this.value);
+            });
+
+            //Configura a Exibição do Modal de Aporte
+            //=======================================
+            $("#modalAporte").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                console.log("Entrou na Abertura do Modal");
+
+                var button = $(event.relatedTarget); // button the triggered modal
+                var movimentacaoId = button.data("id"); //data-id of button which is equal to id (primary key)
+
+                notaEmpenho = $("#txtNotaEmpenho").text();
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(0)").text());
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(1)").text());
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(2)").text());
+
+                var notaEmpenho = $("#txtNotaEmpenho").val();
+                var dataAporte = $(event.relatedTarget).closest("tr").find("td:eq(0)").text();
+                var descricaoAporte = $(event.relatedTarget).closest("tr").find("td:eq(1)").text();
+                var valorAporte = $(event.relatedTarget).closest("tr").find("td:eq(2)").text();
+
+
+                var parts = dataAporte.split('/');
+                dataAporte = parts[2] + "-" + (parts[1]) + "-" + parts[0];
+                $("#txtDataAporte").val(dataAporte);
+
+                $("#txtDescricaoAporte").val(descricaoAporte);
+                $("#txtValorAporte").val(valorAporte);
+
+                //displays values to modal
+                $(this).find("#DynamicModalLabel").html($("<b>Editar Aporte do Empenho: " + notaEmpenho + "</b>"))
+                $('#btnAportar').attr('data-id', movimentacaoId);
+                $('#txtMovimentacaoId').attr('value', movimentacaoId);
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+            //Configura a Exibição do Modal de anulacao
+            //======================================
+            $("#modalanulacao").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                console.log("Entrou na Abertura do Modal");
+
+                var button = $(event.relatedTarget); // button the triggered modal
+                var movimentacaoId = button.data("id"); //data-id of button which is equal to id (primary key)
+
+                notaEmpenho = $("#txtNotaEmpenho").text();
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(0)").text());
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(1)").text());
+                console.log($(event.relatedTarget).closest("tr").find("td:eq(2)").text());
+
+                var notaEmpenho = $("#txtNotaEmpenho").val();
+                var dataanulacao = $(event.relatedTarget).closest("tr").find("td:eq(0)").text();
+                var descricaoanulacao = $(event.relatedTarget).closest("tr").find("td:eq(1)").text();
+                var valoranulacao = $(event.relatedTarget).closest("tr").find("td:eq(2)").text();
+
+
+                var parts = dataanulacao.split('/');
+                dataanulacao = parts[2] + "-" + (parts[1]) + "-" + parts[0];
+                $("#txtDataanulacao").val(dataanulacao);
+
+                $("#txtDescricaoanulacao").val(descricaoanulacao);
+                $("#txtValoranulacao").val(valoranulacao);
+
+                //displays values to modal
+                $(this).find("#DynamicModalLabel").html($("<b>Editar Anulação do Empenho: " + notaEmpenho + "</b>"))
+                $('#btnanular').attr('data-id', movimentacaoId);
+                $('#txtMovimentacaoId').attr('value', movimentacaoId);
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+            //Configura a Exibição do Modal de Notas Fiscais
+            //==============================================
+            $("#modalNF").modal({
+                keyboard: true,
+                backdrop: "static",
+                show: false,
+
+            }).on("show.bs.modal", function (event) {
+
+                var dataTableNF = $('#tblNotaFiscal').DataTable();
+                dataTableNF.destroy();
+
+                dataTableNF = $('#tblNotaFiscal').DataTable({
+                    'columnDefs': [
+                        {
+                            "targets": 0,                //Número da Nota
+                            "className": "text-center",
+                            "width": "8%",
+                        },
+                        {
+                            "targets": 1,               //Data de Emissão
+                            "className": "text-center",
+                            "width": "8%",
+                        },
+                        {
+                            "targets": 2,               //Valor
+                            "className": "text-right",
+                            "width": "10%",
+                        },
+                        {
+                            "targets": 3,               //Valor Glosa.
+                            "className": "text-right",
+                            "width": "8%",
+                        },
+                        {
+                            "targets": 4,               //Motivo Glosa
+                            "className": "text-left",
+                            "width": "15%",
+                        },
+                        {
+                            "targets": 5,               //Ação
+                            "className": "text-center",
+                            "width": "8%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 6,               //ContratoId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        },
+                        {
+                            "targets": 7,               //EmpenhoId
+                            "className": "text-center",
+                            "width": "10%",
+                            "visible": false,
+                        }
+                    ],
+                    responsive: true,
+                    "ajax": {
+                        "url": "/api/notafiscal/nfempenhos",
+                        "data": { id: '@Model.EmpenhoObj.Empenho.EmpenhoId'},
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "numeroNF" },
+                        { "data": "dataFormatada" },
+                        { "data": "valorNFFormatado" },
+                        { "data": "valorGlosaFormatado" },
+                        { "data": "motivoGlosa" },
+                        {
+                            "data": "notaFiscalId",
+                            "render": function (data) {
+                                return `<div class="text-center">
+                                <a href="/NotaFiscal/Upsert?id=${data}" class="btn btn-primary btn-xs text-white"  aria-label="Editar a Nota Fiscal!" data-microtip-position="top" role="tooltip" style="cursor:pointer; ">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-delete btn-danger btn-xs text-white" aria-label="Excluir a Nota Fiscal!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                        </div>`;
+                            },
+                        },
+                        { "data": "contratoId" },
+                        { "data": "empenhoId" },
+                    ],
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                        "emptyTable": "Sem Dados para Exibição"
+                    },
+                    "width": "100%"
+                });
+
+            }).on("hide.bs.modal", function (event) {
+                $(this).find("#modal_body").html("");
+            });
+
+
+        });
+
+
+        $("#lstInstrumento").on('change', function () {
+
+            $('#EmpenhoObj_Empenho_AtaId').val('')
+            $('#EmpenhoObj_Empenho_ContratoId').val('')
+
+            if ($("#lstInstrumento").val() === '0') {
+                //Exibe Contrato
+                document.getElementById("divContrato").style.display = "block"
+                document.getElementById("divAta").style.display = "none"
+            }
+
+            if ($("#lstInstrumento").val() === '1') {
+                //Exibe Ata
+                document.getElementById("divAta").style.display = "block"
+                document.getElementById("divContrato").style.display = "none"
+            }
+
+            console.log($("#lstInstrumento").val());
+
+        });
+
+
+    </script>
+
+
+    <script>
+
+        // ---------------  INSERE E EDITA EMPENHO --------------------
+        //=============================================================
+
+
+        //Controla o Submit do formulário através de botões escondidos (permite a validação via javascript)
+        //=================================================================================================
+        $("#btnSubmit").click(function (event) {
+
+            event.preventDefault()
+
+            if (document.getElementById("txtNotaEmpenho").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Nota de Empenho é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("txtDataEmissao").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A data de emissão é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("txtVigenciaInicial").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Vigência Inicial do Empenho é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("lstVigencia").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O ano da Vigência do Empenho é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("txtVigenciaFinal").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Vigência Final do Empenho é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            //Verifica se escolheu um Instrumento
+            if (document.getElementById("lstInstrumento").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "Você deve escolher o Instrumento do Empenho (Contrato/Ata)",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            //Verifica se escolheu o Contrato
+            if (document.getElementById("lstInstrumento").value === "0" && document.getElementById("EmpenhoObj_Empenho_ContratoId").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O Contrato do Empenho é obrigatório",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            //Verifica se escolheu a Ata
+            if (document.getElementById("lstInstrumento").value === "1" && document.getElementById("EmpenhoObj_Empenho_AtaId").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O Ata de Registro de Preços do Empenho é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("SaldoInicial").value === "" || document.getElementById("SaldoInicial").value === "0") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "O Saldo Inicial do Empenho é obrigatório",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            $("#btnSubmit").prop("disabled", true);
+
+
+            $("#btnEscondido").click();
+
+
+
+        });
+
+
+
+
+        $("#btnEscondido").click(function (event) {
+
+            event.preventDefault();
+
+            InsereRegistro();
+
+        });
+
+        // $("#btnEdita").click(function (event) {
+
+        //     event.preventDefault();
+
+        //     InsereRegistro();
+
+        // });
+
+            function InsereRegistro() {
+
+
+                //----------------- Adiciona EMPENHO Novo -----------------------
+                //===============================================================
+                if ('@Model.EmpenhoObj.Empenho.EmpenhoId' === null || '@Model.EmpenhoObj.Empenho.EmpenhoId' === '00000000-0000-0000-0000-000000000000') {
+
+
+                    //Ajusta valor numérico do Valor do Contrato
+                    //-------------------------------------------
+                    var valorsaldoinicial = $('#SaldoInicial').val().replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace(',', '.');
+
+
+
+                    if (document.getElementById("lstInstrumento").value === "0")
+                    {
+                        var objEmpenho = JSON.stringify({
+                            "NotaEmpenho": $('#txtNotaEmpenho').val(),
+                            "DataEmissao": $('#txtDataEmissao').val(),
+                            "AnoVigencia": $('#lstVigencia').val(),
+                            "VigenciaInicial": $('#txtVigenciaInicial').val(),
+                            "VigenciaFinal": $('#txtVigenciaFinal').val(),
+                            "AnoProcesso": $('#txtAnoProcesso').val(),
+                            "ContratoId": $('#EmpenhoObj_Empenho_ContratoId').val(),
+                            "SaldoInicial": valorsaldoinicial,
+                            "SaldoFinal": valorsaldoinicial,
+                        })
+                    }
+                    else
+                    {
+                        var objEmpenho = JSON.stringify({
+                            "NotaEmpenho": $('#txtNotaEmpenho').val(),
+                            "DataEmissao": $('#txtDataEmissao').val(),
+                            "AnoVigencia": $('#lstVigencia').val(),
+                            "VigenciaInicial": $('#txtVigenciaInicial').val(),
+                            "VigenciaFinal": $('#txtVigenciaFinal').val(),
+                            "AnoProcesso": $('#txtAnoProcesso').val(),
+                            "AtaId": $('#EmpenhoObj_Empenho_AtaId').val(),
+                            "SaldoInicial": valorsaldoinicial,
+                            "SaldoFinal": valorsaldoinicial,
+                        })
+
+                    }
+
+                    console.log(objEmpenho);
+                    //debugger;
+                    //return;
+
+                    $.ajax({
+                        type: "post",
+                        url: "api/Empenho/InsereEmpenho",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: objEmpenho,
+
+                        success: function (data) {
+
+                            location.replace("/empenho");
+                            toastr.success("Empenho Adicionado com Sucesso!");
+
+                        },
+                        error: function (data) {
+                            toastr.error(data.message);
+                            console.log(data);
+                        }
+                    });
+                }
+                else
+                {
+                //----------------- Edita Empenho Existente ---------------------
+                //===============================================================
+
+                    //Ajusta valor numérico do Valor do Empenho
+                    //-------------------------------------------
+                    var valorsaldoinicial = $('#SaldoInicial').val().replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace('.', '');
+                    valorsaldoinicial = valorsaldoinicial.replace(',', '.');
+
+                    var valorsaldofinal = $('#SaldoFinal').val().replace('.', '');
+                    valorsaldofinal = valorsaldofinal.replace('.', '');
+                    valorsaldofinal = valorsaldofinal.replace('.', '');
+                    valorsaldofinal = valorsaldofinal.replace('.', '');
+                    valorsaldofinal = valorsaldofinal.replace(',', '.');
+
+
+
+                    if (document.getElementById("lstInstrumento").value === "0")
+                    {
+                        var objEmpenho = JSON.stringify({
+                            "EmpenhoId": '@Model.EmpenhoObj.Empenho.EmpenhoId',
+                            "NotaEmpenho": $('#txtNotaEmpenho').val(),
+                            "DataEmissao": $('#txtDataEmissao').val(),
+                            "VigenciaInicial": $('#txtVigenciaInicial').val(),
+                            "VigenciaFinal": $('#txtVigenciaFinal').val(),
+                            "AnoVigencia": $('#lstVigencia').val(),
+                            "AnoProcesso": $('#txtAnoProcesso').val(),
+                            "ContratoId": $('#EmpenhoObj_Empenho_ContratoId').val(),
+                            "SaldoInicial": valorsaldoinicial,
+                            "SaldoFinal": valorsaldofinal,
+                        })
+                    }
+                    else
+                    {
+                        var objEmpenho = JSON.stringify({
+                            "EmpenhoId": '@Model.EmpenhoObj.Empenho.EmpenhoId',
+                            "NotaEmpenho": $('#txtNotaEmpenho').val(),
+                            "DataEmissao": $('#txtDataEmissao').val(),
+                            "VigenciaInicial": $('#txtVigenciaInicial').val(),
+                            "VigenciaFinal": $('#txtVigenciaFinal').val(),
+                            "AnoVigencia": $('#lstVigencia').val(),
+                            "AnoProcesso": $('#txtAnoProcesso').val(),
+                            "AtaId": $('#EmpenhoObj_Empenho_AtaId').val(),
+                            "SaldoInicial": valorsaldoinicial,
+                            "SaldoFinal": valorsaldofinal,
+                        })
+
+                    }
+
+                    console.log(objEmpenho);
+                    //return;
+
+                    $.ajax({
+                        type: "post",
+                        url: "api/Empenho/EditaEmpenho",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: objEmpenho,
+
+                        success: function (data) {
+
+                            toastr.success("Empenho Alterado com Sucesso!");
+                            location.replace("/empenho");
+
+                        },
+                        error: function (data) {
+                            toastr.error(data.message);
+                            console.log(data);
+                        }
+                    });
+
+
+                }
+            }
+
+
+    </script>
+
+
+}

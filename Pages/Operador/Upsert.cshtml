@@ -1,0 +1,282 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Operador.UpsertModel
+
+@{
+    ViewData["Title"] = "Operadores";
+    ViewData["PageName"] = "operador_upsert";
+    ViewData["Heading"] = "<i class='fad fa-user-tie'></i> Cadastros: <span class='fw-300'>Operadores</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fal fa-user-tie";
+}
+
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .escondido {
+        display: none;
+    }
+
+    .espacofundo{
+        padding-bottom: 20px;
+    }
+
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/dropify.min.css" />
+
+}
+
+
+<form method="post" asp-action="Upsert" enctype="multipart/form-data">
+    <div class="row espacofundo">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div id="painelfundo" class="panel-container show espacofundo">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.OperadorObj.Operador.OperadorId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="OperadorObj.Operador.OperadorId" />
+                        }
+                        <input type="hidden" asp-for="OperadorObj.Operador.UsuarioIdAlteracao" />
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.OperadorObj.Operador.OperadorId != Guid.Empty ? "Atualizar " : "Criar ") Operador  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.Nome"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.Nome"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.Nome" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.CPF"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.CPF"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.CPF" oninput="mascara(this)" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.DataNascimento"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.DataNascimento"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.DataNascimento" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.Celular01"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.Celular01"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.Celular01" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.Celular02"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.Celular02"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.Celular02" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.DataIngresso"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.DataIngresso"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.DataIngresso" type="date" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="OperadorObj.Operador.Ponto"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.Ponto"></span>
+                                        <input class="form-control form-control-xs" asp-for="OperadorObj.Operador.Ponto" />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <label id="lblcontrato" class="label font-weight-bold" asp-for="OperadorObj.Operador.ContratoId"></label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="OperadorObj.Operador.ContratoId"></span>
+                                    @Html.DropDownListFor(m => m.OperadorObj.Operador.ContratoId,
+                                                          Model.OperadorObj.ContratoList,
+                                                          "-- Selecione um Contrato --",
+                                                          new { @class = "form-control form-control-xs", @Name = "lstcontratos" })
+                                </div>
+                                <div class="col-3">
+                                    <label class="label font-weight-bold">Foto</label>
+                                    <input class="form-control" id="txtFile" type="file" value="Upload File" style="width:100%;" asp-for="FotoUpload" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                </div>
+                            </div>
+                            <div class="float-right">
+                                <img id="imgViewer" width="200" style="border:1px solid #000000;margin-top:10px;" asp-for="FotoUpload" />
+                            </div>
+                            <br />
+                            <br />
+                            <div class="row">
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">
+                                                <input type="checkbox" class="form-check-input" asp-for="OperadorObj.Operador.Status" />
+                                                Ativo/Inativo
+                                            </label>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            @if (Model.OperadorObj.Operador.OperadorId != Guid.Empty)
+                                            {
+                                                <label class="font-weight-light">Alterado/Incluído por @Model.OperadorObj.NomeUsuarioAlteracao em @Model.OperadorObj.Operador.DataAlteracao.ToString("dd/MM/yy") as @Model.OperadorObj.Operador.DataAlteracao.ToString("HH:mm")</label>
+                                            }
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row  float-left">
+                                        <div class="col-6  float-left">
+
+                                            @if (Model.OperadorObj.Operador.OperadorId != Guid.Empty)
+                                            {
+                                                <button method="post" asp-page-handler="Edit" asp-route-id=@Model.OperadorObj.Operador.OperadorId class="btn btn-primary form-control" style="width:200px">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control" style="width:200px">Criar</button>
+                                            }
+
+
+                                        </div>
+                                        <div class="col-6  float-right">
+                                            <a asp-page="./Index" class="btn btn-success form-control" style="width:200px">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/dropify.min.js"></script>
+
+    <script>
+
+
+        //Formata CPF
+        //====================
+        function mascara(i) {
+
+            var v = i.value;
+
+            if (isNaN(v[v.length - 1])) { // impede entrar outro caractere que não seja número
+                i.value = v.substring(0, v.length - 1);
+                return;
+            }
+
+            i.setAttribute("maxlength", "14");
+            if (v.length == 3 || v.length == 7) i.value += ".";
+            if (v.length == 11) i.value += "-";
+
+        }
+
+
+        //Carrega a foto no controle e redimensiona o painel
+        //==================================================
+        $("#txtFile").change(function (event) {
+            var files = event.target.files;
+            $("#imgViewer").attr("src", window.URL.createObjectURL(files[0]));
+            $("#painelfundo").css({
+                "padding-bottom:": "200px"
+            });
+        });
+
+
+        $(document).ready(function () {
+            if ('@Model.OperadorObj.Operador.OperadorId' != '00000000-0000-0000-0000-000000000000') {
+                console.info("Foto do Editar");
+                console.info('@Model.OperadorObj.Operador.OperadorId');
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Operador/PegaFoto",
+                    success: function (data) {
+                        console.info(data);
+                        $('#imgViewer').attr('src', "data:image/jpg;base64," + data.foto + "");
+                    },
+                    error: function (data) {
+                        console.log('Error:', data);
+                    }
+                });
+            } else {
+                console.info("Foto do Inserir");
+                var origin = window.location.origin
+                console.info(origin + "/Images/barbudo.jpg");
+                $('#imgViewer').attr('src', "/Images/barbudo.jpg");
+
+
+                // let list = new DataTransfer();
+                // let file = new File(["content"], origin + "/Images/barbudo.jpg");
+                // list.items.add(file);
+                // let myFileList = list.files;
+                // document.querySelector('.image-url').files = myFileList;
+            }
+        });
+
+
+
+    </script>
+
+
+
+}

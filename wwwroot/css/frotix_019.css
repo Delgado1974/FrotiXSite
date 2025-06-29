@@ -1,0 +1,241 @@
+﻿
+/* Animação de ícone pulsando */
+@keyframes pulseIcon {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.icon-pulse {
+    display: inline-block;
+    animation: pulseIcon 1.5s ease-in-out infinite;
+}
+
+/* Animação de ícone girando para a esquerda */
+@keyframes spinLeft {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+.icon-rotate-left {
+    display: inline-block;
+    animation: spinLeft 2s linear infinite;
+}
+
+.form-control {
+    font-size: 0.9rem;
+}
+
+label {
+    margin-bottom: 0.2rem;
+}
+
+/* Força altura semelhante à dos campos input padrão */
+.e-dropdowntree .e-input,
+.e-dropdowntree.e-control-wrapper {
+    min-height: 38px; /* altura padrão do Bootstrap input */
+    height: 38px;
+    line-height: 1.5;
+    padding: 6px 12px;
+    box-sizing: border-box;
+}
+
+.swal2-title.titulo-erro-radioativo {
+    font-family: 'Rowdies', cursive;
+    font-size: 26px;
+    color: #d9534f;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* animação ao inserir itens */
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* destaque rápido após adição */
+@keyframes highlight {
+    0% {
+        background-color: #fff3cd;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+.e-tooltip-wrap.custom-orange-tooltip {
+    background-color: orange;
+    color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+    .e-tooltip-wrap.custom-orange-tooltip .e-tip-content {
+        color: white;
+    }
+
+    .e-tooltip-wrap.custom-orange-tooltip .e-arrow-tip-inner {
+        background-color: orange;
+    }
+
+/* === Tooltips personalizados laranja com Syncfusion === */
+.e-tooltip-wrap.custom-orange-tooltip {
+    background-color: orange !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 8px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.95rem;
+    z-index: 99999;
+    pointer-events: auto;
+}
+
+    .e-tooltip-wrap.custom-orange-tooltip .e-tip-content {
+        color: white !important;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    .e-tooltip-wrap.custom-orange-tooltip .e-arrow-tip-inner {
+        background-color: orange !important;
+    }
+
+.swal2-popup-custom {
+    padding: 0 !important;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+    .swal2-popup-custom .swal2-html-container {
+        padding: 20px;
+    }
+
+.swal2-footer-btn {
+    background-color: #a4b3ff !important;
+    color: white !important;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 0 !important;
+    padding: 15px 0;
+}
+
+.swal2-popup-zero-padding {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    width: auto !important;
+}
+
+.swal2-container {
+    background: rgba(0, 0, 0, 0.4) !important; /* ou como quiser o backdrop */
+}
+
+.swal2-html-container {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* LIMPA o container principal do toast */
+.e-toast.custom-toast-success,
+.e-toast.custom-toast-danger,
+.e-toast.custom-toast-info,
+.e-toast.custom-toast-warning {
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+
+/* CONTEÚDO interno do toast */
+.toast-content {
+    display: flex;
+    align-items: center;
+    background-color: #1b8a1b; /* será sobrescrito por tipo */
+    color: white;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 15px;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 350px;
+    border: 1px solid white;
+}
+
+/* Ícone */
+.toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* VARIAÇÕES DE COR PELO TIPO */
+.custom-toast-success .toast-content {
+    background-color: #1b8a1b;
+}
+
+.custom-toast-danger .toast-content {
+    background-color: #c62828;
+}
+
+.custom-toast-info .toast-content {
+    background-color: #1565c0;
+}
+
+.custom-toast-warning .toast-content {
+    background-color: #f57c00;
+}
+
+body.loading {
+    cursor: progress; /* Ampulheta */
+}
+
+.destaque-erro {
+    color: red;
+    font-style: italic;
+    /* não precisa declarar font-weight:bold, pois o <strong> já faz isso */
+}

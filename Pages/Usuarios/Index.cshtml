@@ -1,0 +1,191 @@
+﻿@page
+@model FrotiX.Models.Unidade
+
+@{
+    ViewData["Title"] = "Usuários";
+    ViewData["PageName"] = "usuarios_index";
+    ViewData["Heading"] = "<i class='fad fa-users'></i> Cadastros: <span class='fw-300'>Usuários</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-users";
+}
+
+@section HeadBlock {
+
+    <!-- BoldReports CSS -->
+    <link href="https://cdn.boldreports.com/embeddedreporting/commons/css/bold.reports.all.min.css" rel="stylesheet" />
+
+    <!-- BoldReports scripts -->
+    <script src="https://cdn.boldreports.com/embeddedreporting/commons/scripts/bold.reports.all.min.js"></script>
+    <script src="https://cdn.boldreports.com/embeddedreporting/commons/scripts/bold.report-viewer.min.js"></script>
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Usuarios/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-users">
+                        </i> &nbsp; Adicionar Usuário
+                    </a>
+                </div>
+                <div class="panel-content float-right">
+                    <a href="/Ùsuarios/Report" class="btn btn-info">
+                        <i class="fa-regular fa-users">
+                        </i> &nbsp; Relatorio
+                    </a>
+                </div>
+
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblUsuario" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Ponto</th>
+                                    <th>Nome</th>
+									<th>Detentor Carga Patrimonial</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="report-viewer"></div>
+
+@*----------------- MODAL de Recursos  ------------------------*@
+@*=============================================================*@
+<div class="modal fade" id="modalControleAcesso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="h3Titulo">Exibe os Recursos aos quais o Usuário tem Acesso</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmStatus">
+
+                    <input type="hidden" id="txtUsuarioId" />
+
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br /><br />
+                            <table id="tblRecursos" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nome no Menu</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </form>
+                <br /><br />
+                <div class="modal-footer">
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js/cadastros/usuario_01.js"></script>
+
+    <script>
+
+        //Configura o MODAL de Recursos
+        //=============================
+        $('#modalControleAcesso').on('shown.bs.modal', function (event)
+        {
+            var button = $(event.relatedTarget); // button the triggered modal
+            var usuarioId = button.data("id");
+
+            console.log("MultaId: " + usuarioId);
+
+            $('#txtUsuarioId').attr('value', usuarioId);
+
+            $('#tblRecursos').DataTable().destroy();
+			  
+            dataTableRecursos = $('#tblRecursos').DataTable({
+                'order': [],
+                'columnDefs': [
+                    {
+                        "targets": 0,                //Nome no Menu
+                        "className": "text-left",
+                        "width": "20%",
+                    },
+                    {
+                        "targets": 1,               //Acesso
+                        "className": "text-center",
+                        "width": "10%",
+                    },
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": "/api/Usuario/PegaRecursosUsuario",
+                    "type": "GET",
+                    "datatype": "json",
+                    "data": { usuarioId: usuarioId },
+                },
+                "columns": [
+                    { "data": "nome" },
+                    {
+                        "data": "acesso",
+                        "render": function (data, type, row, meta)
+                        {
+                            if (data)
+                                return '<a href="javascript:void" class="updateStatusAcesso btn btn-success btn-xs text-white" data-url="/api/Usuario/UpdateStatusAcesso?IDS=' + row.ids + '">Com Acesso</a>';
+                            else
+                                return '<a href="javascript:void" class="updateStatusAcesso btn btn-xs fundo-cinza text-white text-bold" data-url="/api/Usuario/UpdateStatusAcesso?IDS=' + row.ids + '">Sem Acesso</a>';
+                        },
+                    },
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+                    "emptyTable": "Sem Dados para Exibição"
+                },
+                "width": "100%"
+            });
+
+        }).on("hide.bs.modal", function (event)
+        {
+
+        });
+
+
+    </script>
+
+}

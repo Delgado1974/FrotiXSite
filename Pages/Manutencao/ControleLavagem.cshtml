@@ -1,0 +1,1166 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+        public void OnGet()
+        {
+            FrotiX.Pages.Manutencao.ControleLavagemModel.Initialize(_unitOfWork);
+            ViewData["dataCombustivel"] = new ListaNivelCombustivel(_unitOfWork).NivelCombustivelList();
+
+            ViewData["lstMotorista"] = new ListaMotorista(_unitOfWork).MotoristaList();
+            ViewData["lstVeiculos"] = new ListaVeiculos(_unitOfWork).VeiculosList();
+            ViewData["lstLavadores"] = new ListaLavador(_unitOfWork).LavadorList();
+
+        }
+
+        public void OnPost()
+        {
+            Console.WriteLine(FrotiX.Pages.Viagens.IndexModel.ViagemId);
+        }
+
+    }
+}
+
+
+@model FrotiX.Models.ViewViagens
+
+@{
+    ViewData["Title"] = "Manutenção";
+    ViewData["PageName"] = "manutencao_controlelavagem";
+    ViewData["Heading"] = "<i class='fa-duotone fa-car-wash'></i> Manutenção: <span class='fw-300'>Controle de Lavagens</span>";
+    ViewData["Category1"] = "Manutenção";
+    ViewData["PageIcon"] = "fa-duotone fa-car-wash";
+}
+
+@section HeadBlock {
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/microtip.css" />
+    <base href="https://demos.telerik.com/kendo-ui/multiselect/api">
+    <style>
+        html {
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.3.913/styles/kendo.default-ocean-blue.min.css" />
+
+}
+
+<style>
+    .fundo-azul {
+        background-color: #0D98BA;
+        color: white;
+    }
+
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .img {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: 50%;
+        height: 100%;
+        margin: 0 auto !important;
+    }
+</style>
+
+<script>
+
+    var URapi = "/api/manutencao/ListaLavagens";
+
+    var IDapi = "";
+
+    var escolhendoVeiculo = false;
+    var escolhendoMotorista = false;
+    var escolhendoData = false;
+    var escolhendoLavador = false;
+
+
+    //------ Indica um Item Sendo Escolhido-------------
+    //==================================================
+    function DefineEscolhaVeiculo() {
+        console.log("Fechou Veículo");
+        escolhendoVeiculo = true;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoLavador = false;
+
+        var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+        if (veiculos.value === null) {
+            //ListaTodasLavagens();
+        }
+
+    }
+
+    function DefineEscolhaMotorista() {
+        console.log("Fechou Motorista");
+        escolhendoVeiculo = false;
+        escolhendoMotorista = true;
+        escolhendoData = false;
+        escolhendoLavador = false;
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        if (motoristas.value === null) {
+            //ListaTodasLavagens();
+        }
+    }
+    function DefineEscolhaData() {
+        console.log("Escolheu Data");
+        escolhendoVeiculo = false;
+        escolhendoMotorista = false;
+        escolhendoCombustivel = false;
+        escolhendoData = true;
+        escolhendoLavador = false;
+    }
+
+    function DefineEscolhaLavador() {
+        console.log("Fechou Lavador");
+        escolhendoVeiculo = false;
+        escolhendoSetor = false;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoLavador = true;
+        var lavador = document.getElementById('lstLavador').ej2_instances[0];
+        if (lavador.value === null) {
+            //ListaTodasLavagens();
+        }
+    }
+
+
+    //------ Lista Todas as Lavagens -------------
+    //============================================
+
+    function ListaTodasLavagens() {
+
+
+        console.log("Lista Todos");
+
+        escolhendoVeiculo = false;
+        escolhendoSetor = false;
+        escolhendoMotorista = false;
+        escolhendoData = false;
+        escolhendoStatus = false;
+
+        statusId = "";
+
+        URLapi = "/api/manutencao/ListaLavagens"
+
+        ListaTblLavagens(URLapi, statusId);
+
+    }
+
+    //------ Função de Escolha do ComboBox Veículos ------------------
+    //================================================================
+    function VeiculosValueChange() {
+
+        if (escolhendoVeiculo === false) {
+            return;
+        }
+
+        console.log("VeiculosValueChange");
+
+        $("#txtData").val('');
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        motoristas.value = "";
+        var lavador = document.getElementById('lstLavador').ej2_instances[0];
+        lavador.value = "";
+
+        var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+        if (veiculos.value === null) {
+            ListaTodasLavagens();
+            return;
+        }
+        var veiculoId = veiculos.value.toString();
+
+
+        ListaTblLavagens("/api/manutencao/ListaLavagemVeiculos", veiculoId);
+
+    }
+
+    //------ Função de Escolha do ComboBox Motorista ------------------
+    //=================================================================
+    function MotoristaValueChange() {
+
+
+        console.log("MotoristaValueChange");
+
+        if (escolhendoMotorista === false) {
+            return;
+        }
+
+        $("#txtData").val('');
+        var veiculo = document.getElementById('lstVeiculos').ej2_instances[0];
+        veiculo.value = "";
+        var lavador = document.getElementById('lstLavador').ej2_instances[0];
+        lavador.value = "";
+
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        if (motoristas.value === null) {
+            ListaTodasLavagens();
+            return;
+        }
+        var motoristaId = motoristas.value.toString();
+
+        ListaTblLavagens("/api/manutencao/ListaLavagemMotoristas", motoristaId);
+
+    }
+
+
+    //------ Função de Escolha do ComboBox Lavadores ------------------
+    //=================================================================
+    function LavadorValueChange() {
+
+
+        console.log("LavadorValueChange");
+
+        if (escolhendoLavador === false) {
+            return;
+        }
+
+        $("#txtData").val('');
+        var veiculo = document.getElementById('lstVeiculos').ej2_instances[0];
+        veiculo.value = "";
+        var motorista = document.getElementById('lstMotorista').ej2_instances[0];
+        motorista.value = "";
+
+        var lavador = document.getElementById('lstLavador').ej2_instances[0];
+        if (status.value === null) {
+            ListaTodasLavagens();
+            return;
+        }
+
+        var lavadorId = lavador.value.toString();
+
+        ListaTblLavagens("/api/manutencao/ListaLavagemLavadores", lavadorId);
+    }
+
+</script>
+
+<form>
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br />
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                <h2 class="text-primary">
+                                    Insira uma Lavagem:
+                                </h2>
+                            </div>
+                            <br />
+                            <div class="k-d-flex k-justify-content-left">
+                                <div class="form-group row">
+                                    <div class="col-2">
+                                        <label class="label font-weight-bold color-black">Data</label>
+                                        <input id="txtDataLavagem" class="form-control form-control-xs" type="date" />
+                                    </div>
+                                    <div class="col-2">
+                                        <label class="label font-weight-bold color-black">Hora</label>
+                                        <input id="txtHoraLavagem" class="form-control form-control-xs" type="time" />
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="label font-weight-bold color-black">Veículo Lavado</label>
+                                        <ejs-combobox id="lstVeiculoLavagem" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="label font-weight-bold color-black">Condutor do Veículo</label>
+                                        <ejs-combobox id="lstMotoristaLavagem" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <div class="k-w-800">
+                                        <br />
+                                        <select id="lstLavadores" data-placeholder="Selecione os lavadores participantes da lavagem..." style="width:500px;"></select>
+                                        <br />
+                                        <br />
+                                        <button id="btnInserir" type="button" class="btn btn-primary">Inserir</button>
+                                        <button id="btnLimpar" type="button" class="btn btn-dark">Limpar</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <br /><br />
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                <h2 class="text-primary">
+                                    Escolha os filtros desejados para visualizar as Lavagens:
+                                </h2>
+                            </div>
+                            <br /><br />
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <div class="col-2">
+                                        <label class="label font-weight-bold color-black">Escolha uma Data</label>
+                                        <input id="txtData" class="form-control form-control-xs" type="date" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstVeiculos" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" change="DefineEscolhaVeiculo" width="100%" showClearButton="true" close="VeiculosValueChange">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" change="DefineEscolhaMotorista" width="100%" showClearButton="true" close="MotoristaValueChange">
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstLavador" placeholder="Selecione um Lavador" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstLavadores"]" popupHeight="250px" width="100%" showClearButton="true" change="DefineEscolhaLavador" close="LavadorValueChange">
+                                            <e-combobox-fields text="Nome" value="LavadorId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+                            <br /><br />
+                            <div id="divViagens">
+                                <table id="tblLavagem" class="table table-bordered table-striped" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Horário</th>
+                                            <th>Veículo</th>
+                                            <th>Motorista</th>
+                                            <th>Lavadores</th>
+                                            <th>Ação</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div id="divViagens"></div>
+    </div>
+</form>
+
+
+
+@section ScriptsBlock{
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+
+    <script>
+
+
+        $(document).ready(function () {
+
+
+            $("txtData").on('keyup', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+
+                    document.getElementById('txtData').onchange();
+
+                }
+            });
+
+            ListaTodasLavagens();
+
+            $("#txtData").change(function () {
+
+                DefineEscolhaData();
+
+                console.log("txtDataChange");
+
+                var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+                veiculos.value = "";
+                var lavadores = document.getElementById('lstLavador').ej2_instances[0];
+                lavadores.value = "";
+                var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+                motoristas.value = "";
+
+                var date = $('#txtData').val().split("-");
+                console.log(date, $('#txtData').val())
+                day = date[2];
+                month = date[1];
+                year = date[0];
+                var dataLavagem = (day + "/" + month + "/" + year);
+
+                console.log(dataLavagem);
+
+                ListaTblLavagens("/api/manutencao/ListaLavagensData", dataLavagem);
+
+            });
+
+        });
+
+
+        // Botão Limpar Campos
+        //====================
+        $("#btnLimpar").click(function (e) {
+
+            LimpaControles();
+
+        });
+
+        ej.base.L10n.load({
+            "pt-BR": {
+                "richtexteditor": {
+                    "alignments": "Alinhamentos",
+                    "justifyLeft": "Alinhar à Esquerda",
+                    "justifyCenter": "Centralizar",
+                    "justifyRight": "Alinhar à Direita",
+                    "justifyFull": "Justificar",
+                    "fontName": "Nome da Fonte",
+                    "fontSize": "Tamanho da Fonte",
+                    "fontColor": "Cor da Fonte",
+                    "backgroundColor": "Cor de Fundo",
+                    "bold": "Negrito",
+                    "italic": "Itálico",
+                    "underline": "Sublinhado",
+                    "strikethrough": "Tachado",
+                    "clearFormat": "Limpa Formatação",
+                    "clearAll": "Limpa Tudo",
+                    "cut": "Cortar",
+                    "copy": "Copiar",
+                    "paste": "Colar",
+                    "unorderedList": "Lista com Marcadores",
+                    "orderedList": "Lista Numerada",
+                    "indent": "Aumentar Identação",
+                    "outdent": "Diminuir Identação",
+                    "undo": "Desfazer",
+                    "redo": "Refazer",
+                    "superscript": "Sobrescrito",
+                    "subscript": "Subscrito",
+                    "createLink": "Inserir Link",
+                    "openLink": "Abrir Link",
+                    "editLink": "Editar Link",
+                    "removeLink": "Remover Link",
+                    "image": "Inserir Imagem",
+                    "replace": "Substituir",
+                    "align": "Alinhar",
+                    "caption": "Título da Imagem",
+                    "remove": "Remover",
+                    "insertLink": "Inserir Link",
+                    "display": "Exibir",
+                    "altText": "Texto Alternativo",
+                    "dimension": "Mudar Tamanho",
+                    "fullscreen": "Maximizar",
+                    "maximize": "Maximizar",
+                    "minimize": "Minimizar",
+                    "lowerCase": "Caixa Baixa",
+                    "upperCase": "Caixa Alta",
+                    "print": "Imprimir",
+                    "formats": "Formatos",
+                    "sourcecode": "Visualizar Código",
+                    "preview": "Exibir",
+                    "viewside": "ViewSide",
+                    "insertCode": "Inserir Código",
+                    "linkText": "Exibir Texto",
+                    "linkTooltipLabel": "Título",
+                    "linkWebUrl": "Endereço Web",
+                    "linkTitle": "Entre com um título",
+                    "linkurl": "http://exemplo.com",
+                    "linkOpenInNewWindow": "Abrir Link em Nova Janela",
+                    "linkHeader": "Inserir Link",
+                    "dialogInsert": "Inserir",
+                    "dialogCancel": "Cancelar",
+                    "dialogUpdate": "Atualizar",
+                    "imageHeader": "Inserir Imagem",
+                    "imageLinkHeader": "Você pode proporcionar um link da web",
+                    "mdimageLink": "Favor proporcionar uma URL para sua imagem",
+                    "imageUploadMessage": "Solte a imagem aqui ou busque para o upload",
+                    "imageDeviceUploadMessage": "Clique aqui para o upload",
+                    "imageAlternateText": "Texto Alternativo",
+                    "alternateHeader": "Texto Alternativo",
+                    "browse": "Procurar",
+                    "imageUrl": "http://exemplo.com/imagem.png",
+                    "imageCaption": "Título",
+                    "imageSizeHeader": "Tamanho da Imagem",
+                    "imageHeight": "Altura",
+                    "imageWidth": "Largura",
+                    "textPlaceholder": "Entre com um Texto",
+                    "inserttablebtn": "Inserir Tabela",
+                    "tabledialogHeader": "Inserir Tabela",
+                    "tableWidth": "Largura",
+                    "cellpadding": "Espaçamento de célula",
+                    "cellspacing": "Espaçamento de célula",
+                    "columns": "Número de colunas",
+                    "rows": "Número de linhas",
+                    "tableRows": "Linhas da Tabela",
+                    "tableColumns": "Colunas da Tabela",
+                    "tableCellHorizontalAlign": "Alinhamento Horizontal da Célular",
+                    "tableCellVerticalAlign": "Alinhamento Vertical da Célular",
+                    "createTable": "Criar Tabela",
+                    "removeTable": "Remover Tabela",
+                    "tableHeader": "Cabeçalho da Tabela",
+                    "tableRemove": "Remover Tabela",
+                    "tableCellBackground": "Fundo da Célula",
+                    "tableEditProperties": "Editar Propriedades da Tabela",
+                    "styles": "Estilos",
+                    "insertColumnLeft": "Inserir Coluna à Esquerda",
+                    "insertColumnRight": "Inserir Coluna à Direita",
+                    "deleteColumn": "Apagar Coluna",
+                    "insertRowBefore": "Inserir Linha Antes",
+                    "insertRowAfter": "Inserir Linha Depois",
+                    "deleteRow": "Apagar Linha",
+                    "tableEditHeader": "Edita Tabela",
+                    "TableHeadingText": "Cabeçãlho",
+                    "TableColText": "Col",
+                    "imageInsertLinkHeader": "Inserir Link",
+                    "editImageHeader": "Edita Imagem",
+                    "alignmentsDropDownLeft": "Alinhar à Esquerda",
+                    "alignmentsDropDownCenter": "Centralizar",
+                    "alignmentsDropDownRight": "Alinhar à Direita",
+                    "alignmentsDropDownJustify": "Justificar",
+                    "imageDisplayDropDownInline": "Inline",
+                    "imageDisplayDropDownBreak": "Break",
+                    "tableInsertRowDropDownBefore": "Inserir linha antes",
+                    "tableInsertRowDropDownAfter": "Inserir linha depois",
+                    "tableInsertRowDropDownDelete": "Apagar linha",
+                    "tableInsertColumnDropDownLeft": "Inserir coluna à esquerda",
+                    "tableInsertColumnDropDownRight": "Inserir coluna à direita",
+                    "tableInsertColumnDropDownDelete": "Apagar Coluna",
+                    "tableVerticalAlignDropDownTop": "Alinhar no Topo",
+                    "tableVerticalAlignDropDownMiddle": "Alinhar no Meio",
+                    "tableVerticalAlignDropDownBottom": "Alinhar no Fundo",
+                    "tableStylesDropDownDashedBorder": "Bordas Pontilhadas",
+                    "tableStylesDropDownAlternateRows": "Linhas Alternadas",
+                    "pasteFormat": "Colar Formato",
+                    "pasteFormatContent": "Escolha a ação de formatação",
+                    "plainText": "Texto Simples",
+                    "cleanFormat": "Limpar",
+                    "keepFormat": "Manter",
+                    "formatsDropDownParagraph": "Parágrafo",
+                    "formatsDropDownCode": "Código",
+                    "formatsDropDownQuotation": "Citação",
+                    "formatsDropDownHeading1": "Cabeçalho 1",
+                    "formatsDropDownHeading2": "Cabeçalho 2",
+                    "formatsDropDownHeading3": "Cabeçalho 3",
+                    "formatsDropDownHeading4": "Cabeçalho 4",
+                    "fontNameSegoeUI": "SegoeUI",
+                    "fontNameArial": "Arial",
+                    "fontNameGeorgia": "Georgia",
+                    "fontNameImpact": "Impact",
+                    "fontNameTahoma": "Tahoma",
+                    "fontNameTimesNewRoman": "Times New Roman",
+                    "fontNameVerdana": "Verdana"
+                }
+            }
+        })
+
+    </script>
+
+
+    <script>
+
+        function ListaTblLavagens(URLapi, IDapi) {
+
+            //------ Aciona o Loading Spinner ------------------
+            //==================================================
+            $('#divViagens').LoadingScript('method_12', {
+                'background_image': 'img/loading7.png',
+                'main_width': 200,
+                'animation_speed': 10,
+                'additional_style': '',
+                'after_element': false
+            });
+
+
+            var dataTableViagens = $('#tblLavagem').DataTable();
+            dataTableViagens.destroy();
+            $('#tblLavagem tbody').empty();
+
+            DataTable.datetime('DD/MM/YYYY');
+
+            dataTableViagens = $('#tblLavagem').DataTable({
+
+                autoWidth: false,
+
+                dom: 'Bfrtip',
+
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10 linhas', '25 linhas', '50 linhas', 'Todas as Linhas']
+                ],
+
+                buttons: ['pageLength', 'excel', {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL'
+                }],
+
+                "order": [[0, 'desc']],
+
+
+                'columnDefs': [
+                    {
+                        "targets": 0, //Data
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 1, //Horario
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 2, //Veiculo
+                        "className": "text-left",
+                        "width": "10%",
+                    },
+                    {
+                        "targets": 3, //Motorista
+                        "className": "text-left",
+                        "width": "10%",
+                    },
+                    {
+                        "targets": 4, //Lavadores
+                        "className": "text-left",
+                        "width": "30%",
+                    },
+                    {
+                        "targets": 5, //Ação
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 6, //Row Number
+                        "className": "text-center",
+                        "width": "1%",
+                    },
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": URLapi,
+                    "type": "GET",
+                    "data": { id: IDapi },
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "data" },
+                    { "data": "horario" },
+                    { "data": "descricaoVeiculo" },
+                    { "data": "nome" },
+                    { "data": "lavadores" },
+                    {
+                        "data": "lavagemId",
+                        "render": function (data) {
+                            return `<div class="text-center">
+                                    <a class="btn btn-apagar btn-danger btn-xs text-white" aria-label="Apagar a Lavagem!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                    <i class="far fa-window-close"></i></a>
+                                        </div>`;
+                        }
+                    },
+                    {
+                        "data": "lavagemId",
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "Nenhum registro encontrado",
+                    "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "infoFiltered": "(Filtrados de _MAX_ registros)",
+                    "infoThousands": ".",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "search": "Pesquisar",
+                    "paginate": {
+                        "next": "Próximo",
+                        "previous": "Anterior",
+                        "first": "Primeiro",
+                        "last": "Último"
+                    },
+                    "aria": {
+                        "sortAscending": ": Ordenar colunas de forma ascendente",
+                        "sortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Selecionado %d linhas",
+                            "1": "Selecionado 1 linha"
+                        },
+                        "cells": {
+                            "1": "1 célula selecionada",
+                            "_": "%d células selecionadas"
+                        },
+                        "columns": {
+                            "1": "1 coluna selecionada",
+                            "_": "%d colunas selecionadas"
+                        }
+                    },
+                    "buttons": {
+                        "copySuccess": {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        },
+                        "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                        "colvis": "Visibilidade da Coluna",
+                        "colvisRestore": "Restaurar Visibilidade",
+                        "copy": "Copiar",
+                        "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                        "copyTitle": "Copiar para a Área de Transferência",
+                        "csv": "CSV",
+                        "excel": "Excel",
+                        "pageLength": {
+                            "-1": "Mostrar todos os registros",
+                            "_": "Mostrar %d registros"
+                        },
+                        "pdf": "PDF",
+                        "print": "Imprimir"
+                    },
+                    "autoFill": {
+                        "cancel": "Cancelar",
+                        "fill": "Preencher todas as células com",
+                        "fillHorizontal": "Preencher células horizontalmente",
+                        "fillVertical": "Preencher células verticalmente"
+                    },
+                    "lengthMenu": "Exibir _MENU_ resultados por página",
+                    "searchBuilder": {
+                        "add": "Adicionar Condição",
+                        "button": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "clearAll": "Limpar Tudo",
+                        "condition": "Condição",
+                        "conditions": {
+                            "date": {
+                                "after": "Depois",
+                                "before": "Antes",
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "number": {
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "gt": "Maior Que",
+                                "gte": "Maior ou Igual a",
+                                "lt": "Menor Que",
+                                "lte": "Menor ou Igual a",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "string": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "endsWith": "Termina Com",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notEmpty": "Não Vazio",
+                                "startsWith": "Começa Com"
+                            },
+                            "array": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "equals": "Igual à",
+                                "not": "Não",
+                                "notEmpty": "Não vazio",
+                                "without": "Não possui"
+                            }
+                        },
+                        "data": "Data",
+                        "deleteTitle": "Excluir regra de filtragem",
+                        "logicAnd": "E",
+                        "logicOr": "Ou",
+                        "title": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "value": "Valor",
+                        "leftTitle": "Critérios Externos",
+                        "rightTitle": "Critérios Internos"
+                    },
+                    "searchPanes": {
+                        "clearMessage": "Limpar Tudo",
+                        "collapse": {
+                            "0": "Painéis de Pesquisa",
+                            "_": "Painéis de Pesquisa (%d)"
+                        },
+                        "count": "{total}",
+                        "countFiltered": "{shown} ({total})",
+                        "emptyPanes": "Nenhum Painel de Pesquisa",
+                        "loadMessage": "Carregando Painéis de Pesquisa...",
+                        "title": "Filtros Ativos"
+                    },
+                    "thousands": ".",
+                    "datetime": {
+                        "previous": "Anterior",
+                        "next": "Próximo",
+                        "hours": "Hora",
+                        "minutes": "Minuto",
+                        "seconds": "Segundo",
+                        "amPm": [
+                            "am",
+                            "pm"
+                        ],
+                        "unknown": "-",
+                        "months": {
+                            "0": "Janeiro",
+                            "1": "Fevereiro",
+                            "10": "Novembro",
+                            "11": "Dezembro",
+                            "2": "Março",
+                            "3": "Abril",
+                            "4": "Maio",
+                            "5": "Junho",
+                            "6": "Julho",
+                            "7": "Agosto",
+                            "8": "Setembro",
+                            "9": "Outubro"
+                        },
+                        "weekdays": [
+                            "Domingo",
+                            "Segunda-feira",
+                            "Terça-feira",
+                            "Quarta-feira",
+                            "Quinte-feira",
+                            "Sexta-feira",
+                            "Sábado"
+                        ]
+                    },
+                    "editor": {
+                        "close": "Fechar",
+                        "create": {
+                            "button": "Novo",
+                            "submit": "Criar",
+                            "title": "Criar novo registro"
+                        },
+                        "edit": {
+                            "button": "Editar",
+                            "submit": "Atualizar",
+                            "title": "Editar registro"
+                        },
+                        "error": {
+                            "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                        },
+                        "multi": {
+                            "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                            "restore": "Desfazer alterações",
+                            "title": "Multiplos valores",
+                            "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                        },
+                        "remove": {
+                            "button": "Remover",
+                            "confirm": {
+                                "_": "Tem certeza que quer deletar %d linhas?",
+                                "1": "Tem certeza que quer deletar 1 linha?"
+                            },
+                            "submit": "Remover",
+                            "title": "Remover registro"
+                        }
+                    },
+                    "decimal": ","
+                },
+                "width": "100%"
+            });
+
+            $('#divViagens').LoadingScript('destroy');
+
+        }
+
+
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '/api/Manutencao/RecuperaLavador',
+                type: "Get",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (key, val) {
+                        console.log(val);
+
+                        var data = val;
+
+                        $("#lstLavadores").kendoMultiSelect({
+                            dataTextField: "nome",
+                            dataValueField: "lavadorId",
+                            downArrow: true,
+                            dataSource: data,
+                            autoClose: false
+                        });
+
+
+                    });
+                },
+                error: function (err) {
+                    console.log(err)
+                    alert('something went wrong')
+                }
+            });
+        });
+
+        // Botão de Inserir Lavagem
+        //=============================
+        $("#btnInserir").click(function (e) {
+
+            e.preventDefault();
+
+            DataLavagem = $("#txtDataLavagem").val();
+
+            if (DataLavagem === '') {
+                swal({
+                    title: "Erro na Data",
+                    text: "A data de lavagem é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            HoraLavagem = $("#txtHoraLavagem").val();
+
+            if (HoraLavagem === '') {
+                swal({
+                    title: "Erro na Hora",
+                    text: "A hora da lavagem é obrigatória!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            var veiculo = document.getElementById('lstVeiculoLavagem').ej2_instances[0];
+            if ((veiculo.value === null)) {
+                swal({
+                    title: 'Atenção',
+                    text: "O veículo lavado é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var motorista = document.getElementById('lstMotoristaLavagem').ej2_instances[0];
+            if ((motorista.value === null)) {
+                swal({
+                    title: 'Atenção',
+                    text: "O condutor do veículo é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var lavadores = $("#lstLavadores").data("kendoMultiSelect");
+
+            if ((lavadores.value().length === 0)) {
+                swal({
+                    title: 'Atenção',
+                    text: "Ao menos um Lavador é obrigatório!",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        close: "Fechar",
+                    }
+                });
+                return
+            };
+
+            var objLavagem = JSON.stringify({ "Data": $('#txtDataLavagem').val(), "Horario": $('#txtHoraLavagem').val(), "VeiculoId": veiculo.value, "MotoristaId": motorista.value })
+
+            console.log(objLavagem);
+
+            $.ajax({
+                type: "post",
+                url: "/api/Manutencao/InsereLavagem",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: objLavagem,
+
+                success: function (data) {
+                    toastr.success(data.message);
+                    //toastr.info(data.lavagemId);
+
+                    var lavadores = $("#lstLavadores").data("kendoMultiSelect");
+
+                    var objLavadoresLavagem = "";
+
+                    //debugger;
+
+                    for (var i = 0; i < lavadores.value().length; i++) {
+
+                        //alert(lavadores.value()[i]);
+
+                        objLavadoresLavagem = JSON.stringify({ "LavadorId": lavadores.value()[i], "LavagemId": data.lavagemId });
+
+                        $.ajax({
+                            type: "post",
+                            url: "/api/Manutencao/InsereLavadoresLavagem",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: objLavadoresLavagem,
+
+                            success: function (data) {
+                                //toastr.success(data.message);
+                            },
+                            error: function (data) {
+                                alert('error');
+                                console.log(data);
+                            }
+                        })
+                    }
+                    //$('#tblLavagem').DataTable().ajax.reload(null, false);
+
+                    ListaTodasLavagens();
+
+                    //Limpa Controles
+                    $("#txtDataLavagem").val("");
+                    $("#txtHoraLavagem").val("");
+                    var veiculo = document.getElementById('lstVeiculoLavagem').ej2_instances[0];
+                    veiculo.value = null;
+
+                    var motorista = document.getElementById('lstMotoristaLavagem').ej2_instances[0];
+                    motorista.value = null;
+
+                    var lavadores = $("#lstLavadores").data("kendoMultiSelect");
+                    lavadores.value([]);
+
+                    //location.reload();
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+
+            //LimpaControles();
+
+        });
+
+
+        function LimpaControles() {
+
+            $("#txtDataLavagem").val("");
+            $("#txtHoraLavagem").val("");
+            var veiculo = document.getElementById('lstVeiculoLavagem').ej2_instances[0];
+            veiculo.value = null;
+
+            var motorista = document.getElementById('lstMotoristaLavagem').ej2_instances[0];
+            motorista.value = null;
+
+            var lavadores = $("#lstLavadores").data("kendoMultiSelect");
+            lavadores.value([]);
+
+        }
+
+    </script>
+
+    <script>
+
+        //------------------ Apaga a Penalidade -------------------------------
+        //===================================================================
+        $(document).on('click', '.btn-apagar', function () {
+
+            var id = $(this).data('id');
+
+            swal({
+                title: "Você tem certeza que deseja apagar esta Lavagem?",
+                text: "Não será possível recuperar os dados eliminados!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    cancel: "Cancelar",
+                    confirm: "Excluir"
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    var dataToPost = JSON.stringify({ 'LavagemId': id });
+                    var url = '/api/Manutencao/ApagaLavagem';
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: dataToPost,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                ListaTodasLavagens();
+                            }
+                            else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                            alert('something went wrong')
+                        }
+                    });
+
+                }
+            });
+        });
+
+    </script>
+}

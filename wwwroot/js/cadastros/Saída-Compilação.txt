@@ -1,0 +1,10 @@
+﻿A limpeza começou às 18:45...
+1>------ Limpeza iniciada: Projeto: FrotiX, Configuração: Debug Any CPU ------
+========== Limpo: 1 bem-sucedido, 0 com falha, 0 ignorado ==========
+========== Limpar concluído às 18:45 e levou 03,110 segundos ==========
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                 Please consider donating to VSColorOutput                    +++
++++                       https://mike-ward.net/donate/                          +++
++++            (this message can be turned off in the settings panel)            +++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

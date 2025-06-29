@@ -1,0 +1,63 @@
+﻿@page
+@model FrotiX.Models.Combustivel
+
+@{
+    ViewData["Title"] = "Tipos de Combustível";
+    ViewData["PageName"] = "combustivel_index";
+    ViewData["Heading"] = "<i class='fa-duotone fa-gas-pump'></i> Cadastros: <span class='fw-300'>Tipos de Combustível</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-duotone fa-chalkboard-user";
+}
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/Combustivel/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-gas-pump">
+                        </i> &nbsp; Adicionar Tipo de Combustível
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblCombustivel" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Descrição do Combustível</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js//cadastros/combustivel.js"></script>
+}

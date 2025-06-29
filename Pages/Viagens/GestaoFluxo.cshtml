@@ -1,0 +1,318 @@
+﻿@page
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@model FrotiX.Models.ViewViagens
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+    ViewData["Title"] = "Gestão do Fluxo";
+    ViewData["PageName"] = "viagens_gestaofluxo";
+    ViewData["Heading"] = "<i class='fa-duotone fa-car-bus'></i> Gestão do Fluxo: <span class='fw-300'>Economildos</span>";
+    ViewData["Category1"] = "Fluxo de Passageiros";
+    ViewData["PageIcon"] = "fa-duotone fa-car-bus";
+
+    // Carregamos as listas para combos:
+    var listaMotorista = new ListaMotoristasMOB(_unitOfWork).MotoristaList();
+    var listaVeiculos = new ListaVeiculosMOB(_unitOfWork).VeiculosList();
+    // Se precisar, carregue "lstVeiculosEconomildos" e "lstMotoristasEconomildo" etc.
+}
+
+@section HeadBlock {
+    <!-- Se tiver RTE e outras libs, carregue aqui -->
+}
+
+<style>
+    /* Minimal styling */
+    .label {
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    let dataTable; // DataTable principal
+
+    $(document).ready(function() {
+
+        // 🛠️ 1) Preencher a data atual no campo de filtros
+        let hoje = new Date();
+        let dia = String(hoje.getDate()).padStart(2, '0');
+        let mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+        let ano = hoje.getFullYear();
+        let dataFormatada = `${ano}-${mes}-${dia}`; // yyyy-MM-dd para input type="date"
+
+        $('#txtData').val(dataFormatada);
+
+
+        // 1) Inicializa DataTable com serverSide e POST
+        dataTable = $('#tblFluxo').DataTable({
+            processing: true,
+            serverSide: true,
+
+            autoWidth: false,
+            dom: 'Bfrtip',
+            lengthMenu: [
+                [10, 25, 50, -1],
+                ['10 linhas', '25 linhas', '50 linhas', 'Todas']
+            ],
+            buttons: ['pageLength', 'excel', {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL'
+            }],
+            aaSorting: [],
+            order: [[0, 'desc']],
+            responsive: true,
+            ajax: {
+                url: "/api/viagem/FluxoServerSide", // Server-side endpoint
+                type: "POST",
+                datatype: "json",
+                // Enviando nossos filtros (dataFluxo, veiculoId, motoristaId):
+                data: function (d) {
+                    // "d" já tem draw, start, length, etc.
+                    // Acrescentamos os campos do formulário
+                    d.dataFluxo   = $('#txtData').val();
+                    d.veiculoId   = document.getElementById('lstVeiculos').ej2_instances[0].value;
+                    d.motoristaId = document.getElementById('lstMotorista').ej2_instances[0].value;
+                    // Assim, no Controller (FluxoServerSide), pegamos Request.Form["dataFluxo"], etc.
+                }
+            },
+            columns: [
+                { data: "dataFluxo"        }, // 1) Data
+                { data: "mob"              }, // 2) MOB
+                { data: "descricaoVeiculo" }, // 3) Veiculo
+                { data: "nomeMotorista"    }, // 4) Motorista
+                { data: "horaInicio"       }, // 5) Hora Início
+                { data: "horaFim"          }, // 6) Hora Fim
+                { data: "qtdPassageiros"   }, // 7) Quantidade
+                {
+                    data: "viagemEconomildoId", // 8) Ação (botões)
+                    render: function(data) {
+                        return `
+                            <div class="text-center">
+                                <a class="btn btn-primary btn-xs"
+                                   data-toggle="modal" data-target="#modalEditaRegistro"
+                                   data-id='${data}'>
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-danger btn-xs btn-apagar" data-id='${data}'>
+                                    <i class="far fa-window-close"></i>
+                                </a>
+                            </div>`;
+                    }
+                },
+                {
+                    data: "viagemEconomildoId", // 9) Exibe o row number
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                }
+            ],
+            language: {
+                emptyTable: "Nenhum registro encontrado",
+                // ... (restante da tradução se quiser)
+            }
+        });
+
+        // 2) Botão apagar (igual antes)
+        $(document).on('click', '.btn-apagar', function() {
+            let viagemEconomildoId = $(this).data('id');
+            swal({
+                title: "Confirma apagar esta viagem?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            }).then((yes) => {
+                if (!yes) return;
+                let objViagem = {
+                    Data: "",
+                    IdaVolta: "",
+                    HoraInicio: "",
+                    HoraFim: "",
+                    QtdPassageiros: "",
+                    VeiculoId: "",
+                    MOB: "",
+                    Responsavel: "",
+                    ViagemEconomildoId: viagemEconomildoId
+                };
+                $.ajax({
+                    url: "/api/viagem/ApagaFluxoEconomildo",
+                    type: "POST",
+                    data: JSON.stringify(objViagem),
+                    contentType: "application/json; charset=utf-8",
+                    success: function(resp) {
+                        if (resp.success) {
+                            toastr.success(resp.message);
+                            dataTable.ajax.reload();
+                        } else {
+                            toastr.error(resp.message);
+                        }
+                    },
+                    error: function(err) {
+                        console.error(err);
+                        alert("Falha ao apagar");
+                    }
+                });
+            });
+        });
+
+        // 3) Modal Editar (igual antes)
+        $('#modalEditaRegistro').on('shown.bs.modal', function(e) {
+            let btn = $(e.relatedTarget);
+            let viagemEconomildoId = btn.data('id');
+            $('#txtId').val(viagemEconomildoId);
+        });
+
+        $('#btnEditarOcorrencia').click(function() {
+            let id = $('#txtId').val();
+            alert("Salvando/atualizando 'id' = " + id);
+            $('#modalEditaRegistro').modal('hide');
+        });
+    });
+
+    // 4) Função Aplicar Filtros: agora basta dar reload no DataTable,
+    //    pois enviamos os params (dataFluxo, veiculoId, motoristaId) em ajax.data
+    function AplicarFiltros() {
+        dataTable.ajax.reload(); // Chama POST /FluxoServerSide com os campos atualizados
+    }
+
+    // 5) Função Limpar Filtros: zera os combos e data, e dá reload
+    function LimparFiltros() {
+        $('#txtData').val("");
+        document.getElementById('lstVeiculos').ej2_instances[0].value  = null;
+        document.getElementById('lstMotorista').ej2_instances[0].value = null;
+        dataTable.ajax.reload();
+    }
+</script>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="box-body">
+                        <br /><br />
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">
+                                Escolha os filtros desejados para visualizar as Viagens:
+                            </h2>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <div class="col-2">
+                                    <label class="label">Escolha uma Data</label>
+                                    <input id="txtData" class="form-control form-control-xs" type="date" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <ejs-combobox id="lstVeiculos"
+                                                  placeholder="Selecione um Veículo"
+                                                  allowFiltering="true"
+                                                  filterType="Contains"
+                                                  dataSource="@listaVeiculos"
+                                                  popupHeight="250px"
+                                                  width="100%"
+                                                  showClearButton="true">
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+
+                                <div class="col-3">
+                                    <ejs-combobox id="lstMotorista"
+                                                  placeholder="Selecione um Motorista"
+                                                  allowFiltering="true"
+                                                  filterType="Contains"
+                                                  dataSource="@listaMotorista"
+                                                  popupHeight="250px"
+                                                  width="100%"
+                                                  showClearButton="true">
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mt-2">
+                                <!-- <-- nova linha para os botões -->
+                                <div class="col-6 d-flex gap-2">
+                                    <!-- 6 colunas para alinhar à esquerda -->
+                                    <button type="button" class="btn btn-primary mr-2" onclick="AplicarFiltros()">
+                                        <i class="fa fa-search"></i> Aplicar Filtros
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="LimparFiltros()">
+                                        <i class="fa fa-eraser"></i> Limpar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <br /><br />
+                        <div id="divFluxo">
+                            <table id="tblFluxo" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>MOB</th>
+                                        <th>Veículo</th>
+                                        <th>Motorista</th>
+                                        <th>Hora Início</th>
+                                        <th>Hora Fim</th>
+                                        <th>Quantidade</th>
+                                        <th>Ação</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody><!-- DataTables preenche --></tbody>
+                            </table>
+                        </div><!-- divFluxo -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal EditaRegistro -->
+<div class="modal fade" id="modalEditaRegistro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Editar a Ocorrência</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmOcorrencia">
+                    <input type="hidden" id="txtId" />
+                    <div class="form-group row">
+                        <div class="col-3 col-sm-3">
+                            <label class="label">Data</label>
+                            <input id="txtDataModal" class="form-control form-control-xs" type="date" />
+                        </div>
+                        <div class="col-4">
+                            <label class="label">Economildo (veículo)</label>
+                            <ejs-combobox id="lstVeiculosEconomildos" allowFiltering="true" filterType="Contains"
+                                          popupHeight="250px" width="100%" showClearButton="true">
+                                <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                            </ejs-combobox>
+                        </div>
+                        <div class="col-4">
+                            <label class="label">Motorista</label>
+                            <ejs-combobox id="lstMotoristasEconomildo" allowFiltering="true" filterType="Contains"
+                                          popupHeight="250px" width="100%" showClearButton="true">
+                                <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                            </ejs-combobox>
+                        </div>
+                    </div>
+                    <!-- etc... -->
+                </form>
+                <div class="modal-footer">
+                    <button id="btnEditarOcorrencia" class="btn btn-primary" type="submit" value="SUBMIT">
+                        Editar a Ocorrência
+                    </button>
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

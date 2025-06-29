@@ -1,0 +1,1530 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+    @functions{
+        public void OnGet()
+        {
+            FrotiX.Pages.Multa.ListaMultaModel.Initialize(_unitOfWork);
+            ViewData["dataOrgaoAutuante"] = new ListaOrgaoAutuanteMulta(_unitOfWork).OrgaoAutuanteList();
+
+            ViewData["lstMotorista"] = new ListaMotorista(_unitOfWork).MotoristaList();
+            ViewData["lstVeiculos"] = new ListaVeiculos(_unitOfWork).VeiculosList();
+            ViewData["lstTipoMulta"] = new ListaTipoMulta(_unitOfWork).TipoMultaList();
+            ViewData["lstStatus"] = new ListaStatusPenalidade(_unitOfWork).StatusList();
+
+        }
+
+    }
+}
+
+
+@model FrotiX.Models.Multa
+
+@{
+    ViewData["Title"] = "Multas";
+    ViewData["PageName"] = "multa_listapenalidade";
+    ViewData["Heading"] = "<i class='fad fa-pen-to-square'></i> Multas: <span class='fw-300'>Penalidades</span>";
+    ViewData["Category1"] = "Penalidade";
+    ViewData["PageIcon"] = "fad fa-pen-to-square";
+}
+
+@section HeadBlock {
+
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    @*<script src="https://cdn.kendostatic.com/2022.1.412/js/jquery.min.js"></script>*@
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+    .fundo-verde {
+        background-color: #6C7665;
+        color: white;
+    }
+
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .img {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: 50%;
+        height: 100%;
+        margin: 0 auto !important;
+    }
+
+    .btn_margem {
+        margin-top: 2px;
+        margin-left: 2px;
+        margin-right: 2px;
+        margin-bottom: 2px;
+    }
+</style>
+
+<script>
+
+    var URapi = "/api/multa";
+
+    var IDapi = "";
+
+    var escolhendoVeiculo = false;
+    var escolhendoMulta = false;
+    var escolhendoMotorista = false;
+    var escolhendoOrgao = false;
+    var escolhendoStatus = false;
+
+
+    //------ Indica um Item Sendo Escolhido-------------
+    //==================================================
+    function DefineEscolhaVeiculo() {
+        console.log("Fechou Veículo");
+        escolhendoVeiculo = true;
+        escolhendoOrgao = false;
+        escolhendoMulta = false;
+        escolhendoMotorista = false;
+        escolhendoStatus = false;
+
+        var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+        if (veiculos.value === null) {
+            //ListaTodasPenalidades();
+        }
+
+    }
+
+    function DefineEscolhaMulta() {
+        console.log("Fechou Multa");
+        escolhendoVeiculo = false;
+        escolhendoOrgao = false;
+        escolhendoMulta = true;
+        escolhendoMotorista = false;
+        escolhendoStatus = false;
+        var tipos = document.getElementById('lstTiposMulta').ej2_instances[0];
+        console.log(tipos.value);
+        if (tipos.value === null || tipos.value === '') {
+            console.log("Deveria estar aqui listando todas as multas");
+            //ListaTodasPenalidades();
+        }
+    }
+    function DefineEscolhaMotorista() {
+        console.log("Fechou Motorista");
+        escolhendoVeiculo = false;
+        escolhendoOrgao = false;
+        escolhendoMulta = false;
+        escolhendoMotorista = true;
+        escolhendoStatus = false;
+        var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+        if (motoristas.value === null) {
+            //ListaTodasPenalidades();
+        }
+    }
+    function DefineEscolhaOrgao() {
+        console.log("Fechou Orgão");
+        escolhendoVeiculo = false;
+        escolhendoOrgao = true;
+        escolhendoMulta = false;
+        escolhendoMotorista = false;
+        escolhendoStatus = false;
+        var orgaos = document.getElementById('lstOrgao').ej2_instances[0];
+        if (orgaos.value === null) {
+            //ListaTodasPenalidades();
+        }
+    }
+    function DefineEscolhaStatus() {
+        console.log("Fechou Status");
+        escolhendoVeiculo = false;
+        escolhendoOrgao = false;
+        escolhendoMulta = false;
+        escolhendoMotorista = false;
+        escolhendoStatus = true;
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+        if (status.value === null) {
+            //ListaTodasPenalidades();
+        }
+    }
+
+
+    //------ Lista Todas as Autuacoes -------------
+    //=============================================
+
+    function ListaTodasPenalidades() {
+
+
+        console.log("Lista Todos");
+
+        var status = document.getElementById('lstStatus').ej2_instances[0];
+
+        if (status.value === "" || status.value === null) {
+            var statusId = "Pendentes";
+        } else {
+            var statusId = "Todas";
+        }
+        URLapi = "/api/multa/listamultas"
+
+        ListaTblPenalidades(URLapi, statusId);
+
+    }
+
+
+    //Ajusta funcionamento do RTE no Modal
+    //====================================
+    var defaultRTE;
+
+    function onCreate() {
+        defaultRTE = this;
+    }
+
+</script>
+
+<form>
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content float-right">
+                        <a href="/Multa/UpsertPenalidade" class="btn btn-info">
+                            <i class="fal fa-pen-to-square">
+                            </i> &nbsp; Adicionar Notificação de Penalidade
+                        </a>
+                    </div>
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br /><br />
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                <h2 class="text-primary">
+                                    Escolha os filtros desejados para visualizar as Penalidades:
+                                </h2>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <div class="col-4">
+                                        <br />
+                                        <ejs-combobox id="lstOrgao" placeholder="Selecione um Órgão..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataOrgaoAutuante"]" popupHeight="250px"  width="100%" showClearButton="true" >
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-8">
+                                        <br />
+                                        <ejs-combobox id="lstTiposMulta" placeholder="Selecione uma Infração..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstTipoMulta"]" popupHeight="250px"  width="100%" showClearButton="true" >
+                                            <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-4">
+                                    <ejs-combobox id="lstVeiculos" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px"  width="100%" showClearButton="true" >
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-4">
+                                    <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px"  width="100%" showClearButton="true" >
+                                        <e-combobox-fields text="Descricao" value="Id"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-2">
+                                    <ejs-combobox id="lstStatus" placeholder="Multas com Status..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstStatus"]" popupHeight="250px"  width="100%" showClearButton="true" >
+                                        <e-combobox-fields text="Status" value="StatusId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <a class="col-2 btn btn-primary text-white" id="btnFiltro" name="btnFiltro" aria-label="Filtra as Penalidades!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" onclick="ListaTblPenalidades()">
+                                    Filtra as Penalidades
+                                </a>
+
+                            </div>
+                            <br />
+                            <div id="divPenalidades">
+                                <table id="tblMulta" class="table table-bordered table-striped" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nº Infração</th>
+                                            <th>Data</th>
+                                            <th>Hora</th>
+                                            <th>Motorista</th>
+                                            <th>Veículo</th>
+                                            <th>Órgão</th>
+                                            <th>Infração</th>
+                                            <th>Local</th>
+                                            <th>Data Pagamento</th>
+                                            <th>Valor Pago</th>
+                                            <th>(R$) Pós Vencimento</th>
+                                            <th>Processo eDoc</th>
+                                            <th>Ação</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div id="divPenalidades"></div>
+    </div>
+
+</form>
+
+@*-------------- Modal da Ficha de Vistoria --------------
+    ========================================================*@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalPDF">
+        <div class="modal-dialog modal-md" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Ficha de Vistoria</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+
+                    <div id="pdfViewer">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@*----------------- MODAL de Pagamento ------------------------*@
+@*=============================================================*@
+<div class="modal fade" id="modalRegistraPagamento" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="h3Titulo">Registra o Pagamento da Infração</h3>
+            </div>
+            <div class="modal-body">
+                <form id="frmStatus">
+                    <input type="hidden" id="txtId" />
+                    <input type="hidden" id="txtEmpenhoMultaId" />
+
+                    <div class="row">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="label font-weight-bold">Data de Pagamento</label>
+                                    <input id="txtDataPagamento" class="form-control form-control-xs" type="date" />
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="label font-weight-bold">Valor Pago</label>
+                                    <input id="txtValorPago" class="form-control form-control-xs" data-inputmask="'alias': 'currency'" style="text-align: right;" onKeyPress="return(moeda(this,'.',',',event))" />
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="label font-weight-bold">Forma de Pagamento</label>
+                                    <select id="lstPagamento" class="form-control form-control-xs">
+                                        <option value="">--- Escolha ---</option>
+                                        <option value="Defin">Via Defin</option>
+                                        <option value="Direto">Direto pelo Infrator</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="control-wrapper">
+                        <div id="divPDF">
+                            <input type="file" name="files" id="pdfComprovante" />
+                            <div id="PDFContainer">
+                                <div id="ComprovantepdfViewer">
+                                </div>
+                            </div>
+                            <input id="txtComprovantePDF" class="form-control form-control-xs" style="display:none" />
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button id="btnPagamento" class="btn btn-primary" type="submit" value="SUBMIT">Registra Pagamento</button>
+                    <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div id="events">
+        Row selected count - new information added at the top
+    </div>*@
+
+
+
+@section ScriptsBlock{
+
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    @*<script src="https://cdn.kendostatic.com/2022.1.412/js/jquery.min.js"></script>*@
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+
+    <script>
+
+        var defaultRTE;
+
+        function onCreate() {
+
+            defaultRTE = this;
+
+        }
+
+    </script>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+
+            $("txtData").on('keyup', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+
+                    document.getElementById('txtData').onchange();
+
+                }
+            });
+
+            ListaTodasPenalidades();
+
+        });
+
+        // Botão Fechar do Modal
+        //=============================
+        $("#btnFechar").click(function (e) {
+            $("div").removeClass("modal-backdrop");
+        });
+
+
+        //Função necessária para o RTE
+        function toolbarClick(e) {
+            if (e.item.id == "rte_toolbar_Image") {
+                var element = document.getElementById('rte_upload')
+                element.ej2_instances[0].uploading = function upload(args) {
+                    args.currentRequest.setRequestHeader('XSRF-TOKEN', document.getElementsByName('__RequestVerificationToken')[0].value);
+                }
+            }
+        }
+
+        ej.base.L10n.load({
+            "pt-BR": {
+                "richtexteditor": {
+                    "alignments": "Alinhamentos",
+                    "justifyLeft": "Alinhar à Esquerda",
+                    "justifyCenter": "Centralizar",
+                    "justifyRight": "Alinhar à Direita",
+                    "justifyFull": "Justificar",
+                    "fontName": "Nome da Fonte",
+                    "fontSize": "Tamanho da Fonte",
+                    "fontColor": "Cor da Fonte",
+                    "backgroundColor": "Cor de Fundo",
+                    "bold": "Negrito",
+                    "italic": "Itálico",
+                    "underline": "Sublinhado",
+                    "strikethrough": "Tachado",
+                    "clearFormat": "Limpa Formatação",
+                    "clearAll": "Limpa Tudo",
+                    "cut": "Cortar",
+                    "copy": "Copiar",
+                    "paste": "Colar",
+                    "unorderedList": "Lista com Marcadores",
+                    "orderedList": "Lista Numerada",
+                    "indent": "Aumentar Identação",
+                    "outdent": "Diminuir Identação",
+                    "undo": "Desfazer",
+                    "redo": "Refazer",
+                    "superscript": "Sobrescrito",
+                    "subscript": "Subscrito",
+                    "createLink": "Inserir Link",
+                    "openLink": "Abrir Link",
+                    "editLink": "Editar Link",
+                    "removeLink": "Remover Link",
+                    "image": "Inserir Imagem",
+                    "replace": "Substituir",
+                    "align": "Alinhar",
+                    "caption": "Título da Imagem",
+                    "remove": "Remover",
+                    "insertLink": "Inserir Link",
+                    "display": "Exibir",
+                    "altText": "Texto Alternativo",
+                    "dimension": "Mudar Tamanho",
+                    "fullscreen": "Maximizar",
+                    "maximize": "Maximizar",
+                    "minimize": "Minimizar",
+                    "lowerCase": "Caixa Baixa",
+                    "upperCase": "Caixa Alta",
+                    "print": "Imprimir",
+                    "formats": "Formatos",
+                    "sourcecode": "Visualizar Código",
+                    "preview": "Exibir",
+                    "viewside": "ViewSide",
+                    "insertCode": "Inserir Código",
+                    "linkText": "Exibir Texto",
+                    "linkTooltipLabel": "Título",
+                    "linkWebUrl": "Endereço Web",
+                    "linkTitle": "Entre com um título",
+                    "linkurl": "http://exemplo.com",
+                    "linkOpenInNewWindow": "Abrir Link em Nova Janela",
+                    "linkHeader": "Inserir Link",
+                    "dialogInsert": "Inserir",
+                    "dialogCancel": "Cancelar",
+                    "dialogUpdate": "Atualizar",
+                    "imageHeader": "Inserir Imagem",
+                    "imageLinkHeader": "Você pode proporcionar um link da web",
+                    "mdimageLink": "Favor proporcionar uma URL para sua imagem",
+                    "imageUploadMessage": "Solte a imagem aqui ou busque para o upload",
+                    "imageDeviceUploadMessage": "Clique aqui para o upload",
+                    "imageAlternateText": "Texto Alternativo",
+                    "alternateHeader": "Texto Alternativo",
+                    "browse": "Procurar",
+                    "imageUrl": "http://exemplo.com/imagem.png",
+                    "imageCaption": "Título",
+                    "imageSizeHeader": "Tamanho da Imagem",
+                    "imageHeight": "Altura",
+                    "imageWidth": "Largura",
+                    "textPlaceholder": "Entre com um Texto",
+                    "inserttablebtn": "Inserir Tabela",
+                    "tabledialogHeader": "Inserir Tabela",
+                    "tableWidth": "Largura",
+                    "cellpadding": "Espaçamento de célula",
+                    "cellspacing": "Espaçamento de célula",
+                    "columns": "Número de colunas",
+                    "rows": "Número de linhas",
+                    "tableRows": "Linhas da Tabela",
+                    "tableColumns": "Colunas da Tabela",
+                    "tableCellHorizontalAlign": "Alinhamento Horizontal da Célular",
+                    "tableCellVerticalAlign": "Alinhamento Vertical da Célular",
+                    "createTable": "Criar Tabela",
+                    "removeTable": "Remover Tabela",
+                    "tableHeader": "Cabeçalho da Tabela",
+                    "tableRemove": "Remover Tabela",
+                    "tableCellBackground": "Fundo da Célula",
+                    "tableEditProperties": "Editar Propriedades da Tabela",
+                    "styles": "Estilos",
+                    "insertColumnLeft": "Inserir Coluna à Esquerda",
+                    "insertColumnRight": "Inserir Coluna à Direita",
+                    "deleteColumn": "Apagar Coluna",
+                    "insertRowBefore": "Inserir Linha Antes",
+                    "insertRowAfter": "Inserir Linha Depois",
+                    "deleteRow": "Apagar Linha",
+                    "tableEditHeader": "Edita Tabela",
+                    "TableHeadingText": "Cabeçãlho",
+                    "TableColText": "Col",
+                    "imageInsertLinkHeader": "Inserir Link",
+                    "editImageHeader": "Edita Imagem",
+                    "alignmentsDropDownLeft": "Alinhar à Esquerda",
+                    "alignmentsDropDownCenter": "Centralizar",
+                    "alignmentsDropDownRight": "Alinhar à Direita",
+                    "alignmentsDropDownJustify": "Justificar",
+                    "imageDisplayDropDownInline": "Inline",
+                    "imageDisplayDropDownBreak": "Break",
+                    "tableInsertRowDropDownBefore": "Inserir linha antes",
+                    "tableInsertRowDropDownAfter": "Inserir linha depois",
+                    "tableInsertRowDropDownDelete": "Apagar linha",
+                    "tableInsertColumnDropDownLeft": "Inserir coluna à esquerda",
+                    "tableInsertColumnDropDownRight": "Inserir coluna à direita",
+                    "tableInsertColumnDropDownDelete": "Apagar Coluna",
+                    "tableVerticalAlignDropDownTop": "Alinhar no Topo",
+                    "tableVerticalAlignDropDownMiddle": "Alinhar no Meio",
+                    "tableVerticalAlignDropDownBottom": "Alinhar no Fundo",
+                    "tableStylesDropDownDashedBorder": "Bordas Pontilhadas",
+                    "tableStylesDropDownAlternateRows": "Linhas Alternadas",
+                    "pasteFormat": "Colar Formato",
+                    "pasteFormatContent": "Escolha a ação de formatação",
+                    "plainText": "Texto Simples",
+                    "cleanFormat": "Limpar",
+                    "keepFormat": "Manter",
+                    "formatsDropDownParagraph": "Parágrafo",
+                    "formatsDropDownCode": "Código",
+                    "formatsDropDownQuotation": "Citação",
+                    "formatsDropDownHeading1": "Cabeçalho 1",
+                    "formatsDropDownHeading2": "Cabeçalho 2",
+                    "formatsDropDownHeading3": "Cabeçalho 3",
+                    "formatsDropDownHeading4": "Cabeçalho 4",
+                    "fontNameSegoeUI": "SegoeUI",
+                    "fontNameArial": "Arial",
+                    "fontNameGeorgia": "Georgia",
+                    "fontNameImpact": "Impact",
+                    "fontNameTahoma": "Tahoma",
+                    "fontNameTimesNewRoman": "Times New Roman",
+                    "fontNameVerdana": "Verdana"
+                }
+            }
+        })
+
+    </script>
+
+
+    <script>
+
+        function ListaTblPenalidades() {
+
+            //------ Aciona o Loading Spinner ------------------
+            //==================================================
+            $('#divPenalidades').LoadingScript('method_12', {
+                'background_image': 'img/loading7.png',
+                'main_width': 200,
+                'animation_speed': 10,
+                'additional_style': '',
+                'after_element': false
+            });
+
+            //----- Pega Os Filtros ------------------------
+            //==================================================
+            var veiculoId = "";
+            var veiculos = document.getElementById('lstVeiculos').ej2_instances[0];
+            if (veiculos.value != null) {
+                veiculoId = veiculos.value
+            }
+
+            var tipoMultaId = "";
+            var tipos = document.getElementById('lstTiposMulta').ej2_instances[0];
+            console.log(tipos.value);
+            if (tipos.value != null || tipos.value === '') {
+                tipoMultaId = tipos.value
+            }
+
+            var motoristaId = "";
+            var motoristas = document.getElementById('lstMotorista').ej2_instances[0];
+            if (motoristas.value != null) {
+                motoristaId = motoristas.value
+            }
+
+            var orgaoAutuanteId = "";
+            var orgaos = document.getElementById('lstOrgao').ej2_instances[0];
+            if (orgaos.value != null) {
+                orgaoAutuanteId = orgaos.value
+            }
+
+            var statusId = "";
+            var status = document.getElementById('lstStatus').ej2_instances[0];
+            if (status.value != null) {
+                statusId = status.value
+            }
+
+
+            var dataTableMultas = $('#tblMulta').DataTable();
+            dataTableMultas.destroy();
+            $('#tblMulta tbody').empty();
+
+            console.log("Entrei na Chamada do Lista Todas as Notificações!");
+            console.log("URLapi: " + URLapi);
+
+            var events = $('#events');
+
+
+            DataTable.datetime('DD/MM/YYYY');
+
+            dataTableMultas = $('#tblMulta').DataTable({
+
+                select: {
+                    style: 'multi',
+                    selector: 'td:first-child'
+                },
+
+                autoWidth: false,
+
+                dom: 'Bfrtip',
+
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10 linhas', '25 linhas', '50 linhas', 'Todas as Linhas']
+                ],
+
+                buttons: ['pageLength', 'copy', 'excel', 'pdf', {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    text: 'Imprime Relatório para Secle',
+                    action: function () {
+                        var count = dataTableMultas.rows({ selected: true }).count();
+
+                        //events.prepend('<div>' + count + ' row(s) selected</div>');
+                    }
+                }],
+
+                "order": [[2, 'desc']],
+
+
+                'columnDefs': [
+
+                    {
+                    //    targets: 0,
+                    //    data: null,
+                    //    defaultContent: '',
+                    //    orderable: false,
+                    //    className: 'select-checkbox',
+                    //    "width": "1%",
+
+                    targets: 0,
+                    render: function (data, type, row) {
+                            return '<input type="checkbox" class="editor-active">';
+                    },
+                    className: "dt-body-center",
+                    orderable: false,
+                    searchable: false,
+                    width: "1%",
+
+                    },
+                    {
+                        "targets": 1, //Nº Infração
+                        "className": "text-center",
+                        "width": "3%",
+                        "render": function (data, type, full, meta) {
+                            return `<div class="text-center">
+                                                                                                                <a aria-label="&#9762; (${full.observacao})" data-microtip-position="rigth" role="tooltip"  data-microtip-size="medium" style="cursor:pointer;" data-id='${data}'>
+                                                                                                                    ${full.numInfracao}
+                                                                                                                </a>
+                                                                                                            </div>`;
+                        },
+                    },
+                    {
+                        "targets": 2, //Data
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 3, //Hora
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 4, //Motorista
+                        "className": "text-left",
+                        "width": "8%",
+                        "render": function (data, type, full, meta) {
+                            //return type === 'display' ? '<div title="' + full.telefone + '">' + data : data;
+                            return `<div class="text-center">
+										<a aria-label="&#128241; (${full.telefone})" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}' class="display: block;">
+												${full.nome}
+										</a>
+                                    </div>`;
+                        },
+                    },
+                    {
+                        "targets": 5, //Veículo
+                        "className": "text-center",
+                        "width": "3%",
+                    },
+                    {
+                        "targets": 6, //Órgão
+                        "className": "text-left",
+                        "width": "5%",
+                    },
+                    {
+                        "targets": 7, //Infração
+                        "className": "text-left",
+                        "width": "8%",
+                        "render": function (data, type, full, meta) {
+                            //return type === 'display' ? '<div title="' + full.telefone + '">' + data : data;
+                            return `<div class="text-center">
+                                                                                            <a aria-label="&#9940; (${full.descricao})" data-microtip-position="top" data-microtip-size="medium" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                                ${full.artigo}
+                                                                                            </a>
+                                                                                        </div>`;
+                        },
+                    },
+                    {
+                        "targets": 8, //Local
+                        "className": "text-left",
+                        "width": "20%",
+                    },
+                    {
+                        "targets": 9, //Data Pagamento
+                        "className": "text-center",
+                        "width": "3%",
+                        "render": function (data, type, full, meta) {
+                            return `<div class="text-center">
+                                                                                            <a aria-label="Data Original de Vencimento: (${full.vencimento})" data-microtip-position="top" data-microtip-size="medium" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                                ${full.dataPagamento}
+                                                                                            </a>
+                                                                                        </div>`;
+
+                        },
+                    },
+                    {
+                        "targets": 10, //(R$) Pago
+                        "className": "text-right",
+                        "width": "6%",
+                        "render": function (data, type, full, meta) {
+                            return `<div class="text-center">
+                                                                                            <a aria-label="Valor Original de Pagamento: (${full.valorAteVencimento})" data-microtip-position="top" data-microtip-size="medium" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                                ${full.valorPago}
+                                                                                            </a>
+                                                                                        </div>`;
+
+                        },
+                    },
+                    {
+                        "targets": 11, //(R$) Pós Vencimento
+                        "className": "text-right",
+                        "width": "5%",
+                    },
+                    {
+                        "targets": 12, //eDoc
+                        "className": "text-center",
+                        "width": "5%",
+                    },
+                    {
+                        "targets": 13, //Ação
+                        "className": "text-center",
+                        "width": "12%",
+                    },
+                    {
+                        "targets": 14, //RowNumber
+                        "className": "text-center",
+                        "width": "1%",
+                    }
+                ],
+                responsive: true,
+                "ajax": {
+                    "url": URLapi,
+                    "type": "GET",
+                    "data": {fase: "Penalidade", veiculo: veiculoId, orgao: orgaoAutuanteId, motorista: motoristaId, infracao: tipoMultaId, status: statusId},
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": null },
+                    { "data": "numInfracao" },
+                    { "data": "data" },
+                    { "data": "hora" },
+                    { "data": "nome" },
+                    { "data": "placa" },
+                    { "data": "sigla" },
+                    { "data": "artigo" },
+                    { "data": "localizacao" },
+                    { "data": "dataPagamento" },
+                    { "data": "valorPago" },
+                    { "data": "valorPosVencimento" },
+                    { "data": "processoEDoc" },
+                    //{
+                    //    "data": "status",
+                    //    "render": function (data, type, row, meta) {
+                    //        if (row.status === "Aberta")
+                    //            return '<a href="javascript:void" class="updateStatusViagem btn btn-success btn-xs text-white" data-url="/api/Viagem/updateStatusViagem?Id=' + row.viagemId + '">Aberta</a>';
+                    //        else
+                    //            if (row.status === "Realizada")
+                    //                return '<a href="javascript:void" class="updateStatusViagem btn  btn-xs fundo-cinza text-white text-bold" data-url="/api/Viagem/updateStatusViagem?Id=' + row.viagemId + '">Realizada</a>';
+                    //            else
+                    //                return '<a href="javascript:void" class="updateStatusViagem btn btn-danger btn-xs text-white text-bold" data-url="/api/Viagem/updateStatusViagem?Id=' + row.viagemId + '">Cancelada</a>';
+                    //    }
+                    //},
+                    {
+                        "data": "multaId",
+                        "render": function (data, type, full, meta) {
+                            return `<div class="text-center">
+                                                                                                                    <a href="/Multa/UpsertPenalidade?id=${data}" class="btn btn_margem btn-primary btn-xs text-white" aria-label="Editar a Penalidade!" data-microtip-position="top" role="tooltip"  style="cursor:pointer;">
+                                                                                                                        <i class="far fa-edit"></i>
+                                                                                                                    </a>
+
+                                                                                                                    <a class="btn btn_margem btn-pagamento btn-danger btn-xs text-white fundo-laranja" aria-label="${full.tooltip}" id="rowdata" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}' ${full.habilitado}>
+                                                                                                                        <i class="fa-regular fa-dollar-sign"></i>
+                                                                                                                    </a>
+
+                                                                                                                    <a class="btn btn_margem btn-apagar btn-danger btn-xs text-white" aria-label="Apagar a Penalidade!" data-microtip-position="top" role="tooltip" style="cursor:pointer;" data-id='${data}'>
+                                                                                                                        <i class="far fa-window-close"></i>
+                                                                                                                    </a>
+
+                                                                                                                    <a href="/Multa/ExibePDFPenalidade?id=${data}" class="btn btn_margem btn-dark btn-xs text-white" aria-label="Exibe a Notificação de Penalidade!" data-microtip-position="top" role="tooltip"  style="cursor:pointer;">
+                                                                                                                        <i class="fab fa-wpforms"></i>
+
+                                                                                                                    <a href="/Multa/ExibePDFComprovante?id=${data}" class="btn btn_margem fundo-verde btn-xs text-white" aria-label="Exibe o Comprovante de Pagamento da Penalidade!" data-microtip-position="top" data-microtip-size="medium" role="tooltip"  style="cursor:pointer;">
+                                                                                                                        <i class="fa-regular fa-receipt"></i>
+                                                                                                                </div>`;
+
+
+
+                        }
+                    },
+                    {
+                        "data": "multaId",
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "Nenhum registro encontrado",
+                    "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "infoFiltered": "(Filtrados de _MAX_ registros)",
+                    "infoThousands": ".",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "search": "Pesquisar",
+                    "paginate": {
+                        "next": "Próximo",
+                        "previous": "Anterior",
+                        "first": "Primeiro",
+                        "last": "Último"
+                    },
+                    "aria": {
+                        "sortAscending": ": Ordenar colunas de forma ascendente",
+                        "sortDescending": ": Ordenar colunas de forma descendente"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": " %d linhas selecionadas ",
+                            "1": "  1 linha selecionada "
+                        },
+                        "cells": {
+                            "1": " 1 célula selecionada",
+                            "_": " %d células selecionadas"
+                        },
+                        "columns": {
+                            "1": " 1 coluna selecionada",
+                            "_": " %d colunas selecionadas"
+                        }
+                    },
+                    "buttons": {
+                        "copySuccess": {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        },
+                        "collection": "Coleção  <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"><\/span>",
+                        "colvis": "Visibilidade da Coluna",
+                        "colvisRestore": "Restaurar Visibilidade",
+                        "copy": "Copiar",
+                        "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. Para cancelar, clique nesta mensagem ou pressione Esc..",
+                        "copyTitle": "Copiar para a Área de Transferência",
+                        "csv": "CSV",
+                        "excel": "Excel",
+                        "pageLength": {
+                            "-1": "Mostrar todos os registros",
+                            "_": "Mostrar %d registros"
+                        },
+                        "pdf": "PDF",
+                        "print": "Imprimir"
+                    },
+                    "autoFill": {
+                        "cancel": "Cancelar",
+                        "fill": "Preencher todas as células com",
+                        "fillHorizontal": "Preencher células horizontalmente",
+                        "fillVertical": "Preencher células verticalmente"
+                    },
+                    "lengthMenu": "Exibir _MENU_ resultados por página",
+                    "searchBuilder": {
+                        "add": "Adicionar Condição",
+                        "button": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "clearAll": "Limpar Tudo",
+                        "condition": "Condição",
+                        "conditions": {
+                            "date": {
+                                "after": "Depois",
+                                "before": "Antes",
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "number": {
+                                "between": "Entre",
+                                "empty": "Vazio",
+                                "equals": "Igual",
+                                "gt": "Maior Que",
+                                "gte": "Maior ou Igual a",
+                                "lt": "Menor Que",
+                                "lte": "Menor ou Igual a",
+                                "not": "Não",
+                                "notBetween": "Não Entre",
+                                "notEmpty": "Não Vazio"
+                            },
+                            "string": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "endsWith": "Termina Com",
+                                "equals": "Igual",
+                                "not": "Não",
+                                "notEmpty": "Não Vazio",
+                                "startsWith": "Começa Com"
+                            },
+                            "array": {
+                                "contains": "Contém",
+                                "empty": "Vazio",
+                                "equals": "Igual à",
+                                "not": "Não",
+                                "notEmpty": "Não vazio",
+                                "without": "Não possui"
+                            }
+                        },
+                        "data": "Data",
+                        "deleteTitle": "Excluir regra de filtragem",
+                        "logicAnd": "E",
+                        "logicOr": "Ou",
+                        "title": {
+                            "0": "Construtor de Pesquisa",
+                            "_": "Construtor de Pesquisa (%d)"
+                        },
+                        "value": "Valor",
+                        "leftTitle": "Critérios Externos",
+                        "rightTitle": "Critérios Internos"
+                    },
+                    "searchPanes": {
+                        "clearMessage": "Limpar Tudo",
+                        "collapse": {
+                            "0": "Painéis de Pesquisa",
+                            "_": "Painéis de Pesquisa (%d)"
+                        },
+                        "count": "{total}",
+                        "countFiltered": "{shown} ({total})",
+                        "emptyPanes": "Nenhum Painel de Pesquisa",
+                        "loadMessage": "Carregando Painéis de Pesquisa...",
+                        "title": "Filtros Ativos"
+                    },
+                    "thousands": ".",
+                    "datetime": {
+                        "previous": "Anterior",
+                        "next": "Próximo",
+                        "hours": "Hora",
+                        "minutes": "Minuto",
+                        "seconds": "Segundo",
+                        "amPm": [
+                            "am",
+                            "pm"
+                        ],
+                        "unknown": "-",
+                        "months": {
+                            "0": "Janeiro",
+                            "1": "Fevereiro",
+                            "10": "Novembro",
+                            "11": "Dezembro",
+                            "2": "Março",
+                            "3": "Abril",
+                            "4": "Maio",
+                            "5": "Junho",
+                            "6": "Julho",
+                            "7": "Agosto",
+                            "8": "Setembro",
+                            "9": "Outubro"
+                        },
+                        "weekdays": [
+                            "Domingo",
+                            "Segunda-feira",
+                            "Terça-feira",
+                            "Quarta-feira",
+                            "Quinte-feira",
+                            "Sexta-feira",
+                            "Sábado"
+                        ]
+                    },
+                    "editor": {
+                        "close": "Fechar",
+                        "create": {
+                            "button": "Novo",
+                            "submit": "Criar",
+                            "title": "Criar novo registro"
+                        },
+                        "edit": {
+                            "button": "Editar",
+                            "submit": "Atualizar",
+                            "title": "Editar registro"
+                        },
+                        "error": {
+                            "system": "Ocorreu um erro no sistema (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Mais informações<\/a>)."
+                        },
+                        "multi": {
+                            "noMulti": "Essa entrada pode ser editada individualmente, mas não como parte do grupo",
+                            "restore": "Desfazer alterações",
+                            "title": "Multiplos valores",
+                            "info": "Os itens selecionados contêm valores diferentes para esta entrada. Para editar e definir todos os itens para esta entrada com o mesmo valor, clique ou toque aqui, caso contrário, eles manterão seus valores individuais."
+                        },
+                        "remove": {
+                            "button": "Remover",
+                            "confirm": {
+                                "_": "Tem certeza que quer deletar %d linhas?",
+                                "1": "Tem certeza que quer deletar 1 linha?"
+                            },
+                            "submit": "Remover",
+                            "title": "Remover registro"
+                        }
+                    },
+                    "decimal": ","
+                },
+
+
+                "width": "100%"
+            });
+
+            $('#divPenalidades').LoadingScript('destroy');
+
+        }
+
+
+    </script>
+
+
+
+    <script>
+
+        //------------------ Apaga a Penalidade -------------------------------
+        //===================================================================
+        $(document).on('click', '.btn-apagar', function () {
+            var id = $(this).data('id');
+
+            swal({
+                title: "Você tem certeza que deseja apagar esta Penalidade?",
+                text: "Não será possível recuperar os dados eliminados!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    cancel: "Cancelar",
+                    confirm: "Excluir"
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    var dataToPost = JSON.stringify({ 'MultaId': id });
+                    var url = '/api/Multa/Delete';
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: dataToPost,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                ListaTodasPenalidades();
+                            }
+                            else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                            alert('something went wrong')
+                        }
+                    });
+
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+
+        //------------------ Transforma Penalidade em Penalidade -------------------------------
+        //====================================================================================
+        $(document).on('click', '.btn-penalidade', function () {
+            var id = $(this).data('id');
+
+            swal({
+                title: "Você tem certeza que deseja transformar esta Penalidade?",
+                text: "Não será possível desfazer a operação!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: {
+                    cancel: "Cancelar",
+                    confirm: "Transformar"
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    var dataToPost = JSON.stringify({ 'MultaId': id });
+                    var url = '/api/Multa/TransformaPenalidade';
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: dataToPost,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.success) {
+                                toastr.success(data.message);
+                                ListaTodasPenalidades();
+                            }
+                            else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                            alert('something went wrong')
+                        }
+                    });
+
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+
+        //Desabilita o Drop Zone
+        kendo.ui.Upload.fn._supportsDrop = function () { return false; }
+
+
+    </script>
+
+    <script>
+
+        //Configura o MODAL de Registro de Pagamento
+        //====================================================================
+        $('#modalRegistraPagamento').on('shown.bs.modal', function (event) {
+
+            //Cria DIV do PDF
+            $("#PDFContainer").append("<div id='ComprovantepdfViewer'> </div>");
+
+            var button = $(event.relatedTarget); // button the triggered modal
+            var multaId = button.data("id");
+
+            console.log("MultaId: " + multaId);
+
+            $('#txtId').attr('value', multaId);
+
+            $.ajax({
+                type: "get",
+                url: "/api/Multa/PegaValor",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { Id: multaId },
+
+                success: function (data) {
+
+                    $('#txtValorPago').attr('value', Number(data.valor).toLocaleString('pt-br'));
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+
+            $.ajax({
+                type: "get",
+                url: "/api/Multa/PegaEmpenhoMultaId",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { Id: multaId },
+
+                success: function (data) {
+
+                    $('#txtEmpenhoMultaId').attr('value', data.empenhoMultaId);
+
+                    //debugger;
+
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+
+
+        }).on("hide.bs.modal", function (event) {
+
+            //debugger;
+
+            document.getElementById("lstPagamento").value = "";
+            document.getElementById("txtComprovantePDF").value = "";
+            document.getElementById("txtDataPagamento").value = "";
+
+            //Limpa o controle de Upload de arquivos
+            var upload = $("#pdfComprovante").data("kendoUpload");
+            upload.clearAllFiles();
+
+            //Remove a DIV para excluir o PDF escolhido anteriormente
+            $("#ComprovantepdfViewer").remove();
+
+        });
+
+        //$("#lstPagamento").change(function () {
+
+        //    FormaPagamento = document.getElementById("lstPagamento").value;
+
+        //    if (FormaPagamento === "Direto") {
+        //        document.getElementById("divPDF").style.display = "block"
+        //    }
+        //    else {
+        //        document.getElementById("divPDF").style.display = "none"
+        //    }
+
+        //});
+
+
+    </script>
+
+    <script>
+        function moeda(a, e, r, t) {
+            let n = ""
+                , h = j = 0
+                , u = tamanho2 = 0
+                , l = ajd2 = ""
+                , o = window.Event ? t.which : t.keyCode;
+            if (13 == o || 8 == o)
+                return !0;
+            if (n = String.fromCharCode(o),
+                -1 == "0123456789".indexOf(n))
+                return !1;
+            for (u = a.value.length,
+                h = 0; h < u && ("0" == a.value.charAt(h) || a.value.charAt(h) == r); h++)
+                ;
+            for (l = ""; h < u; h++)
+                -1 != "0123456789".indexOf(a.value.charAt(h)) && (l += a.value.charAt(h));
+            if (l += n,
+                0 == (u = l.length) && (a.value = ""),
+                1 == u && (a.value = "0" + r + "0" + l),
+                2 == u && (a.value = "0" + r + l),
+                u > 2) {
+                for (ajd2 = "",
+                    j = 0,
+                    h = u - 3; h >= 0; h--)
+                    3 == j && (ajd2 += e,
+                        j = 0),
+                        ajd2 += l.charAt(h),
+                        j++;
+                for (a.value = "",
+                    tamanho2 = ajd2.length,
+                    h = tamanho2 - 1; h >= 0; h--)
+                    a.value += ajd2.charAt(h);
+                a.value += r + l.substr(u - 2, u)
+            }
+            return !1
+        }
+    </script>
+
+    <script>
+
+        //Controla o Submit do Pagamento
+        //================================
+        $("#btnPagamento").click(function (event) {
+
+            event.preventDefault()
+
+            multaId = document.getElementById("txtId").value;
+            empenhomultaId = document.getElementById("txtEmpenhoMultaId").value;
+
+            debugger;
+
+            //Valida Campos Obrigatórios
+            //==========================
+
+            if (document.getElementById("txtDataPagamento").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Data de Pagamento é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("txtValorPago").value === "" || document.getElementById("txtValorPago").value === "0") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Valor Pago é obrigatório",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            if (document.getElementById("lstPagamento").value === "") {
+                swal({
+                    title: "Informação Ausente",
+                    text: "A Forma de Pagamento é obrigatória",
+                    icon: "error",
+                    buttons: true,
+                    dangerMode: true,
+                    buttons: {
+                        ok: "Ok"
+                    }
+                })
+                return;
+            }
+
+            var Status = "";
+
+            if (lstPagamento.value === "Defin") {
+                Status = "À Enviar Secle"
+            }
+            else {
+                Status = "Paga (Infrator)"
+            }
+
+            var ValorPago = $('#txtValorPago').val().replaceAll(".", "");
+            var ValorPago = ValorPago.replaceAll(",", ".");
+
+            var objMulta = JSON.stringify({
+                "MultaId": multaId,
+                "DataPagamento": $('#txtDataPagamento').val(),
+                "ValorPago": ValorPago,
+                "FormaPagamento": lstPagamento.value,
+                "Status": Status,
+                "ComprovantePDF": $('#txtComprovantePDF').val(),
+                "EmpenhoMultaId": empenhomultaId,
+            })
+
+            console.log(objMulta);
+
+            //debugger;
+
+            $.ajax({
+                type: "get",
+                url: "/api/Multa/RegistraPagamento",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { MultaId: multaId, DataPagamento: $('#txtDataPagamento').val(), ValorPago: ValorPago, Status: Status, FormaPagamento: lstPagamento.value, ComprovantePDF: $('#txtComprovantePDF').val(), EmpenhoMultaId: empenhomultaId },
+
+                success: function (data) {
+                    toastr.success(data.message);
+                    $("#modalRegistraPagamento").hide();
+                    location.reload();
+                },
+                error: function (data) {
+                    alert('error');
+                    console.log(data);
+                }
+            });
+        });
+
+
+    </script>
+
+	<script>
+
+		//Upload do PDF do Registro de Pagamento
+		//======================================
+		$("#pdfComprovante").kendoUpload({
+			async: {
+				saveUrl: "/Multa/UpsertPenalidade?handler=SavePDF",
+				removeUrl: "/Multa/UpsertPenalidade?handler=RemovePDF"
+			},
+			localization: {
+				select: "Selecione o comprovante de pagamento...",
+				headerStatusUploaded: "Arquivo Carregado",
+				uploadSuccess: "Arquivo Carregado com Sucesso"
+			},
+			validation: {
+				allowedExtensions: [".pdf"],
+			},
+			success: onSuccess
+		});
+
+		function onSuccess(e) {
+			// An array with information about the uploaded files
+			var files = e.files;
+
+			// Checks the extension of each file and aborts the upload if it is not .jpg
+			$.each(files, function () {
+
+				console.log(this.name);
+
+				document.getElementById("txtComprovantePDF").setAttribute('value', TiraAcento(this.name));
+
+				debugger;
+
+				var pdfViewer = $("#ComprovantepdfViewer").kendoPDFViewer({
+					pdfjsProcessing: {
+						file: "/DadosEditaveis/Multas/" + document.getElementById("txtComprovantePDF").value
+					},
+					width: "100%",
+					height: 400
+				}).data("kendoPDFViewer");
+
+			});
+		}
+
+		function TiraAcento(input) {
+			var accentMap = {
+				'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+				'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
+				'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
+				'ã': 'a', 'õ': 'o',
+				'ç': 'c',
+				'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
+				'À': 'A', 'È': 'E', 'Ì': 'I', 'Ò': 'O', 'Ù': 'U',
+				'Â': 'A', 'Ê': 'E', 'Î': 'I', 'Ô': 'O', 'Û': 'U',
+				'Ã': 'A', 'Õ': 'O',
+				'Ç': 'C'
+			};
+
+			var result = '';
+
+			for (var i = 0; i < input.length; i++) {
+				var char = input.charAt(i);
+				result += accentMap[char] || char;
+			}
+
+			// Replace spaces with underscores
+			result = result.replace(/\s/g, '_');
+
+			debugger;
+
+			return result.toUpperCase();
+		}
+
+
+	</script>
+
+}

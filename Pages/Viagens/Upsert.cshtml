@@ -1,0 +1,1209 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Syncfusion.EJ2.DropDowns;
+@using Syncfusion.EJ2;
+@using Syncfusion.Data;
+@using Syncfusion.EJ2.DropDowns;
+@using Syncfusion.EJ2.DocumentEditor
+
+@model FrotiX.Pages.Viagens.UpsertModel
+
+@{
+    // Declaração das variáveis que você vai usar no preview
+    bool hasBytes = Model.ViagemObj.Viagem.FichaVistoria != null;
+    // Garante que o browser não fique carregando uma versão em cache
+    string defaultImg = Url.Content("~/Images/FichaAmarelaNova.JPG")
+                        + "?t=" + DateTime.Now.Ticks;
+
+    // Pré-calcula src e tamanho da imagem
+    string imgSrc;
+    int imgWidth;
+    int imgHeight;
+
+    if (hasBytes)
+    {
+        imgSrc = "data:image/jpeg;base64,"
+                 + Convert.ToBase64String(Model.ViagemObj.Viagem.FichaVistoria);
+        // se for upload do usuário: tamanho maior
+        imgWidth = imgHeight = 200;
+    }
+    else
+    {
+        imgSrc = defaultImg;
+        // se for fallback: tamanho de ícone
+        imgWidth = imgHeight = 24;
+    }
+}
+
+
+@{
+    string conteudoSfdt = Model.ViagemObj.Viagem.DescricaoViagemWord != null
+        ? System.Text.Encoding.UTF8.GetString(Model.ViagemObj.Viagem.DescricaoViagemWord)
+        : "";
+}
+
+@Html.AntiForgeryToken()
+
+@{
+    ViewData["Title"] = "Viagens";
+    ViewData["PageName"] = "viagens_upsert";
+    ViewData["Heading"] = "<i class='fad fa-route'></i> Cadastros: <span class='fw-300'>Viagens</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-route";
+
+
+    ViewData["fieldsMotorista"] = new ComboBoxFieldSettings
+    {
+        Text = "Nome",
+        Value = "MotoristaId"
+    };
+
+    ViewData["itemTemplate"] = @"
+    <div class='d-flex align-items-center'>
+        <img src='${Foto}' style='width:40px; height:40px; border-radius:50%; margin-right:10px;' />
+        <span>${Nome}</span>
+    </div>";
+
+    ViewData["valueTemplate"] = @"
+    <div class='d-flex align-items-center'>
+        <img src='${Foto}' style='width:30px; height:30px; border-radius:50%; margin-right:10px;' />
+        <span>${Nome}</span>
+    </div>";
+}
+
+@section HeadBlock {
+
+    @* Se precisar de referências adicionais, insira aqui *@
+
+}
+
+<script>
+
+
+
+
+    //============================== FUNÇÕES QUE ANTES FICAVAM EM CSHTML !! ===========================================
+
+
+    // Evita submissão de formulários ao pressionar Enter em certos elementos
+    function stopEnterSubmitting(e) {
+        if (e.keyCode === 13) {
+            const src = e.srcElement || e.target;
+            if (src.tagName.toLowerCase() !== "div") {
+                e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            }
+        }
+    }
+
+    // Templates para o ComboBox de Motoristas
+       function onCmbMotoristaCreated() {
+        const combo = document.getElementById('cmbMotorista').ej2_instances[0];
+
+        combo.itemTemplate = function (data) {
+            let imgSrc = data.Foto && data.Foto.startsWith('data:image')
+                            ? data.Foto
+                            : '/images/barbudo.jpg';
+
+            return `
+                <div class="d-flex align-items-center">
+                    <img src="${imgSrc}" alt="Foto"
+                        style="height:40px; width:40px; border-radius:50%; margin-right:10px;" />
+                    <span>${data.Nome}</span>
+                </div>`;
+        };
+
+        combo.valueTemplate = function (data) {
+            if (!data) return '';
+
+            let imgSrc = data.Foto && data.Foto.startsWith('data:image')
+                            ? data.Foto
+                            : '/images/barbudo.jpg';
+
+            return `
+                <div class="d-flex align-items-center">
+                    <img src="${imgSrc}" alt="Foto"
+                        style="height:30px; width:30px; border-radius:50%; margin-right:10px;" />
+                    <span>${data.Nome}</span>
+                </div>`;
+        };
+    }
+
+        function lstFinalidade_Change() {
+        try {
+            const finalidade = document.getElementById('ddtFinalidade').ej2_instances[0].value[0];
+            const lstEvento = document.getElementById("ddtEventos").ej2_instances[0];
+            const btnEvento = document.getElementById("btnEvento");
+
+            if (finalidade === 'Evento') {
+                lstEvento.enabled = true;
+                lstEvento.dataBind();
+
+                if (btnEvento) {
+                    btnEvento.style.display = "block";
+                }
+
+                $(".esconde-diveventos").show();
+            } else {
+                lstEvento.enabled = false;
+                lstEvento.dataBind();
+
+                if (btnEvento) {
+                    btnEvento.style.display = "none";
+                }
+
+                $(".esconde-diveventos").hide();
+            }
+        } catch (error) {
+            TratamentoErroComLinha("Viagem_050", "lstFinalidade_Change", error);
+        }
+    }
+
+
+    // Desativa setor ao selecionar motorista
+    function MotoristaValueChange() {
+        try {
+            const motoristaId = document.getElementById('cmbMotorista').ej2_instances[0].value;
+            if (!motoristaId) return;
+
+            const setor = document.getElementById('cmbSetor');
+            if (setor?.ej2_instances?.length) {
+                setor.ej2_instances[0].enabled = false;
+            }
+        } catch (error) {
+            TratamentoErroComLinha("Viagem_050", "MotoristaValueChange", error);
+        }
+    }
+
+    // Gatilho ao trocar veículo
+    function VeiculoValueChange() {
+        try {
+            const veiculoId = document.getElementById('cmbVeiculo').ej2_instances[0].value;
+            if (!veiculoId) return;
+
+            // Placeholder para lógica futura
+        } catch (error) {
+            TratamentoErroComLinha("Viagem_050", "VeiculoValueChange", error);
+        }
+    }
+
+    // Gatilho ao trocar requisitante (normal)
+    function RequisitanteValueChange() {
+        try {
+            const requisitanteId = document.getElementById('cmbRequisitante').ej2_instances[0].value;
+            if (!requisitanteId) return;
+
+            // Placeholder para lógica futura
+        } catch (error) {
+            TratamentoErroComLinha("Viagem_050", "RequisitanteValueChange", error);
+        }
+    }
+
+    // Gatilho ao trocar requisitante (evento)
+    function RequisitanteEventoValueChange() {
+        try {
+            const requisitanteId = document.getElementById('cmbRequisitanteEvento').ej2_instances[0].value;
+            if (!requisitanteId) return;
+
+            // Placeholder para lógica futura
+        } catch (error) {
+            TratamentoErroComLinha("Viagem_050", "RequisitanteEventoValueChange", error);
+        }
+    }
+
+
+    // function onCmbMotoristaCreated() {
+    //     const combo = document.getElementById('cmbMotorista').ej2_instances[0];
+
+    //     combo.itemTemplate = function (data) {
+    //         const foto = data.Foto ?? '/Images/barbudo.jpg';
+    //         return `
+    //             <div class="d-flex align-items-center">
+    //                 <img src="${foto}" alt="Foto"
+    //                     style="height:40px; width:40px; border-radius:50%; margin-right:10px;" />
+    //                 <span>${data.Nome}</span>
+    //             </div>`;
+    //     };
+
+    //     combo.valueTemplate = function (data) {
+    //         if (!data) return '';
+    //         const foto = data.Foto ?? '/Images/barbudo.jpg';
+    //         return `
+    //             <div class="d-flex align-items-center">
+    //                 <img src="${foto}" alt="Foto"
+    //                     style="height:30px; width:30px; border-radius:50%; margin-right:10px;" />
+    //                 <span>${data.Nome}</span>
+    //             </div>`;
+    //     };
+    // }
+
+    function onVeiculoComboCreated() {
+        try {
+            var veiculoCombo = document.getElementById('cmbVeiculo').ej2_instances[0];
+
+            veiculoCombo.itemTemplate = function (data) {
+                return '<div class="d-flex align-items-center">' +
+                    '<img src="' + (data.Imagem || '/Images/carro.jpg') + '" alt="Imagem" style="height:30px; width:30px; border-radius:5px; margin-right:10px;" />' +
+                    '<span>' + data.Descricao + '</span>' +
+                    '</div>';
+            };
+
+            veiculoCombo.valueTemplate = function (data) {
+                if (!data) return '';
+                return '<div class="d-flex align-items-center">' +
+                    '<img src="' + (data.Imagem || '/Images/carro.jpg') + '" alt="Imagem" style="height:30px; width:30px; border-radius:5px; margin-right:10px;" />' +
+                    '<span>' + data.Descricao + '</span>' +
+                    '</div>';
+            };
+        } catch (error) {
+            // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: Viagem_050 | Método: onVeiculoComboCreated | Erro: " + error.message);
+            TratamentoErroComLinha("Viagem_050", "onVeiculoComboCreated", error);
+        }
+    }
+
+    function onMotoristaChange(args) {
+        const motoristaId = args.itemData.MotoristaId;
+        fetch(`/api/Viagem/FotoMotorista?id=${motoristaId}`)
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.fotoBase64)
+                    document.getElementById("fotoMotorista").src = data.fotoBase64;
+            });
+    }
+
+    function VisualizaImagem(input) {
+        if (!input.files || !input.files[0]) return;
+        var file = input.files[0];
+        if (!file.type.startsWith("image/")) {
+            alert("Por favor escolha um arquivo de imagem.");
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById("imgViewer").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+
+
+</script>
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 10px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .btn-largura {
+        width: 100px;
+        height: 100px;
+    }
+
+    .esconde-diveventos {
+        display: none; /* Oculta inicialmente */
+    }
+
+    /* Garante que haja espaço extra ao final */
+    .bottom-space {
+        margin-bottom: 2rem; /* Ajuste conforme necessidade */
+    }
+
+    .custom-red-btn {
+        background-color: #c82333 !important;
+        color: #fff !important;
+        border: 1px solid #bd2130 !important;
+        transition: background-color 0.2s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    /* === todos os estados: hover, focus, active e mouse-up === */
+    button.custom-red-btn:hover,
+    button.custom-red-btn:focus,
+    button.custom-red-btn:focus:hover,
+    button.custom-red-btn:active,
+    button.custom-red-btn.active,
+    button.custom-red-btn:focus-visible {
+        background-color: #a71d2a !important;
+        color: #fff !important;
+        border-color: #a71d2a !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .icon-space {
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* === estilo base do botão === */
+    .custom-blue-btn {
+        background-color: #6c87a3 !important;
+        color: #fff !important;
+        border: 1px solid #5c748f !important;
+        transition: background-color 0.2s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* === todos os estados: hover, foco, active e mouse-up === */
+    button.custom-blue-btn:hover,
+    button.custom-blue-btn:focus,
+    button.custom-blue-btn:focus:hover,
+    button.custom-blue-btn:active,
+    button.custom-blue-btn.active,
+    button.custom-blue-btn:focus-visible {
+        background-color: #5c748f !important;
+        color: #fff !important;
+        border-color: #5c748f !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .icon-space {
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Escopo: Apenas para o ComboBox com ID lstMotorista */
+    .cmbMotorista_popup .e-dropdownbase .e-list-item {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        transition: background-color 0.3s;
+    }
+
+        .cmbMotorista_popup .e-dropdownbase .e-list-item img {
+            height: 45px;
+            width: 45px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .cmbMotorista_popup .e-dropdownbase .e-list-item:hover {
+            background-color: #f0f8ff;
+        }
+
+    #cmbMotorista_popup .e-dropdownbase .e-list-item:hover img {
+        transform: scale(1.2);
+    }
+
+    .cmbMotorista .e-input-group .e-input,
+    .cmbMotorista .e-control-wrapper .e-input {
+        display: flex;
+        align-items: center;
+    }
+
+        .cmbMotorista .e-input-group .e-input img,
+        .cmbMotorista .e-control-wrapper .e-input img {
+            height: 30px;
+            width: 30px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+    .label i {
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+
+    /* === Tooltip laranja com Syncfusion === */
+    .e-tooltip-wrap.custom-orange-tooltip {
+        background-color: orange !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 8px 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.95rem;
+        z-index: 99999 !important;
+    }
+
+        .e-tooltip-wrap.custom-orange-tooltip .e-tip-content {
+            color: white !important;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .e-tooltip-wrap.custom-orange-tooltip .e-arrow-tip-inner {
+            background-color: orange !important;
+        }
+
+    /* 🧠 TOOLTIP SYNCFUSION */
+    .tooltip-laranja .e-tip-content {
+        background-color: #FFA726;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .tooltip-laranja .e-arrow-tip-inner {
+        background-color: #FFA726;
+    }
+
+    .e-tooltip-wrap.tooltip-laranja {
+        z-index: 3000 !important;
+        position: fixed !important;
+        pointer-events: auto !important;
+        transform: translateZ(0); /* Garante renderização no topo */
+    }
+
+    img[alt="Foto"]:not([src]) {
+        display: none;
+    }
+
+    .modal-divider {
+        height: 1px;
+        border: none;
+        background-color: #dee2e6;
+        margin: 0.5rem 0;
+    }
+
+</style>
+
+
+<form method="post" asp-action="Upsert" onkeypress="stopEnterSubmitting(window.event)" enctype="multipart/form-data">
+    <!-- Utiliza container-fluid para maior largura e alinhamento à esquerda -->
+    <div class="container-fluid" style="padding-left: 0; margin-left: 0;">
+        <div class="row">
+            <div class="col-xl-12">
+                <div id="panel-1" class="panel">
+                    <div class="panel-container show">
+                        <div id="divPainel" class="panel-content">
+                            <input type="hidden" asp-for="@Model.ViagemObj.Viagem.ViagemId" id="txtViagemId" />
+
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                @if (Model.ViagemObj.Viagem.Status != null)
+                                {
+                                    @if (Model.ViagemObj.Viagem.Status == "Realizada" || Model.ViagemObj.Viagem.Status == "Cancelada")
+                                    {
+                                        <h2 class="text-primary">
+                                            <i class="fa-duotone fa-solid fa-suitcase-rolling"></i>
+                                            Viagem Realizada/Cancelada - Edição não permitida
+                                        </h2>
+                                    }
+                                    else
+                                    {
+                                        <h2 class="text-primary">
+                                            <i class="fa-duotone fa-solid fa-suitcase-rolling"></i>
+                                            @(Model.ViagemObj.Viagem.ViagemId != Guid.Empty ? "Atualizar " : "Criar ") Viagem
+                                        </h2>
+                                    }
+                                }
+                                else
+                                {
+                                    <h2 class="text-primary">
+                                        <i class="fa-duotone fa-solid fa-suitcase-rolling"></i>
+                                        @(Model.ViagemObj.Viagem.ViagemId != Guid.Empty ? "Atualizar " : "Criar ") Viagem
+                                    </h2>
+                                }
+                            </div>
+
+                            <div class="p-3">
+                                <!-- Linha 1: Nº Ficha Vistoria, Data Inicial, Hora Inicial, Data Final, Hora Final -->
+                                <div class="row">
+                                    <div class="col-12 col-md-4 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.NoFichaVistoria">
+                                                Nº Ficha Vistoria <i class="fa-solid fa-clipboard-list"></i>
+                                            </label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.NoFichaVistoria"></span>
+                                            <input id="txtNoFichaVistoria" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.NoFichaVistoria" />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-2 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.DataInicial">
+                                                Data Inicial <i class="fa-solid fa-calendar-day"></i>
+                                            </label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.DataInicial"></span>
+                                            <input id="txtDataInicial" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.DataInicial" type="date" />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-2 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.HoraInicio">
+                                                Hora de Início <i class="fa-solid fa-clock"></i>
+                                            </label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.HoraInicio"></span>
+                                            <input id="txtHoraInicial" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.HoraInicio" type="time" />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-2 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.DataFinal">
+                                                Data Final <i class="fa-duotone fa-calendar-check"></i>
+                                            </label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.DataFinal"></span>
+                                            <input id="txtDataFinal" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.DataFinal" type="date" />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-2 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.HoraFim">
+                                                Hora Fim <i class="fa-duotone fa-stopwatch"></i>
+                                            </label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.HoraFim"></span>
+                                            <input id="txtHoraFinal" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.HoraFim" type="time" />
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-2 col-xl-2">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">
+                                                Duração (hs) <i class="fa-duotone fa-hourglass-half"></i>
+                                            </label>
+                                            <input id="txtDuracao" class="form-control form-control-xs" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Linha 2: Finalidade, Origem, Destino e Evento (oculto) -->
+                                <div class="row">
+                                    <div class="col-12 col-md-6 col-xl-3">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.Finalidade"></label>
+                                            <i class="fa-duotone fa-solid fa-rectangle-history-circle-user" style="font-size: 1.25em; cursor: pointer;"></i>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.Finalidade"></span>
+                                            <ejs-dropdowntree id="ddtFinalidade" placeholder="Escolha a Finalidade..."
+                                                              showCheckBox="false" allowMultiSelection="false"
+                                                              allowFiltering="true" filterType="Contains"
+                                                              ejs-for="@Model.ViagemObj.Viagem.Finalidade" popupHeight="200px"
+                                                              sortOrder="Ascending" showClearButton="true" change="lstFinalidade_Change">
+                                                <e-dropdowntree-fields dataSource="@ViewData["dataFinalidade"]" value="FinalidadeId" text="Descricao"></e-dropdowntree-fields>
+                                            </ejs-dropdowntree>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 col-xl-3">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.Origem"></label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.Origem"></span>
+                                            <ejs-combobox id="cmbOrigem" ejs-for="ViagemObj.Viagem.Origem"
+                                                          dataSource="@ViewData["ListaOrigem"]"
+                                                          placeholder="Selecione ou digite a Origem"
+                                                          allowFiltering="true" filterType="Contains"
+                                                          allowCustom="true" popupHeight="220px">
+                                            </ejs-combobox>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6 col-xl-3">
+                                        <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.Destino"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.Destino"></span>
+                                        <ejs-combobox id="cmbDestino" ejs-for="ViagemObj.Viagem.Destino"
+                                                      dataSource="@ViewData["ListaDestino"]" placeholder="Selecione ou digite o destino"
+                                                      allowFiltering="true" filterType="Contains" allowCustom="true" popupHeight="220px">
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="divEvento" class="row esconde-diveventos">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Nome do Evento</label>
+                                        <div class="d-flex align-items-end">
+                                            <ejs-dropdowntree id="ddtEventos" placeholder="Selecione um Evento..."
+                                                              showCheckBox="false" allowMultiSelection="false"
+                                                              allowFiltering="true" filterType="Contains"
+                                                              filterBarPlaceholder="Procurar..."
+                                                              ejs-for="@Model.ViagemObj.Viagem.EventoId" popupHeight="200px"
+                                                              sortOrder="Ascending" class="flex-grow-1">
+                                                <e-dropdowntree-fields dataSource="@ViewData["dataEvento"]" value="EventoId" text="Nome"></e-dropdowntree-fields>
+                                            </ejs-dropdowntree>
+                                            <a class="btn btn-success btn-sm text-white ms-2"
+                                               data-toggle="modal"
+                                               data-target="#modalEvento"
+                                               id="btnEvento"
+                                               style="display: none;"
+                                               aria-label="Adicionar Evento!"
+                                               role="tooltip"
+                                               data-microtip-position="top-right"
+                                               title="Adicionar Evento">
+                                                <i class="fal fa-calendar-plus"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Linha 3: Motorista, Veículo e Quilometragem -->
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <label class="label font-weight-bold">Motorista</label>
+                                    <i class="fa-duotone fa-solid fa-person-biking" style="font-size: 1.25em; cursor: pointer;"></i>
+
+                                    <ejs-combobox id="cmbMotorista"
+                                                  placeholder="Selecione um Motorista"
+                                                  ejs-for="@Model.ViagemObj.Viagem.MotoristaId"
+                                                  allowFiltering="true"
+                                                  filterType="Contains"
+                                                  popupHeight="200px"
+                                                  width="100%"
+                                                  showClearButton="true"
+                                                  dataSource="@ViewData["dataMotorista"]"
+                                                  created="onCmbMotoristaCreated"
+                                                  change="MotoristaValueChange">
+                                        <e-combobox-fields text="Nome" value="MotoristaId"></e-combobox-fields>
+                                    </ejs-combobox>
+
+
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="label font-weight-bold">Veículo</label>
+                                    <i class="fa-duotone fa-solid fa-truck-bolt" style="font-size: 1.25em; cursor: pointer;"></i>
+                                    <ejs-combobox id="cmbVeiculo" placeholder="Selecione um Veículo"
+                                                  allowFiltering="true" filterType="Contains"
+                                                  dataSource="@ViewData["dataVeiculo"]" popupHeight="200px"
+                                                  width="100%" showClearButton="true"
+                                                  ejs-for="@Model.ViagemObj.Viagem.VeiculoId" change="VeiculoValueChange">
+                                        <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-12 col-md-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.KmAtual"></label>
+                                        <i class="fa-duotone fa-solid fa-gauge" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.KmAtual"></span>
+                                        <input readonly id="txtKmAtual" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.KmAtual" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.KmInicial"></label>
+                                        <i class="fa-duotone fa-solid fa-gauge-max" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.KmInicial"></span>
+                                        <input id="txtKmInicial" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.KmInicial" type="number" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.KmFinal"></label>
+                                        <i class="fa-duotone fa-solid fa-gauge-min" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.KmFinal"></span>
+                                        <input id="txtKmFinal" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.KmFinal" type="number" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-1">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Km Percorrido</label>
+                                        <i class="fa-duotone fa-solid fa-road" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <input id="txtKmPercorrido" class="form-control form-control-xs" type="number" disabled />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Linha 4: Combustível Inicial e Combustível Final -->
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Combustível Inicial</label>
+                                        <i class="fa-duotone fa-gauge-circle-plus mr-2" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.CombustivelInicial"></span>
+                                        <ejs-dropdowntree id="ddtCombustivelInicial" popupHeight="200px" showClearButton="true"
+                                                          ejs-for="@Model.ViagemObj.Viagem.CombustivelInicial">
+                                            <e-dropdowntree-fields dataSource="@ViewData["dataCombustivel"]" value="Nivel" text="Descricao" imageURL="Imagem"></e-dropdowntree-fields>
+                                        </ejs-dropdowntree>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">Combustível Final</label>
+                                        <i class="fa-duotone fa-solid fa-gauge-circle-minus" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.CombustivelFinal"></span>
+                                        <ejs-dropdowntree id="ddtCombustivelFinal" popupHeight="200px" showClearButton="true"
+                                                          ejs-for="@Model.ViagemObj.Viagem.CombustivelFinal">
+                                            <e-dropdowntree-fields dataSource="@ViewData["dataCombustivel"]" value="Nivel" text="Descricao" imageURL="Imagem"></e-dropdowntree-fields>
+                                        </ejs-dropdowntree>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Linha 5: Requisitante, Botões e Setor -->
+                            <div class="row">
+                                <div class="col-12 col-md-5">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <i class="fa-duotone fa-solid fa-person-simple" style="font-size: 1.25em; cursor: pointer;"></i>
+                                            Requisitante
+                                        </label>
+                                        <div style="display: flex; gap: 6px; align-items: center;">
+                                            <ejs-combobox id="cmbRequisitante" placeholder="Selecione um Requisitante..."
+                                                          allowFiltering="true" filterType="Contains"
+                                                          dataSource="@ViewData["dataRequisitante"]" popupHeight="200px"
+                                                          width="100%" showClearButton="true" change="RequisitanteValueChange"
+                                                          ejs-for="@Model.ViagemObj.Viagem.RequisitanteId">
+                                                <e-combobox-fields text="Requisitante" value="RequisitanteId"></e-combobox-fields>
+                                            </ejs-combobox>
+
+                                            <a class="btn btn-nfs btn-success btn-sm text-white"
+                                               data-toggle="modal" data-target="#modalRequisitante"
+                                               id="btnRequisitante" style="cursor: pointer;">
+                                                <i class="fal fa-user-plus"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-2">
+                                    <label class="label font-weight-bold" asp-for="ViagemObj.Viagem.RamalRequisitante">
+                                        <i class="fa-duotone fa-phone-office" style="font-size: 1.25em; cursor: pointer;"></i>
+                                        Ramal
+                                    </label>
+                                    <span class="text-danger font-weight-light" asp-validation-for="ViagemObj.Viagem.RamalRequisitante"></span>
+                                    <input id="txtRamalRequisitante" class="form-control form-control-xs" asp-for="ViagemObj.Viagem.RamalRequisitante" />
+                                </div>
+
+                                <div class="col-12 col-md-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <i class="fa-duotone fa-solid fa-building-user" style="font-size: 1.25em; cursor: pointer;"></i>
+                                            Setor Solicitante
+                                        </label>
+                                        <div class="d-flex align-items-end" style="gap: 6px;">
+                                            <ejs-dropdowntree id="ddtSetor" placeholder="Selecione um Setor" enabled="false"
+                                                              sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false"
+                                                              allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..."
+                                                              ejs-for="@Model.ViagemObj.Viagem.SetorSolicitanteId">
+                                                <e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
+                                                                       value="SetorSolicitanteId" text="Nome"
+                                                                       parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+                                            </ejs-dropdowntree>
+
+                                            <a hidden
+                                               class="btn btn-success btn-nfs btn-sm text-white"
+                                               data-toggle="modal"
+                                               data-target="#modalSetor"
+                                               id="btnSetor"
+                                               aria-label="Adicionar Setor!"
+
+                                               role="tooltip"
+                                               title="Adicionar Setor">
+                                                <i class="fa-light fa-house-medical"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Linha 6: Descrição da Viagem -->
+                            <div class="row">
+                                <div class="col-md-12 col-xl-10 control-section">
+                                    <div class="control-wrapper">
+                                        <div>
+                                            <label class="label font-weight-bold">Descrição da Viagem (passageiros / carga)</label>
+                                            <i class="fa-duotone fa-solid fa-typewriter" style="font-size: 1.25em; cursor: pointer;"></i>
+
+                                            <input type="hidden" id="DescricaoViagemWordBase64" name="DescricaoViagemWordBase64" />
+
+                                            @* <ejs-documenteditorcontainer id="DocumentEditor"
+                                                                         serviceUrl="/api/Editor/"
+                                                                         height="600px"
+                                                                         locale="pt-BR"
+                                                                         enableToolbar="true"
+                                                                         enableLocalPaste="true"
+                                                                         enableEditor="true">
+                                            </ejs-documenteditorcontainer>
+
+                                            <!-- Botões para exportar -->
+                                            <button onclick="exportarDocumento('docx')">Exportar .docx</button>
+                                            <button onclick="exportarDocumento('pdf')">Exportar .pdf</button>
+                                            <button onclick="exportarDocumento('txt')">Exportar .txt</button>
+                                            <button id="salvardescricao" type="button">Salvar Descrição</button> *@
+
+                                            <ejs-richtexteditor ejs-for="@Model.ViagemObj.Viagem.Descricao" id="rte"
+                                                                toolbarClick="toolbarClick" locale="pt-BR" height="500px">
+                                                <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                                            </ejs-richtexteditor>
+                                            <div id="errorMessage">
+                                                <span asp-validation-for="@Model.ViagemObj.Viagem.Descricao"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <!-- User Labels -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        @* Agendado por *@
+                                        @if (!string.IsNullOrEmpty(Model.ViagemObj.NomeUsuarioAgendamento))
+                                        {
+                                            <label id="lblUsuarioAgendamento" class="font-weight-light d-block text-muted">
+                                                <i class="fa-duotone fa-solid fa-user-clock"></i>
+                                                Agendado por: @Model.ViagemObj.NomeUsuarioAgendamento
+                                            </label>
+                                        }
+
+                                        @* Criado por *@
+                                        @if (!string.IsNullOrEmpty(Model.ViagemObj.NomeUsuarioCriacao))
+                                        {
+                                            <label id="lblUsuarioCriacao" class="font-weight-light d-block text-muted">
+                                                <i class="fa-duotone fa-solid fa-user-plus"></i>
+                                                Criado por: @Model.ViagemObj.NomeUsuarioCriacao
+                                            </label>
+                                        }
+
+                                        @* Finalizado por *@
+                                        @if (!string.IsNullOrEmpty(Model.ViagemObj.NomeUsuarioFinalizacao))
+                                        {
+                                            <label id="lblUsuarioFinalizacao" class="font-weight-light d-block text-muted">
+                                                <i class="fa-duotone fa-solid fa-user-check"></i>
+                                                Finalizado por: @Model.ViagemObj.NomeUsuarioFinalizacao
+                                            </label>
+                                        }
+
+                                        @* Cancelado por *@
+                                        @if (!string.IsNullOrEmpty(Model.ViagemObj.NomeUsuarioCancelamento))
+                                        {
+                                            <label id="lblUsuarioCancelamento" class="font-weight-light d-block text-muted">
+                                                <i class="fa-duotone fa-regular fa-trash-can-xmark"></i>
+                                                Cancelado por: @Model.ViagemObj.NomeUsuarioCancelamento
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <!-- Linha 7: Botões de Submit e Voltar -->
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <!-- Botão visível: Cria/Edita Viagem -->
+                                        <div id="divSubmit" class="col-12 col-md-4 pb-2">
+                                            @if (Model.ViagemObj.Viagem.ViagemId != Guid.Empty)
+                                            {
+                                                <button id="btnSubmit"
+                                                        type="submit"
+                                                        asp-page-handler="Submit"
+                                                        class="btn custom-blue-btn w-100">
+                                                    <span class="d-flex justify-content-center align-items-center">
+                                                        <i class="fa-sharp-duotone fa-solid fa-calendar-lines-pen icon-space icon-pulse"></i>
+                                                        <span>Edita Viagem</span>
+                                                    </span>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnSubmit"
+                                                        type="submit"
+                                                        value="Submit"
+                                                        asp-page-handler="Submit"
+                                                        class="btn custom-blue-btn w-100">
+                                                    <span class="d-flex justify-content-center align-items-center">
+                                                        <i class="fa-sharp-duotone fa-solid fa-calendar-lines-pen icon-space icon-pulse"></i>
+                                                        <span>Cria Viagem</span>
+                                                    </span>
+                                                </button>
+
+
+
+                                            }
+                                        </div>
+
+                                        <!-- Botão oculto para submit via JavaScript -->
+                                        <div class="col-12" hidden>
+                                            @if (Model.ViagemObj.Viagem.ViagemId != Guid.Empty)
+                                            {
+                                                <button id="btnEscondido"
+                                                        type="submit"
+                                                        asp-page-handler="Edit"
+                                                        asp-route-id="@Model.ViagemObj.Viagem.ViagemId"
+                                                        class="btn btn-primary form-control">
+                                                    Atualizar
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnEscondido"
+                                                        type="submit"
+                                                        asp-page-handler="Submit"
+                                                        class="btn btn-primary form-control">
+                                                    Criar
+                                                </button>
+                                            }
+                                        </div>
+
+                                        <!-- Botão de Voltar -->
+                                        <div class="col-12 col-md-4">
+                                            <a asp-page="./Index" class="btn custom-red-btn w-100">
+                                                <span class="d-flex justify-content-center align-items-center">
+                                                    <i class="fa-sharp-duotone fa-solid fa-rotate-left icon-space icon-rotate-left"></i>
+                                                    <span>Voltar à Lista</span>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seção Ficha de Vistoria -->
+                            <div class="row bottom-space" style="margin-top: 2rem;">
+                                <!-- coluna do input -->
+                                <div class="col-md-6 col-lg-5">
+                                    <label class="d-block label font-weight-bold">Ficha de Vistoria</label>
+                                    <input asp-for="FotoUpload"
+                                           type="file"
+                                           id="txtFile"
+                                           class="form-control mb-3"
+                                           onchange="VisualizaImagem(this)" />
+                                </div>
+
+                                <!-- coluna do preview + botão -->
+                                <div class="col-md-6 col-lg-7 d-flex flex-column align-items-start">
+                                    <img id="imgViewer"
+                                         src="@imgSrc"
+                                         style="width:auto; object-fit:contain; border:1px solid #000; margin-top:0.5rem;" />
+                                    <button id="btnFicha"
+                                            type="button"
+                                            asp-page-handler="InsereFicha"
+                                            asp-route-id="@Model.ViagemObj.Viagem.ViagemId"
+                                            class="btn btn-primary mt-3">
+                                        Insere Ficha
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div><!-- Fim de div.panel-content -->
+                </div><!-- Fim de div#panel-1 -->
+            </div><!-- Fim de col-xl-12 -->
+        </div><!-- Fim de container-fluid -->
+</form>
+
+<!-- Modal Inserir Evento -->
+<div class="modal fade" id="modalEvento" data-backdrop="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="DynamicModalLabel">Inserir um novo Evento</h4>
+            </div>
+            <div class="modal-body table-bordered">
+                <form id="frmEvento">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Nome do Evento</label>
+                                <input id="txtNomeDoEvento" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Descrição do Evento</label>
+                                <input id="txtDescricaoEvento" class="form-control form-control-xs" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Data Inicial</label>
+                                <input id="txtDataInicialEvento" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Data Final</label>
+                                <input id="txtDataFinalEvento" class="form-control form-control-xs" type="date" />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="label font-weight-bold">Quantidade de Pessoas</label>
+                                <input id="txtQtdPessoas" class="form-control form-control-xs" type="number" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 form-control-xs" style="margin: 10px; width: 200px;">
+                            <label class="label font-weight-bold">Requisitante do Evento</label>
+                            <ejs-dropdowntree id="lstRequisitanteEvento" placeholder="Selecione um Requisitante"
+                                              showCheckBox="false" allowMultiSelection="false" allowFiltering="true"
+                                              filterType="Contains" filterBarPlaceholder="Procurar..."
+                                              popupHeight="200px" change="RequisitanteEventoValueChange">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataRequisitante"]"
+                                                       value="RequisitanteId" text="Requisitante">
+                                </e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                        <div class="col-5 form-control-xs" style="margin: 10px; width: 200px;">
+                            <label class="label font-weight-bold">Setor do Requisitante</label>
+                            <ejs-dropdowntree id="ddtSetorRequisitanteEvento" placeholder="Selecione um Setor"
+                                              sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false"
+                                              allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar...">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
+                                                       value="SetorSolicitanteId" text="Nome"
+                                                       parentValue="SetorPaiId" hasChildren="HasChild">
+                                </e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+                    <br /><br /><br />
+                    <div class="modal-footer">
+                        <button id="btnInserirEvento" class="btn btn-primary" type="submit" value="SUBMIT">Inserir Evento</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Inserir Requisitante -->
+<div class="modal fade" id="modalRequisitante">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Cabeçalho -->
+            <div class="modal-header">
+                <h4 class="modal-title">Inserir um novo Requisitante</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <!-- Corpo -->
+            <div class="modal-body">
+                <form id="frmRequisitante">
+                    <div class="form-row mb-3">
+                        <div class="col-md-2">
+                            <label for="txtPonto" class="font-weight-bold">Ponto</label>
+                            <input id="txtPonto" class="form-control" />
+                        </div>
+                        <div class="col-md-8">
+                            <label for="txtNome" class="font-weight-bold">Nome do Requisitante</label>
+                            <input id="txtNome" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="txtRamal" class="font-weight-bold">Ramal</label>
+                            <input id="txtRamal" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-3">
+                        <div class="col-md-8">
+                            <label for="txtEmail" class="font-weight-bold">Email</label>
+                            <input id="txtEmail" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="col-md-6">
+                            <label for="ddtSetorRequisitante" class="font-weight-bold">Setor do Requisitante</label>
+                            <ejs-dropdowntree id="ddtSetorRequisitante" placeholder="Selecione um Setor"
+                                              sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false"
+                                              allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar...">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
+                                                       value="SetorSolicitanteId" text="Nome"
+                                                       parentValue="SetorPaiId" hasChildren="HasChild">
+                                </e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+
+                    <div class="modal-divider"></div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button id="btnInserirRequisitante" class="btn btn-primary" type="submit">Inserir Requisitante</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Inserir Setor -->
+<div class="modal fade" id="modalSetor">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Cabeçalho -->
+            <div class="modal-header">
+                <h4 class="modal-title">Inserir um novo Setor Solicitante</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <!-- Corpo -->
+            <div class="modal-body">
+                <form id="frmSetor">
+                    <div class="form-row mb-3">
+                        <div class="col-md-3">
+                            <label for="txtSigla" class="font-weight-bold">Sigla</label>
+                            <input id="txtSigla" class="form-control" placeholder="Ex: TI, RH" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="txtNomeSetor" class="font-weight-bold">Nome do Setor</label>
+                            <input id="txtNomeSetor" class="form-control" placeholder="Insira o nome completo do setor" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="txtRamalSetor" class="font-weight-bold">Ramal</label>
+                            <input id="txtRamalSetor" class="form-control" placeholder="Ex: 1234" type="number"/>
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="col-md-6">
+                            <label for="ddtSetorPai" class="font-weight-bold">Setor Pai (se houver)</label>
+                            <ejs-dropdowntree id="ddtSetorPai" placeholder="Selecione um Setor"
+                                              sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false"
+                                              allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar...">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
+                                                       value="SetorSolicitanteId" text="Nome"
+                                                       parentValue="SetorPaiId" hasChildren="HasChild">
+                                </e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-divider"></div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button id="btnInserirSetor" class="btn btn-primary" type="submit">Inserir Setor</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="syncfusion-toast"></div>
+
+@section ScriptsBlock {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script> *@
+
+    <script src="~/js/cadastros/ViagemUpsert_211.js"></script>
+}

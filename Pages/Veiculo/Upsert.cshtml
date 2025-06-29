@@ -1,0 +1,830 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Veiculo.UpsertModel
+
+@{
+    ViewData["Title"] = "Veículos";
+    ViewData["PageName"] = "veiculo_upsert";
+    ViewData["Heading"] = "<i class='fad fa-car-bus'></i> Cadastros: <span class='fw-300'>Veículos</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-regular fa-car-bus";
+}
+
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .escondido {
+        display: none;
+    }
+
+    .right-align-input {
+        text-align: right;
+        position: absolute;
+        top: 110px; /* You can adjust the top position as needed */
+        right: 0px; /* You can adjust the right position as needed */
+    }
+
+    .right-align-label {
+        text-align: right;
+/*         position: absolute;
+        top: 50px; /* You can adjust the top position as needed */
+        right: 0px; /* You can adjust the right position as needed */
+ */    }
+
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.VeiculoObj.Veiculo.VeiculoId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="VeiculoObj.Veiculo.VeiculoId" />
+                        }
+                        <input type="hidden" asp-for="VeiculoObj.Veiculo.UsuarioIdAlteracao" />
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.VeiculoObj.Veiculo.VeiculoId != Guid.Empty ? "Atualizar " : "Criar ") Veículo  </h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.MarcaId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.MarcaId"></span>
+                                        @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.MarcaId,
+                                                                Model.VeiculoObj.MarcaList,
+                                                                "-- Selecione uma Marca --",
+                                                                new { @class = "form-control form-control-xs", @id = "listamarca" })
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ModeloId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ModeloId"></span>
+                                        @Html.Hidden("Veiculo_ModeloId", Model.VeiculoObj.Veiculo.ModeloId)
+
+                                        <select id="ModeloId" name="VeiculoObj.Veiculo.ModeloId" class="form-control form-control-xs">
+                                            <option value="">-- Selecione um Modelo --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Placa"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Placa"></span>
+                                        <input id="txtPlaca" class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Placa" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Quilometragem"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Quilometragem"></span>
+                                        <input class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Quilometragem" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Renavam"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Renavam"></span>
+                                        <input class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Renavam" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.PlacaVinculada"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.PlacaVinculada"></span>
+                                        <input class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.PlacaVinculada" />
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.PlacaBronzeId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.PlacaBronzeId"></span>
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.PlacaBronzeId,
+                                                                    Model.VeiculoObj.PlacaBronzeList,
+                                                                    "-- Selecione uma Placa de Bronze --",
+                                                                    new { @class = "form-control form-control-xs" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.AnoFabricacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.AnoFabricacao"></span>
+                                        <select class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.AnoFabricacao">
+                                            <option value="">-- Ano --</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2016">2016</option>
+                                            <option value="2015">2015</option>
+                                            <option value="2014">2014</option>
+                                            <option value="2013">2013</option>
+                                            <option value="2012">2012</option>
+                                            <option value="2011">2011</option>
+                                            <option value="2010">2010</option>
+                                            <option value="2009">2009</option>
+                                            <option value="2008">2008</option>
+                                            <option value="2007">2007</option>
+                                            <option value="2006">2006</option>
+                                            <option value="2005">2005</option>
+                                            <option value="2004">2004</option>
+                                            <option value="2003">2003</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.AnoModelo"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.AnoModelo"></span>
+                                        <select class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.AnoModelo">
+                                            <option value="">-- Ano --</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2016">2016</option>
+                                            <option value="2015">2015</option>
+                                            <option value="2014">2014</option>
+                                            <option value="2013">2013</option>
+                                            <option value="2012">2012</option>
+                                            <option value="2011">2011</option>
+                                            <option value="2010">2010</option>
+                                            <option value="2009">2009</option>
+                                            <option value="2008">2008</option>
+                                            <option value="2007">2007</option>
+                                            <option value="2006">2006</option>
+                                            <option value="2005">2005</option>
+                                            <option value="2004">2004</option>
+                                            <option value="2003">2003</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.UnidadeId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.UnidadeId"></span>
+                                        @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.UnidadeId,
+                                                                Model.VeiculoObj.UnidadeList,
+                                                                "-- Selecione uma Unidade --",
+                                                                new { @class = "form-control form-control-xs" })
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.CombustivelId"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.CombustivelId"></span>
+                                        @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.CombustivelId,
+                                                              Model.VeiculoObj.CombustivelList,
+                                                              "-- Combustível --",
+                                                              new { @class = "form-control form-control-xs" })
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Categoria"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Categoria"></span>
+                                        <select class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Categoria">
+                                            <option value="">-- Categoria --</option>
+                                            <option value="Ônibus">Ônibus</option>
+                                            <option value="Coletivos Pequenos">Coletivos Pequenos</option>
+                                            <option value="Carga Leve">Carga Leve</option>
+                                            <option value="Carga Pesada">Carga Pesada</option>
+                                            <option value="Passeio">Passeio</option>
+                                            <option value="Mesa">Mesa</option>
+                                            <option value="Ambulância">Ambulância</option>
+                                            <option value="Depol">Depol</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.DataIngresso"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.DataIngresso"></span>
+                                        <input id="txtDataChegada" class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.DataIngresso" type="date" />
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label class="label font-weight-bold">
+                                                <input type="checkbox" class="form-check-input" asp-for="VeiculoObj.Veiculo.Economildo" />
+                                                O Veículo está sendo usado no Economildo, mesmo que temporariamente?
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            @if (Model.VeiculoObj.Veiculo.VeiculoProprio)
+                                            {
+                                                <label id="lblcontrato" class="label font-weight-bold" style="visibility: hidden" asp-for="VeiculoObj.Veiculo.ContratoId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ContratoId"></span>
+                                                @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.ContratoId,
+                                                                      Model.VeiculoObj.ContratoList,
+                                                                      "-- Selecione um Contrato --",
+                                                                      new { @style = "display:none", @class = "form-control form-control-xs", @Name = "lstcontratos" })
+
+                                            }
+                                            else
+                                            {
+                                                <label id="lblcontrato" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ContratoId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ContratoId"></span>
+                                                @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.ContratoId,
+                                                                      Model.VeiculoObj.ContratoList,
+                                                                      "-- Selecione um Contrato --",
+                                                                      new { @class = "form-control form-control-xs", @Name = "lstcontratos" })
+
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            @if (Model.VeiculoObj.Veiculo.VeiculoProprio)
+                                            {
+                                                <label id="lblata" class="label font-weight-bold" style="visibility: hidden" asp-for="VeiculoObj.Veiculo.AtaId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.AtaId"></span>
+                                                @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.AtaId,
+                                                                      Model.VeiculoObj.AtaList,
+                                                                      "-- Selecione uma Ata --",
+                                                                      new { @style = "display:none", @class = "form-control form-control-xs", @Name = "lstatas" })
+
+                                            }
+                                            else
+                                            {
+                                                <label id="lblata" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.AtaId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.AtaId"></span>
+                                                @Html.DropDownListFor(m => m.VeiculoObj.Veiculo.AtaId,
+                                                                      Model.VeiculoObj.AtaList,
+                                                                      "-- Selecione uma Ata --",
+                                                                      new { @class = "form-control form-control-xs", @Name = "lstatas" })
+
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+
+                                            @*Verifica se é veículo próprio para exibição de itens de contrato/ata*@
+                                            @if (Model.VeiculoObj.Veiculo.VeiculoProprio)
+                                            {
+												<label id="lblItem" style="visibility: hidden; margin-top:10px" class="font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoId"></span>
+                                                @Html.Hidden("Veiculo_ItemContratoId", Model.VeiculoObj.Veiculo.ItemVeiculoId)
+                                                <select id="lstItemVeiculo" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoId" class="form-control form-control-xs">
+                                                    <option value="">-- Selecione um Item Contratual --</option>
+                                                </select>
+
+												<label id="lblItem" style="visibility: hidden; margin-top:10px" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></label>
+                                                <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></span>
+                                                @Html.Hidden("Veiculo_ItemAtaId", Model.VeiculoObj.Veiculo.ItemVeiculoAtaId)
+                                                <select id="lstItemAtaVeiculo" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoAtaId" class="form-control form-control-xs">
+                                                    <option value="">-- Selecione um Item da Ata --</option>
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                @*Verifica origem do veículo para exibição de itens de contrato/ata*@
+                                                if (Model.VeiculoObj.Veiculo.ContratoId != null)
+                                                {
+													<label id="lblItem" class="font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoId" style="margin-top:10px"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoId)
+
+													<select id="lstItemVeiculo" name="VeiculoObj.Veiculo.ItemVeiculoId" class="form-control form-control-xs">
+                                                        <option value="">-- Selecione um Item Contratual --</option>
+                                                    </select>
+
+													<label id="lblItemAta" style="visibility: hidden; margin-top:10px" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoAtaId)
+
+													<select id="lstItemVeiculoAta" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoAtaId" class="form-control form-control-xs">
+                                                        <option value="">-- Selecione um Item da Ata--</option>
+                                                    </select>
+                                                }
+                                                else if (Model.VeiculoObj.Veiculo.AtaId != null)
+                                                {
+													<label id="lblItem" style="display: none; margin-top:10px" class="font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoId"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoId)
+
+													<select id="lstItemVeiculo" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoId" class="form-control form-control-xs">
+                                                        <option value="">-- Selecione um Item Contratual --</option>
+                                                    </select>
+
+													<label id="lblItemAta" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoAtaId" style="margin-top:10px"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoAtaId)
+
+													<select id="lstItemVeiculoAta" name="VeiculoObj.Veiculo.ItemVeiculoAtaId" class="form-control form-control-xs" onchange="SelecionaValorMensalAta">
+                                                        <option value="">-- Selecione um Item da Ata--</option>
+                                                    </select>
+                                                }
+                                                else
+                                                {
+													<label id="lblItem" style="display: none; margin-top:10px" class="font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoId"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoId)
+
+													<select id="lstItemVeiculo" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoId" class="form-control form-control-xs">
+                                                        <option value="">-- Selecione um Item Contratual --</option>
+                                                    </select>
+
+													<label id="lblItemAta" style="visibility: hidden; margin-top:10px" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></label>
+                                                    <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.ItemVeiculoAtaId"></span>
+                                                    @Html.Hidden("Veiculo_ItemId", Model.VeiculoObj.Veiculo.ItemVeiculoAtaId)
+
+													<select id="lstItemVeiculoAta" style="display: none" name="VeiculoObj.Veiculo.ItemVeiculoAtaId" class="form-control form-control-xs" onchange="SelecionaValorMensalAta">
+                                                        <option value="">-- Selecione um Item da Ata--</option>
+                                                    </select>
+
+@* 													<label id="lblValorMensal" class="right-align-label label font-weight-bold" style="display: none">Valor Mensal do Item</label>
+                                                    <input style="display: none" class="right-align-input" asp-for="VeiculoObj.Veiculo.ValorMensal" id="txtValorMensal" class="form-control form-control-xs" />
+ *@
+                                                }
+
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.VeiculoObj.Veiculo.VeiculoId != Guid.Empty)
+                            {
+                                <div class="panel-content float-right">
+                                    
+                                    <a href="/Veiculo/UploadCRLV?id=@Model.VeiculoObj.Veiculo.VeiculoId" class="btn btn-info text-white" style="cursor:pointer;">
+                                        <i class="fal fa-file-alt"></i> &nbsp; Upload do CRLV Digitalizado
+
+                                    </a>
+                                </div>
+                            }
+
+                            <br />
+
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <input type="checkbox" class="form-check-input" asp-for="VeiculoObj.Veiculo.VeiculoProprio" />
+                                            Veículo Próprio
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="col-2">
+                                    @if (Model.VeiculoObj.Veiculo.VeiculoProprio)
+                                    {
+                                        <div class="form-group">
+                                            <label id="lblPatrimonio" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Patrimonio"></label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Patrimonio"></span>
+                                            <input id="txtPatrimonio" class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Patrimonio" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <label id="lblPatrimonio" style="visibility: hidden" class="label font-weight-bold" asp-for="VeiculoObj.Veiculo.Patrimonio"></label>
+                                            <span class="text-danger font-weight-light" asp-validation-for="VeiculoObj.Veiculo.Patrimonio"></span>
+                                            <input id="txtPatrimonio" style="visibility: hidden" class="form-control form-control-xs" asp-for="VeiculoObj.Veiculo.Patrimonio" />
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <input type="checkbox" class="form-check-input" asp-for="VeiculoObj.Veiculo.Status" />
+                                            Ativo/Inativo
+                                        </label>
+                                    </div>
+                                    <br />
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold">
+                                            <input type="checkbox" class="form-check-input" asp-for="VeiculoObj.Veiculo.Reserva" />
+                                            Veículo Reserva
+                                        </label>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        @if (Model.VeiculoObj.Veiculo.VeiculoId != Guid.Empty)
+                                        {
+                                            <label class="font-weight-light">Alterado/Incluído por @Model.VeiculoObj.NomeUsuarioAlteracao em @Model.VeiculoObj.Veiculo.DataAlteracao.ToString("dd/MM/yy") as @Model.VeiculoObj.Veiculo.DataAlteracao.ToString("HH:mm")</label>
+                                        }
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-6">
+
+                                            @if (Model.VeiculoObj.Veiculo.VeiculoId != Guid.Empty)
+                                            {
+                                                <button method="post" asp-page-handler="Edit" asp-route-id=@Model.VeiculoObj.Veiculo.VeiculoId class="btn btn-primary form-control">Atualizar
+                                            </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">Criar</button>
+                                            }
+
+
+                                        </div>
+                                        <div class="col-6">
+                                            <a asp-page="./Index" class="btn btn-success form-control" id="btnVoltar">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js//cadastros/veiculo_upsert.js"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+			// $('.Select2').select2();
+
+            if ('@Model.VeiculoObj.Veiculo.VeiculoId' != null && '@Model.VeiculoObj.Veiculo.VeiculoId' != '00000000-0000-0000-0000-000000000000') {
+
+                // document.getElementById("txtValorMensal").value = '@Model.VeiculoObj.Veiculo.ValorMensal';
+                // document.getElementById("lblValorMensal").style.display = "block";
+                // document.getElementById("txtValorMensal").style.display = "block";
+                // $("#txtValorMensal").prop("disabled", true);
+
+            }
+
+        });
+
+
+
+
+        function SelecionaValorMensalAta(id) {
+
+            itemAta = document.getElementById("lstItemVeiculoAta").value;
+
+            $.ajax({
+                url: "/Veiculo/Upsert?handler=SelecionaValorMensalAta",
+                method: "GET",
+                data: { itemAta: itemAta },
+                success: function (res) {
+
+                    document.getElementById("txtValorMensal").value = res;
+
+                }
+            })
+        }
+
+
+        function GetModeloList(id) {
+            $.ajax({
+                url: "/Veiculo/Upsert?handler=ModeloList",
+                method: "GET",
+                data: { id: id },
+                success: function (res) {
+                    var option = '<option>-- Selecione um Modelo --</option>';
+
+                    if (res != null && res.data.length) {
+
+                        res.data.forEach(function (obj) {
+                            option += '<option value="' + obj.modeloId + '">';
+                            option += obj.descricaoModelo;
+                            option += '</option>';
+                        });
+                    }
+
+                    $('#ModeloId').empty().append(option);
+
+                    var vid = $('#Veiculo_ModeloId').val();
+                    if (vid) $('#ModeloId').val(vid);
+                }
+            })
+        }
+
+
+        //Preenche Lista com Itens do Contrato
+        function GetItemContratualList(id) {
+
+            $.ajax({
+                url: "/Veiculo/Upsert?handler=ItemContratual",
+                method: "GET",
+                data: { id: id },
+                success: function (res) {
+                    var option = '<option>-- Selecione um Item Contratual --</option>';
+
+                    if (res != null && res.data.length) {
+
+                        res.data.forEach(function (obj) {
+                            option += '<option value="' + obj.itemVeiculoId + '">';
+                            option += obj.descricao;
+                            option += '</option>';
+                        });
+                    }
+
+                    $('#lstItemVeiculo').empty().append(option);
+
+                    document.getElementById("lstItemVeiculo").value = '@Model.VeiculoObj.Veiculo.ItemVeiculoId';
+
+                    //var vid = $('#Veiculo_ItemVeiculoId').val();
+                    //if (vid) $('#lstItemVeiculo').val(vid);
+                }
+            })
+        }
+
+
+        //Preenche Lista com Itens da Ata
+        function GetItemAtaList(id) {
+
+            $.ajax({
+                url: "/Veiculo/Upsert?handler=ItemAta",
+                method: "GET",
+                data: { id: id },
+                success: function (res) {
+                    var option = '<option>-- Selecione um Item da Ata --</option>';
+
+                    if (res != null && res.data.length) {
+
+                        res.data.forEach(function (obj) {
+                            option += '<option value="' + obj.itemVeiculoAtaId + '">';
+                            option += obj.descricao;
+                            option += '</option>';
+                        });
+                    }
+
+                    $('#lstItemVeiculoAta').empty().append(option);
+
+                    document.getElementById("lstItemVeiculoAta").value = '@Model.VeiculoObj.Veiculo.ItemVeiculoAtaId';
+
+                }
+            })
+        }
+
+
+
+        $(function () {
+            var pageId = $('#VeiculoObj_Veiculo_VeiculoId').val();
+
+            if (pageId) {
+                var listamarcaId = $('#listamarca').val();
+                GetModeloList(listamarcaId);
+            }
+
+            $('#listamarca').change(function () {
+                var id = $(this).val();
+                GetModeloList(id);
+            });
+
+
+            var ExisteContratoId = $('#VeiculoObj_Veiculo_ContratoId').val();
+
+            if (ExisteContratoId) {
+                var ContratoId = $('#VeiculoObj_Veiculo_ContratoId').val();
+                GetItemContratualList(ContratoId);
+                document.getElementById("lstItemVeiculo").value = '@Model.VeiculoObj.Veiculo.ItemVeiculoId';
+            }
+
+            var ExisteAtaId = $('#VeiculoObj_Veiculo_AtaId').val();
+
+            if (ExisteAtaId) {
+                var AtaId = $('#VeiculoObj_Veiculo_AtaId').val();
+                GetItemAtaList(AtaId);
+                document.getElementById("lstItemVeiculoAta").value = '@Model.VeiculoObj.Veiculo.ItemVeiculoAtaId';
+            }
+
+
+            $('#VeiculoObj_Veiculo_ContratoId').change(function () {
+
+                console.log("Contrato Change");
+                var id = $(this).val();
+
+                GetItemContratualList(id);
+
+				$('#lstItemVeiculo').css('margin-top', '10px');
+
+
+            });
+
+            $('#VeiculoObj_Veiculo_AtaId').change(function () {
+
+                var id = $(this).val();
+
+                GetItemAtaList(id);
+            });
+
+
+
+        });
+
+        // *** Controla o veículo Próprio
+        $("#VeiculoObj_Veiculo_VeiculoProprio").on("click", function () {
+            console.info("Clicou no CHECKBOX!");
+            if (VeiculoObj_Veiculo_VeiculoProprio.checked) {
+                document.getElementById("VeiculoObj_Veiculo_ContratoId").style.display = "none";
+                document.getElementById("lblcontrato").style.visibility = "hidden";
+                document.getElementById("VeiculoObj_Veiculo_AtaId").style.display = "none";
+                document.getElementById("lblata").style.visibility = "hidden";
+                document.getElementById("lstItemVeiculo").style.display = "none";
+                document.getElementById("lblItem").style.display = "initial";
+                document.getElementById("lstItemVeiculoAta").style.display = "none";
+                document.getElementById("lblItemAta").style.visibility = "hidden";
+                // document.getElementById("lblValorMensal").style.display = "none";
+                // document.getElementById("txtValorMensal").style.display = "none";
+                document.getElementById("lblPatrimonio").style.visibility = "initial";
+                document.getElementById("txtPatrimonio").style.visibility = "initial";
+                document.getElementById("lblPatrimonio").style.display = "initial";
+                document.getElementById("txtPatrimonio").style.display = "initial";
+                $("#VeiculoObj_Veiculo_ContratoId").val("");
+                $("#VeiculoObj_Veiculo_AtaId").val("");
+            } else {
+                document.getElementById("VeiculoObj_Veiculo_ContratoId").style.display = "initial";
+                document.getElementById("lblcontrato").style.visibility = "initial";
+                document.getElementById("VeiculoObj_Veiculo_AtaId").style.display = "initial";
+                document.getElementById("lblata").style.visibility = "initial";
+                document.getElementById("lstItemVeiculo").style.display = "initial";
+                document.getElementById("lblItem").style.display = "none";
+                document.getElementById("lstItemVeiculoAta").style.display = "initial";
+                document.getElementById("lblItemAta").style.visibility = "initial";
+                // document.getElementById("lblValorMensal").style.display = "none";
+                // document.getElementById("txtValorMensal").style.display = "none";
+                document.getElementById("lblPatrimonio").style.visibility = "none";
+                document.getElementById("txtPatrimonio").style.visibility = "none";
+                document.getElementById("lblPatrimonio").style.display = "none";
+                document.getElementById("txtPatrimonio").style.display = "none";
+                $("#txtPatrimonio").val("");
+            }
+        });
+
+        // *** Controla Contrato/Ata
+        $("#VeiculoObj_Veiculo_ContratoId").on("change", function () {
+            document.getElementById("lstItemVeiculo").style.display = "initial";
+            document.getElementById("lblItem").style.display = "initial";
+            $("#VeiculoObj_Veiculo_AtaId").val("");
+            document.getElementById("lstItemVeiculoAta").style.display = "none";
+            document.getElementById("lblItemAta").style.visibility = "hidden";
+
+            // debugger;
+
+            // document.getElementById("lblValorMensal").style.display = "none";
+            // document.getElementById("txtValorMensal").style.display = "none";
+
+        });
+
+        $("#VeiculoObj_Veiculo_AtaId").on("change", function () {
+            document.getElementById("lstItemVeiculoAta").style.display = "initial";
+            document.getElementById("lblItemAta").style.visibility = "initial";
+            $("#VeiculoObj_Veiculo_ContratoId").val("");
+            document.getElementById("lstItemVeiculo").style.display = "none";
+            document.getElementById("lblItem").style.display = "none";
+
+            // document.getElementById("lblValorMensal").style.display = "none";
+            // document.getElementById("txtValorMensal").style.display = "none";
+
+        });
+
+
+        // *** Controla Item Contrato/Ata
+        $("#lstItemVeiculo").on("change", function () {
+            console.log("Entrei no lstItemVeiculo CHANGE")
+
+            if ($("#lstItemVeiculo").val != '' && $("#lstItemVeiculo").val != null)
+            {
+                // document.getElementById("lblValorMensal").style.display = "block";
+                // document.getElementById("txtValorMensal").style.display = "block";
+                // $("#txtValorMensal").prop("disabled", true);
+            }
+        });
+
+        function formatCurrency(value) {
+            // Remove non-numeric characters from the input
+            value = value.replace(/[^0-9.]/g, '');
+
+            // Format the value as a currency string
+            // let formattedValue = parseFloat(value).toFixed(2);
+            // formattedValue = 'R$ ' + formattedValue;
+            // formattedValue = formattedValue.replace('.', ',');
+
+            formattedValue = parseFloat(value).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL' // Change this to your desired currency code
+            });
+
+            return formattedValue;
+        }
+
+
+
+        //Verifica se Número da Placa já existe de alguma forma
+        $("#txtPlaca").focusout(function () {
+
+            if (document.getElementById("txtPlaca").value === '') {
+                return;
+            }
+
+            var Placa = document.getElementById("txtPlaca").value;
+            Placa = Placa.substr(Placa.length - 4);
+
+            $.ajax({
+                url: "/Veiculo/Upsert?handler=VerificaPlaca",
+                method: "GET",
+                datatype: "json",
+                data: { id: Placa },
+                success: function (res) {
+
+                    var resposta = [res.data];
+
+                    console.log(resposta);
+
+                    //debugger;
+
+                    if (resposta[0] === "Existe Placa") {
+                        swal({
+                            title: "Alerta na Placa",
+                            text: "Já existe uma Placa contendo esses valores!",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                            buttons: {
+                                ok: "Ok"
+                            }
+                        })
+                    }
+                }
+            })
+        });
+
+    </script>
+
+
+
+}

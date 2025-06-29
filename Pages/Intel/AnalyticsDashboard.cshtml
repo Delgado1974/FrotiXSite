@@ -1,0 +1,389 @@
+@page
+@model AnalyticsDashboardModel
+@{
+    ViewData["Title"] = "Indice";
+    ViewData["PageName"] = "intel_paginaprincipal";
+    ViewData["Category1"] = "Pagina Principal";
+    //ViewData["Heading"] = "<i class='subheader-icon fas fa-home'></i> P&aacute;gina <span class='fw-300'>Inicial</span>";
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/reactions/reactions.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/jqvmap/jqvmap.bundle.css">
+
+    <!--PROFILE STYLES-->
+    <link href="~/css/profilecards.css" rel="stylesheet">
+    <!--./PROFILE STYLES-->
+    <!--COMMON STYLES-->
+    <link href="~/css/profilecommon.css" rel="stylesheet">
+    <!--./COMMON STYLES-->
+    <!--CUSTOM JAVASCRIPT-->
+    <script src="~/js/custom.js"></script>
+    <!--./CUSTOM JAVASCRIPT-->
+    <!-- DEMO 01 CSS FILE ----------------------------------------------------------------------->
+    <link href="~/css/demo-01.css" rel="stylesheet">
+
+}
+
+
+<style>
+    .botaoFormat {
+        color: #b29b2b;
+    }
+
+        .botaoFormat:hover {
+            font-weight: bold;
+            box-shadow: 0 0 0.8em #808080;
+        }
+
+    .row.display-flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row.display-flex > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+    #notify {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 200px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        display: none;
+        z-index: 99999;
+    }
+</style>
+
+
+@section SubheaderBlock {
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12 text-center">
+                <div>
+                    <img src="~/Images/Frotix_cinza_sem_fundo.png" width="300" alt="FrotiX" align="middle" />
+                </div>
+
+                <div>
+                    <!--<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-2 g-lg-3 justify-content-md-center">
+                        <a href="/agenda/index">
+                            <div class="col p-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Agenda</div>
+                            </div>
+                        </a>
+                        <a href="/viagens/upsert">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Nova Viagem</div>
+                            </div>
+                        </a>
+                        <a href="/notafiscal/upsert">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Entrada de Notas Fiscais</div>
+                            </div>
+                        </a>
+                        <a href="/viagens/index">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Viagens</div>
+                            </div>
+                        </a>
+                        <a href="/manutencao/listamanutencao">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Manuten&ccedil;&atilde;o</div>
+                            </div>
+                        </a>
+                        <a href="/abastecimento/index">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Abastecimento</div>
+                            </div>
+                        </a>
+                        <a href="/contrato/index">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Contratos</div>
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Multas</div>
+                            </div>
+                        </a>
+                        <a href="/veiculo/index">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Gest&atilde;o de Ve&iacute;culos</div>
+                            </div>
+                        </a>
+                        <a href="/viagens/TaxiLeg">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Graficos TaxiLeg Power BI</div>-->
+                    @*<div class="botaoFormat p-3 border bg-light">Administra&ccedil;&atilde;o</div>*@
+                    <!--</div>
+                        </a>
+                        <a href="/viagens/fluxopassageiros">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Inserir Fichas MOB</div>
+                            </div>
+                        </a>
+                        <a href="/abastecimento/pbi">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Abastecimento PBI</div>
+                            </div>
+                        </a>
+                        <a href="/contrato/repactuacaocontrato">
+                            <div class="col p-1 p-sm-2 h-100">
+                                <div class="botaoFormat p-3 border bg-light">Repactua&ccedil;&atilde;o Contrato</div>
+                            </div>
+                        </a>
+                    </div>
+                    <br />
+                    <br />-->
+
+
+                    <div class="row">
+                        <div class="card-container">
+                            <div class="container-fluid">
+                                <div class="row">
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/agenda/index"><img src="~/Images/Schedule.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/agenda/index">Agenda</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Exibe a Agenda.</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/agenda/index"><i class="fa-duotone fa-calendar-days"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/viagens/upsert"><img src="~/Images/Trip.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/viagens/upsert">Nova Viagem</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Cadastra uma nova Viagem</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/viagens/upsert"><i class="fa-duotone fa-location-dot"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/viagens/index"><img src="~/Images/GestaoViagens.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/viagens/index">Gest&atilde;o de Viagens</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Gerencia as Viagens Cadastradas</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/viagens/index"><i class="fa-duotone fa-car-bus"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/veiculo/index"><img src="~/Images/Veiculos.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/veiculo/index">Gest&atilde;o de Ve&iacute;culos</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Gerencia os Ve&iacute;culos</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/Veiculo/index"><i class="fa-duotone fa-bus-school"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/abastecimento/index"><img src="~/Images/Abastecimento.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/abastecimento/index">Gest&atilde;o de Abastecimento</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Controla os Abastecimentos</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/abastecimento/index"><i class="fa-duotone fa-gas-pump"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/manutencao/listamanutencao"><img src="~/Images/Manutencao.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/manutencao/listamanutencao">Gest&atilde;o de Manuten&ccedil;&otilde;es</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Gerencia as Manuten&ccedil;&otilde;es</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/manutencao/listamanutencao"><i class="fa-duotone fa-car-wrench"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PROFILE CARD END -->
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/multa/listapenalidade"><img src="~/Images/Multa.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/multa/listapenalidade">Gest&atilde;o de Multas</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Gerencia as Penalidades</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/multa/listapenalidade"><i class="fad fa-pen-to-square"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <!-- PROFILE CARD START -->
+                                        <div class="profile-card-1">
+                                            <div class="profile-content">
+                                                <!-- PROILE PHOTO -->
+                                                <div class="profile-img">
+                                                    <a href="/viagens/fluxopassageiros"><img src="~/Images/MOB.jpg" class="img img-responsive"></a>
+                                                </div>
+                                                <!-- PROFILE NAME -->
+                                                <div class="profile-name"><a href="/viagens/fluxopassageiros">Inserir Fichas MOB</a></div>
+                                                <!-- PROFILE USERNAME -->
+                                                @*<div class="profile-address">&commat;johndoedesigner</div>*@
+                                                <!-- PROFILE DESCRIPTION -->
+                                                <p class="profile-description">Insere Fichas dos MOBs</p>
+                                                <!-- PROFILE ICONS -->
+                                                <div class="profile-icons">
+                                                    <a href="/viagens/fluxopassageiros"><i class="fa-duotone fa-bus-school"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+@*                     <button class="btn btn-danger" onclick="mostrarErro()">Erro</button>
+                    <button class="btn btn-warning" onclick="mostrarAlerta()">Alerta</button>
+                    <button class="btn btn-info" onclick="mostrarInfo()">Info</button>
+                    <button class="btn btn-success" onclick="mostrarSucesso()">Sucesso</button>
+                    <button class="btn btn-success" onclick="mostrarConfirmar()">Sucesso</button>
+                    <button class="btn btn-success" onclick="mostrarUnexpected()">Sucesso</button>
+                    <button class="btn btn-success" onclick="mostrarUnexpected()">Prevention</button> *@
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section ScriptsBlock {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function mostrarErro() {
+            SweetAlertInterop.ShowError("Falha", "Não foi possível concluir a operação.", "Fechar");
+        }
+
+        function mostrarAlerta() {
+            SweetAlertInterop.ShowWarning("Atenção", "Você tem certeza que deseja continuar?", "Fechar");
+        }
+
+        function mostrarInfo() {
+            SweetAlertInterop.ShowInfo("Informação", "O sistema foi atualizado com sucesso.", "Fechar");
+        }
+
+        function mostrarSucesso() {
+            SweetAlertInterop.ShowSuccess("Sucesso", "A operação foi realizada!", "Fechar");
+        }
+
+        function mostrarConfirmar() {
+            SweetAlertInterop.ShowConfirm("Você tem certeza?", "A operação foi realizada!", "Confirmar", "Fechar");
+        }
+        function mostrarUnexpected() {
+            SweetAlertInterop.ShowErrorUnexpected("AnalyticsDashboard.cshtml", "mostrarUnexpected()");
+        }
+        async function testarPreventionAlert() {
+            const confirmado = await window.SweetAlertInterop.ShowPreventionAlert("A Data Final está 5 dias ou mais após a Inicial. Tem certeza?");
+
+            if (!confirmado) {
+            }
+        }
+    </script>
+}

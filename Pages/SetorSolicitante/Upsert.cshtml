@@ -1,0 +1,159 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.SetorSolicitante.UpsertModel
+
+@{
+    ViewData["Title"] = "Setores Solicitantes";
+    ViewData["PageName"] = "unidade_index";
+    ViewData["Heading"] = "<i class='fad fa-building'></i> Cadastros: <span class='fw-300'>Setores Solicitantes</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-building";
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.SetorSolicitanteObj.SetorSolicitanteId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="SetorSolicitanteObj.SetorSolicitanteId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.SetorSolicitanteObj.SetorSolicitanteId != Guid.Empty ? "Atualizar " : "Criar ") Setor Solicitante</h2>
+                        </div>
+
+                        <div class="col-12 pt-3">
+
+                            <div class="row">
+                                <div class="col-8 col-md-3">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="SetorSolicitanteObj.Sigla"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="SetorSolicitanteObj.Sigla"></span>
+                                        <input class="form-control form-control-xs" asp-for="SetorSolicitanteObj.Sigla" placeholder="Insira a sigla" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="SetorSolicitanteObj.Nome"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="SetorSolicitanteObj.Nome"></span>
+                                        <input class="form-control form-control-xs" asp-for="SetorSolicitanteObj.Nome" placeholder="Insira o nome do setor" />
+                                    </div>
+                                </div>
+                                <div class="col-8 col-md-2">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="SetorSolicitanteObj.Ramal"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="SetorSolicitanteObj.Ramal"></span>
+                                        <input class="form-control form-control-xs" asp-for="SetorSolicitanteObj.Ramal" placeholder="Insira o ramal" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div id="ControlRegion">
+                                        <div class="form-control-xs" style="font-size:13px; width: 100%;">
+                                            <label style="font-size:13px;" class="label font-weight-bold">Setor Pai (se houver)</label>
+                                            @*<ejs-dropdowntree id="ddtree" placeholder="Selecione um Setor" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." select="select" change="valueChange" ejs-for="@Model.SetorSolicitanteObj.SetorPaiId">
+                        <e-dropdowntree-fields dataSource="@ViewData["dataSource"]" value="SetorSolicitanteId" text="Nome" parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+                    </ejs-dropdowntree>*@
+                                            <ejs-dropdowntree id="ddtree" placeholder="Selecione um Setor" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." select="select" change="valueChange" ejs-for="@Model.SetorSolicitanteObj.SetorPaiId">
+                                                <e-dropdowntree-fields dataSource="@ViewData["dataSource"]" value="SetorSolicitanteId" text="Nome" parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+                                            </ejs-dropdowntree>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <br />
+                                <br />
+                                <br />
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold" asp-for="SetorSolicitanteObj.Status">
+                                                <span class="text-danger font-weight-light" asp-validation-for="SetorSolicitanteObj.Status"></span>
+                                                <input type="checkbox" class="form-check-input" asp-for="SetorSolicitanteObj.Status" /> Ativo/Inativo
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="form-group row">
+                                    <div class="col-12 col-sm-9 col-md-6">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">@(Model.SetorSolicitanteObj.SetorSolicitanteId != Guid.Empty ? "Atualizar" : "Criar")</button>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <a asp-page="./Index" class="btn btn-success form-control">Voltar à Lista</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            document.getElementById("ddtree").ej2_instances[0].value = ["@Model.SetorSolicitanteObj.SetorPaiId"];
+        });
+
+    </script>
+
+    <script type="text/javascript">
+
+
+        function valueChange() {
+            var ddTreeObj = document.getElementById("ddtree").ej2_instances[0];
+            console.info(ddTreeObj.value + " - " + ddTreeObj.text);
+        }
+
+        function select(args) {
+            var ddTreeObj = document.getElementById("ddtree").ej2_instances[0];
+            console.info(ddTreeObj.value + " - " + ddTreeObj.text);
+        }
+
+    </script>
+    /**/
+}

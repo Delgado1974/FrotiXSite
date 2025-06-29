@@ -1,0 +1,44 @@
+﻿@page
+@model FrotiX.Pages.Usuarios.ReportModel
+@{
+}
+
+@{
+    Layout = null; // or use your shared _Layout if you prefer
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>BoldReports RDL Demo</title>
+
+    <!-- BoldReports CSS -->
+    <link href="https://cdn.boldreports.com/embeddedreporting/commons/css/bold.reports.all.min.css" rel="stylesheet" />
+
+    <!-- BoldReports scripts -->
+    <script src="https://cdn.boldreports.com/embeddedreporting/commons/scripts/bold.reports.all.min.js"></script>
+    <script src="https://cdn.boldreports.com/embeddedreporting/commons/scripts/bold.report-viewer.min.js"></script>
+</head>
+<body>
+
+<div id="report-viewer"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        BoldReportViewer.create({
+            // Container element to render the viewer
+            element: document.getElementById("report-viewer"),
+                
+            // Specify the RDL report path. 
+            // This can be a local path in wwwroot, or a path to a sample RDL on the server.
+            reportPath: "wwwroot/reports/Abastecimento.rdl", 
+
+            // BoldReports service endpoint (matches our controller routes)
+            reportServiceUrl: "/api/reportviewer/PostReportAction"
+        });
+    });
+</script>
+
+</body>
+</html>

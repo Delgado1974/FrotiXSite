@@ -1,0 +1,303 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.MovimentacaoPatrimonio.UpsertModel
+
+@{
+    ViewData["Title"] = "Adicionar movimentação";
+    ViewData["PageName"] = "movimentacaopatrimonio_upsert";
+    ViewData["Heading"] = "<i class='fa-duotone fa-solid fa-conveyor-belt-boxes'></i> Cadastros: <span class='fw-300'>Movimentação de Patrimônio</span>";
+    ViewData["Category1"] = "Movimentações";
+    ViewData["PageIcon"] = "fa-conveyor-belt-boxes";
+}
+
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+    input[type=checkbox] {
+        vertical-align: middle;
+        position: relative;
+        bottom: 1px;
+    }
+
+    .escondido {
+        display: none;
+    }
+
+    .espacofundo {
+        padding-bottom: 20px;
+    }
+
+    .control-height {
+        height: 38px !important;
+        padding: .375rem .75rem !important;
+        font-size: 1rem !important;
+        line-height: 1.5;
+        border-radius: .25rem;
+    }
+
+    .status-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    /* Label do título "Status do Patrimônio:" */
+    .status-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin: 0;
+        color: #6c757d; /* Cinza padrão Bootstrap: #6c757d */
+    }
+
+    /* Caixa de checkbox */
+    .status-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    /* Label "Ativo/Baixado" */
+    .status-label {
+        font-weight: bold;
+        font-size: 14px;
+        color: #6c757d; /* Cinza padrão Bootstrap */
+    }
+
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/dropify.min.css" />
+
+}
+
+
+<form id="formsMovimentacaoPatrimonio" method="post" asp-action="Upsert" onkeypress='stopEnterSubmitting(window.event)' enctype="multipart/form-data">
+    <div class="row espacofundo">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div id="painelfundo" class="panel-container show espacofundo">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!--Campos invisívies só para guardar os valor do setor e da seção
+                            Adicionei a verifição para saber se ela vai vir com um valor selecionado do server ou não-->
+
+                        <input type="hidden" id="SetorOrigemId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorOrigemId" value="@((Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId != Guid.Empty ) ? Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorOrigemId : "")" />
+                        <input type="hidden" id="SecaoOrigemId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoOrigemId" value="@((Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId != Guid.Empty ) ? Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoOrigemId : "")" />
+
+                        @* Verifica se a Movimentacao do patrimônio já existe para definir o tipo de operação *@
+
+                        @if (Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId != Guid.Empty)
+                        {
+                            <input type="hidden" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId" />
+                        }
+                        else
+                        {
+                            <input type="hidden" id="patrimonioIdParaCarregar" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.PatrimonioId" />
+                        }
+
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">
+                                @(Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId
+                                    != Guid.Empty ? " " : "") Movimentar Patrimônio
+                            </h2>
+                        </div>
+
+
+                        <div class="col-8 pt-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="label font-weight-bold">Patrimônio</label>
+                                    <ejs-combobox id="cmbPatrimonio" class="control-height" placeholder="Selecione um Patrimônio" allowFiltering="true"
+                                                  filterType="Contains" popupHeight="200px" width="100%" showClearButton="true"
+                                                  ejs-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.PatrimonioId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.PatrimonioId">
+                                        <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                    </ejs-combobox>
+                                </div>
+                                <div class="col-4">
+                                  <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao"></span>
+                                        <input class="form-control control-height" id="dataMov" asp-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao" type="date" />
+                                    </div>
+
+@*                                     <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao"></label>
+                                        <span class="text-danger font-weight-light" asp-validation-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao"></span>
+                                        <ejs-datepicker id="dataMov"
+                                                        placeholder="Selecione a data"
+                                                        Value="@(Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao)"
+                                                        Format="dd/MM/yyyy"
+                                                        Width="100%"
+                                                        CssClass="control-height"
+                                                        Name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.DataMovimentacao">
+                                        </ejs-datepicker>
+                                    </div>
+ *@
+                                </div>
+                            </div>
+                            <!--------------------------------------------------------------------------------------->
+@*                             @if (Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonioId == Guid.Empty)
+                            {*@
+                                
+                            <br/>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="label font-weight-bold">Setor Atual</label>
+                                        <input type="text" class="form-control  control-height" id="SetorOrigem" disabled />
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="label font-weight-bold">Seção Atual</label>
+                                        <input type="text" class="form-control  control-height" id="SecaoOrigem" disabled />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="label font-weight-bold">Setor Destino</label>
+                                        <ejs-combobox class="form-control  control-height" id="cmbSetorDestino" placeholder="Selecione um Setor" allowFiltering="true"
+                                                        filterType="Contains" popupHeight="200px" width="100%" showClearButton="true"
+                                                        ejs-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId">
+                                            <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+
+                                    <div class="col-6 form-group" id="divSecaoDestino">
+                                        <label class="label font-weight-bold">Seção Destino</label>
+                                        <ejs-combobox class="form-control  control-height" id="cmbSecoesDestino" placeholder="Selecione uma Seção" allowFiltering="true"
+                                                        filterType="Contains" popupHeight="200px" width="100%" showClearButton="true"
+                                                        ejs-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId">
+                                            <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-container">
+                                <label for="StatusCheckbox" class="status-title">Status do Patrimônio:</label>
+                                <input type="checkbox" id="StatusCheckbox" name="StatusCheckbox" class="status-checkbox" />
+                                <label id="StatusCheckboxLabel" class="status-label"></label>
+                            </div>
+
+
+
+@*                             }
+ *@                           @*  else Esse aqui só aparece caso seja edição *@
+                            @* {
+                                <div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <input type="text" class="form-control" id="SetorOrigemPlaceHolder" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorOrigemId" disabled readonly />
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" class="form-control" id="SecaoOrigemPlaceHolder" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoOrigemId" disabled readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label class="label font-weight-bold">Setor Destino</label>
+                                            <ejs-combobox id="cmbSetorDestino" placeholder="Selecione um Setor" allowFiltering="true"
+                                                          filterType="Contains" popupHeight="200px" width="100%" showClearButton="true"
+                                                          ejs-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId">
+                                                <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                            </ejs-combobox>
+                                        </div>
+
+                                        <div class="col-4 form-group" id="divSecaoDestino">
+                                            <label class="label font-weight-bold">Seção Destino</label>
+                                            <ejs-combobox id="cmbSecoesDestino" placeholder="Selecione um Seção" allowFiltering="true"
+                                                          filterType="Contains" popupHeight="200px" width="100%" showClearButton="true"
+                                                          ejs-for="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId">
+                                                <e-combobox-fields text="text" value="value"></e-combobox-fields>
+                                            </ejs-combobox>
+                                        </div>
+                                    </div>
+                                </div> *@
+                                @*
+                            <input type="hidden" id="SetorOrigemId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorOrigemId" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId" />
+
+                            <input type="hidden" id="SecaoOrigemId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoOrigemId" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoOrigemId" />
+
+                            <input type="hidden" id="SetorDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SetorDestinoId" />
+
+                            <input type="hidden" id="SecaoDestinoId" name="MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId" value="@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.SecaoDestinoId" />
+                            *@
+                            @* } *@
+                            <!--------------------------------------------------------------------------------------->
+                            <br />
+                            <br />
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <div class="row  float-left">
+                                        <div class="col-6  float-left">
+
+                                            @if (Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.MovimentacaoPatrimonioId != Guid.Empty)
+                                            {
+                                                <button method="post" asp-page-handler="Edit" asp-route-id=@Model.MovimentacaoPatrimonioObj.MovimentacaoPatrimonio.MovimentacaoPatrimonioId class="btn btn-primary form-control" style="width:200px">Atualizar</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control" style="width:200px">Movimentar</button>
+                                            }
+                                        </div>
+                                        <div class="col-6  float-right">
+                                            <a asp-page="./Index" class="btn btn-success form-control" style="width:200px">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function stopEnterSubmitting(e) {
+        if (e.keyCode == 13) {
+            var src = e.srcElement || e.target;
+
+            console.log(src.tagName.toLowerCase());
+
+            if (src.tagName.toLowerCase() != "div") {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else {
+                    e.returnValue = false;
+                }
+            }
+        }
+    }
+</script>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="~/js/dropify.min.js"></script>
+    <script src="~/js/cadastros/movimentacaopatrimonio_08.js"></script>
+
+}

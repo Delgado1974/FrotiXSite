@@ -1,0 +1,325 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model FrotiX.Pages.Viagens.UpsertEventoModel
+
+@{
+    ViewData["Title"] = "Eventos";
+    ViewData["PageName"] = "viagens_upsertevento";
+	ViewData["Heading"] = "<i class='fa-duotone fa-calendar-users'></i> Cadastros: <span class='fw-300'>Eventos</span>";
+	ViewData["Category1"] = "Cadastros";
+	ViewData["PageIcon"] = "fa-duotone fa-calendar-users";
+
+}
+
+<style>
+    .form-control-xs {
+        height: calc(1em + .775rem + 2px) !important;
+        padding: .125rem .25rem !important;
+        font-size: .75rem !important;
+        line-height: 1.5;
+        border-radius: .2rem;
+    }
+
+    .label {
+        margin-bottom: -5px;
+        margin-top: 10px;
+    }
+
+   
+</style>
+
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+}
+
+
+<form method="post" asp-action="Upsert">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.EventoObj.Evento.EventoId != Guid.Empty)
+                        {
+                            <input type="hidden" asp-for="EventoObj.Evento.EventoId" />
+                        }
+                        <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                            <h2 class="text-primary">@(Model.EventoObj.Evento.EventoId != Guid.Empty ? "Atualizar " : "Criar ") Evento  </h2>
+                        </div>
+
+                        <div class="col-8 pt-3">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label class="label font-weight-bold" asp-for="EventoObj.Evento.Nome"></label>
+                                        <span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.Nome"></span>
+                                        <input class="form-control form-control-xs" asp-for="EventoObj.Evento.Nome" />
+                                    </div>
+                                </div>
+								<div class="col-8">
+									<div class="form-group">
+										<label class="label font-weight-bold" asp-for="EventoObj.Evento.Descricao"></label>
+										<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.Descricao"></span>
+										<input class="form-control form-control-xs" asp-for="EventoObj.Evento.Descricao" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-4">
+									<div class="form-group">
+										<label class="label font-weight-bold" asp-for="EventoObj.Evento.DataInicial"></label>
+										<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.DataInicial"></span>
+										<input class="form-control form-control-xs" asp-for="EventoObj.Evento.DataInicial" type="date" />
+									</div>
+								</div>
+								<div class="col-4">
+									<div class="form-group">
+										<label class="label font-weight-bold" asp-for="EventoObj.Evento.DataFinal"></label>
+										<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.DataFinal"></span>
+										<input class="form-control form-control-xs" asp-for="EventoObj.Evento.DataFinal" type="date" />
+									</div>
+								</div>
+								<div class="col-4">
+									<div class="form-group">
+										<label class="label font-weight-bold" asp-for="EventoObj.Evento.QtdParticipantes"></label>
+										<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.QtdParticipantes"></span>
+										<input class="form-control form-control-xs" asp-for="EventoObj.Evento.QtdParticipantes" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-5 form-control-xs" style="margin: 10px; width: 200px;">
+									<label class="label font-weight-bold">Requisitante do Evento</label>
+									<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.RequisitanteId"></span>
+									<ejs-dropdowntree id="lstRequisitanteEvento" placeholder="Selecione um Requisitante" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." popupHeight="200px" change="RequisitanteEventoValueChange" ejs-for="@Model.EventoObj.Evento.RequisitanteId">
+										<e-dropdowntree-fields dataSource="@ViewData["dataRequisitante"]" value="RequisitanteId" text="Requisitante"></e-dropdowntree-fields>
+									</ejs-dropdowntree>
+								</div>
+								<div class="col-5 form-control-xs" style="margin: 10px; width: 200px;">
+									<label class="label font-weight-bold">Setor do Requisitante</label>
+									<span class="text-danger  font-weight-light" asp-validation-for="EventoObj.Evento.SetorSolicitanteId"></span>
+									<ejs-dropdowntree id="ddtSetorRequisitanteEvento" placeholder="Selecione um Setor" sortOrder="Ascending" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" filterBarPlaceholder="Procurar..." ejs-for="@Model.EventoObj.Evento.SetorSolicitanteId">
+										<e-dropdowntree-fields dataSource="@ViewData["dataSetor"]" value="SetorSolicitanteId" text="Nome" parentValue="SetorPaiId" hasChildren="HasChild"></e-dropdowntree-fields>
+									</ejs-dropdowntree>
+								</div>
+							</div>
+
+
+							<br />
+							<br />
+
+							<div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+										<label class="label font-weight-bold" asp-for="EventoObj.Evento.Status"></label>
+										<span class="text-danger" asp-validation-for="EventoObj.Evento.Status"></span>
+										<select id="lstStatus" class="form-control form-control-xs"
+												asp-for="EventoObj.Evento.Status">
+											<option value="1">Ativo</option>
+											<option value="0">Inativo</option>
+										</select>
+									</div>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-9">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-primary form-control">@(Model.EventoObj.Evento.EventoId != Guid.Empty ? "Atualizar Evento" : "Criar Evento")</button>
+
+                                        </div>
+                                        <div class="col-6">
+                                            <a asp-page="./ListaEventos" class="btn btn-success form-control">Voltar à Lista</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+						@if (Model.EventoObj.Evento.EventoId != Guid.Empty)
+						{
+							<div class="row">
+								<div class="col-12">
+									<div class="panel-content ">
+										<div class="box-body">
+											<br />
+											<h3 id="TituloViagens">Viagens associadas ao Evento</h3>
+											<br />
+											<table id="tblViagens" class="table table-bordered table-striped" width="100%">
+												<thead>
+													<tr>
+														<th>Vistoria</th>
+														<th>Data</th>
+														<th>Início</th>
+														<th>Requisitante</th>
+														<th>Setor</th>
+														<th>Motorista</th>
+														<th>Veiculo</th>
+														<th>Custo</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section ScriptsBlock
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+
+    <script>
+
+		//Escolheu um Requisitante
+		function RequisitanteEventoValueChange() {
+
+			var ddTreeObj = document.getElementById("lstRequisitanteEvento").ej2_instances[0];
+
+			if (ddTreeObj.value === null) {
+				return;
+			}
+
+			var requisitanteid = String(ddTreeObj.value);
+
+			//Pega Setor Padrão do Requisitante
+			$.ajax({
+				url: "/Viagens/Upsert?handler=PegaSetor",
+				method: "GET",
+				datatype: "json",
+				data: { id: requisitanteid },
+				success: function (res) {
+					document.getElementById("ddtSetorRequisitanteEvento").ej2_instances[0].value = [res.data];
+				}
+			})
+
+		}
+
+		$(document).ready(function () {
+
+			if ('@Model.EventoObj.Evento.EventoId' !== '00000000-0000-0000-0000-000000000000') {
+
+				document.getElementById("lstRequisitanteEvento").ej2_instances[0].value = ['@Model.EventoObj.Evento.RequisitanteId'];
+				document.getElementById("ddtSetorRequisitanteEvento").ej2_instances[0].value = ['@Model.EventoObj.Evento.SetorSolicitanteId'];
+
+				console.log('@Model.EventoObj.Evento.RequisitanteId');
+				console.log('@Model.EventoObj.Evento.SetorSolicitanteId')
+			}
+
+		});
+
+		EventoTable = $('#tblViagens').DataTable({
+			"lengthChange": false,
+			"searching": false,
+			"bSort": false,
+			'columnDefs': [
+				{
+					"targets": 0, //Vistoria
+					"className": "text-center",
+					"width": "3%",
+				},
+				{
+					"targets": 1, //Data
+					"className": "text-center",
+					"width": "3%",
+				},
+				{
+					"targets": 2, //Hora Inicio
+					"className": "text-center",
+					"width": "3%",
+				},
+				{
+					"targets": 3, //Requisitante
+					"className": "text-left",
+					"width": "10%",
+				},
+				{
+					"targets": 4, //Setor
+					"className": "text-left",
+					"width": "10%",
+				},
+				{
+					"targets": 5, //Motorista
+					"className": "text-left",
+					"width": "10%",
+				},
+				{
+					"targets": 6, //Veículo
+					"className": "text-left",
+					"width": "10%",
+				},
+				{
+					"targets": 7, //Custo
+					"className": "text-right",
+					"width": "4%",
+				},
+				{
+					"targets": 8, //Custo Não Formatado
+					"visible": false,
+				}
+				// {
+				// 	"targets": 8, //Ação
+				// 	"className": "text-center",
+				// 	"width": "6%",
+				// },
+				// {
+				// 	"targets": 9, //Row Number
+				// 	"className": "text-center",
+				// 	"width": "1%",
+				// }
+			],
+			responsive: true,
+			"ajax": {
+				"url": "/api/viagem/listaviagensevento",
+				"type": "GET",
+				"datatype": "json",
+				"data": { Id: '@Model.EventoObj.Evento.EventoId' },
+			},
+			"columns": [
+				{ "data": "noFichaVistoria" },
+				{ "data": "dataInicial" },
+				{ "data": "horaInicio" },
+				{ "data": "nomeRequisitante" },
+				{ "data": "nomeSetor" },
+				{ "data": "nomeMotorista" },
+				{ "data": "descricaoVeiculo" },
+				{ "data": "custoViagem" },
+				{ "data": "custoViagemNaoFormatado" },
+			],
+			"language": {
+				"url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json",
+				"emptyTable": "Sem Dados para Exibição"
+			},
+			"width": "100%",
+			"footerCallback": function (row, data, start, end, display) {
+				total = this.api()
+					.column(8)
+					.data()
+					.reduce(function (a, b) {
+						return parseFloat(a) + parseFloat(b);
+					}, 0);
+				soma = total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+				$("#TituloViagens").html("Viagens associadas ao Evento - Custo Total: " + soma);
+			}
+		});
+
+    </script>
+
+}

@@ -1,0 +1,687 @@
+﻿@page
+
+@using FrotiX.Repository.IRepository
+@using Syncfusion.EJ2
+@using Stimulsoft.Report.Mvc;
+@using FrotiX.Helpers;
+
+@inject IUnitOfWork _unitOfWork
+
+@{
+
+@functions {
+    public void OnGet()
+    {
+        FrotiX.Pages.Viagens.IndexModel.Initialize(_unitOfWork);
+        ViewData["dataCombustivel"] = new ListaNivelCombustivel(_unitOfWork).NivelCombustivelList();
+        ViewData["lstMotorista"] = new ListaMotorista(_unitOfWork).MotoristaList();
+        ViewData["lstVeiculos"] = new ListaVeiculos(_unitOfWork).VeiculosList();
+        ViewData["lstSetor"] = new ListaSetores(_unitOfWork).SetoresList();
+        ViewData["dataSetor"] = new ListaSetores(_unitOfWork).SetoresList();
+        ViewData["lstStatus"] = new ListaStatus(_unitOfWork).StatusList();
+        ViewData["lstEventos"] = new ListaEvento(_unitOfWork).EventosList();
+
+    }
+
+    public void OnPost()
+    {
+        Console.WriteLine(FrotiX.Pages.Viagens.IndexModel.ViagemId);
+    }
+
+}
+}
+
+
+@model FrotiX.Models.ViewViagens
+
+@{
+    ViewData["Title"] = "Viagens";
+    ViewData["PageName"] = "viagens_index";
+    ViewData["Heading"] = "<i class='fad fa-route'></i> Cadastros: <span class='fw-300'>Viagens</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fad fa-route";
+}
+
+@section HeadBlock {
+
+}
+
+@* <style>
+    /* 🎨 CORES BASE DOS BOTÕES */
+    .fundo-azul {
+        background-color: #0D98BA;
+        color: white;
+    }
+
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* 🖱️ HOVER ATIVO (QUANDO NÃO DESABILITADO) */
+    .fundo-azul:hover:not(.btn-disabled) {
+        background-color: #0b82a1;
+    }
+
+    .fundo-cinza:hover:not(.btn-disabled) {
+        background-color: #1e2e2e;
+    }
+
+    .fundo-laranja:hover:not(.btn-disabled) {
+        background-color: #b85d1a;
+    }
+
+    .btn-danger:hover:not(.btn-disabled) {
+        background-color: #c82333;
+    }
+
+    /* 🚫 BOTÃO DESABILITADO BASE */
+    .btn-disabled {
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        opacity: 0.8;
+    }
+
+        .btn-disabled:hover,
+        .btn-disabled:active,
+        .btn-disabled:focus {
+            opacity: 0.5;
+        }
+
+    /* 🔒 MANTER COR ORIGINAL QUANDO DESABILITADO */
+    .fundo-azul.btn-disabled {
+        background-color: #0D98BA !important;
+        color: white !important;
+    }
+
+    .fundo-laranja.btn-disabled {
+        background-color: #D2691E !important;
+        color: white !important;
+    }
+
+    .fundo-cinza.btn-disabled {
+        background-color: #2F4F4F !important;
+        color: aliceblue !important;
+    }
+
+    .btn-danger.btn-disabled {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
+
+    /* ✔️ ÍCONES SEMPRE VISÍVEIS NOS BOTÕES DESATIVADOS */
+    .btn-disabled i {
+        opacity: 1 !important;
+        color: inherit !important;
+    }
+
+    /* 🎯 ESTILOS ADICIONAIS JÁ EXISTENTES */
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .img {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: 50%;
+        height: 100%;
+        margin: 0 auto !important;
+    }
+
+    .button {
+        padding: 10px 24px;
+    }
+
+    .icon-space {
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Eleva o z-index do alerta acima do modal Bootstrap */
+    .swal2-container {
+        z-index: 3000 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    /* Garante que o popup do Swal tenha prioridade visual */
+    .swal2-popup {
+        z-index: 3001 !important;
+    }
+
+    /* Adiciona sobreposição de fundo no topo do modal */
+    .swal2-backdrop-show,
+    .swal2-backdrop {
+        z-index: 2999 !important;
+    }
+
+    /* Evita que backdrop do Bootstrap interfira no SweetAlert */
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    .tooltip-laranja .e-tip-content {
+        background-color: #FFA726;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .tooltip-laranja .e-arrow-tip-inner {
+        background-color: #FFA726;
+    }
+
+    .e-tooltip-wrap.tooltip-laranja {
+        z-index: 2000 !important;
+        position: fixed !important;
+    }
+
+    .e-tooltip-wrap.tooltip-laranja {
+        z-index: 3000 !important;
+        position: fixed !important;
+    }
+
+    #modalViagens {
+        z-index: 1050 !important;
+    }
+
+</style>
+ *@
+
+
+<style>
+    /* 🎨 CORES BASE DOS BOTÕES */
+    .fundo-azul {
+        background-color: #0D98BA;
+        color: white;
+    }
+
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .fundo-laranja {
+        background-color: #D2691E;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* 🖱️ HOVER ATIVO (QUANDO NÃO DESABILITADO) */
+    .fundo-azul:hover:not(.btn-disabled) {
+        background-color: #0b82a1;
+    }
+
+    .fundo-cinza:hover:not(.btn-disabled) {
+        background-color: #1e2e2e;
+    }
+
+    .fundo-laranja:hover:not(.btn-disabled) {
+        background-color: #b85d1a;
+    }
+
+    .btn-danger:hover:not(.btn-disabled) {
+        background-color: #c82333;
+    }
+
+    /* 🚫 BOTÃO DESABILITADO BASE */
+    .btn-disabled {
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        opacity: 0.8;
+    }
+
+        .btn-disabled:hover,
+        .btn-disabled:active,
+        .btn-disabled:focus {
+            opacity: 0.5;
+        }
+
+    /* 🔒 MANTER COR ORIGINAL QUANDO DESABILITADO */
+    .fundo-azul.btn-disabled {
+        background-color: #0D98BA !important;
+        color: white !important;
+    }
+
+    .fundo-laranja.btn-disabled {
+        background-color: #D2691E !important;
+        color: white !important;
+    }
+
+    .fundo-cinza.btn-disabled {
+        background-color: #2F4F4F !important;
+        color: aliceblue !important;
+    }
+
+    .btn-danger.btn-disabled {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
+
+    /* ✔️ ÍCONES SEMPRE VISÍVEIS NOS BOTÕES DESATIVADOS */
+    .btn-disabled i {
+        opacity: 1 !important;
+        color: inherit !important;
+    }
+
+    /* ✨ ESTILOS GERAIS */
+    h3:after {
+        content: ' ';
+        display: block;
+        border: 2px solid #d0d0d0;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .img {
+        width: 100%;
+    }
+
+    .modal-dialog {
+        max-width: 50%;
+        height: 100%;
+        margin: 0 auto !important;
+    }
+
+    .button {
+        padding: 10px 24px;
+    }
+
+    .icon-space {
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* 🧠 TOOLTIP SYNCFUSION */
+    .tooltip-laranja .e-tip-content {
+        background-color: #FFA726;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .tooltip-laranja .e-arrow-tip-inner {
+        background-color: #FFA726;
+    }
+
+    .e-tooltip-wrap.tooltip-laranja {
+        z-index: 3000 !important;
+        position: fixed !important;
+        pointer-events: auto !important;
+        transform: translateZ(0); /* Garante renderização no topo */
+    }
+
+    /* 🧱 Z-INDEX PRIORIDADES */
+    .swal2-container {
+        z-index: 3000 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .swal2-popup {
+        z-index: 3001 !important;
+    }
+
+    .swal2-backdrop-show,
+    .swal2-backdrop {
+        z-index: 2999 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    #modalViagens {
+        z-index: 1050 !important;
+    }
+
+    .btn-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: auto; /* Permite hover para tooltip */
+    }
+
+</style>
+
+
+
+<script>
+
+    var URapi = "/api/viagem";
+
+            var defaultRTE;
+        var defaultRTEDescricao;
+
+        function onCreate() {
+
+            defaultRTE = this;
+
+        }
+
+        function onCreateDescricao() {
+
+            defaultRTEDescricao = this;
+
+        }
+
+</script>
+
+<form>
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-container show">
+                    <div class="panel-content float-right">
+                        <a href="/Viagens/Upsert" class="btn btn-info">
+                            <i class="fal fa-route icon-pulse">
+                            </i> &nbsp; Adicionar Viagem
+                        </a>
+                    </div>
+                    <div class="panel-content ">
+                        <div class="box-body">
+                            <br /><br />
+                            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                                <h2 class="text-primary">
+                                    Escolha os filtros desejados para visualizar as Viagens:
+                                </h2>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group row">
+                                    <div class="col-2">
+                                        <label class="label font-weight-bold color-black">Escolha uma Data</label>
+                                        <input id="txtData" class="form-control form-control-xs" type="date" />
+                                    </div>
+                                    <button type="button" class="col-2 btn btn-primary text-white d-flex justify-content-center align-items-center"
+                                            id="btnFiltro" name="btnFiltro" aria-label="Filtra as Viagens!"
+                                            data-microtip-position="top" role="tooltip"
+                                            style="cursor: pointer; height: 40px; display: inline-block; margin-top: 20px;"
+                                            onclick="ListaTodasViagens()">
+                                        <i class="fa-sharp-duotone fa-solid fa-filter-list icon-space icon-pulse"></i>
+                                        <span>Filtra as Viagens</span>
+                                    </button>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-2">
+                                        <ejs-combobox id="lstVeiculos" placeholder="Selecione um Veículo" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstVeiculos"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Descricao" value="VeiculoId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstMotorista" placeholder="Selecione um Motorista" allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstMotorista"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Nome" value="MotoristaId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-2">
+                                        <ejs-combobox id="lstStatus" placeholder="Viagens com Status..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstStatus"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Status" value="StatusId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                    <div class="col-3">
+                                        <ejs-combobox id="lstEventos" placeholder="Viagens do Evento..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["lstEventos"]" popupHeight="250px" width="100%" showClearButton="true">
+                                            <e-combobox-fields text="Evento" value="EventoId"></e-combobox-fields>
+                                        </ejs-combobox>
+                                    </div>
+                                </div>
+                            </div>
+                            <br /><br />
+                            <div id="divViagens">
+                                <table id="tblViagem" class="table table-bordered table-striped" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Vistoria</th>
+                                            <th>Data</th>
+                                            <th>Início</th>
+                                            <th>Requisitante</th>
+                                            <th>Setor</th>
+                                            <th>Motorista</th>
+                                            <th>Veiculo</th>
+                                            <th>Status</th>
+                                            <th>Ação</th>
+                                            <th></th>
+                                            <th>Km Inicial</th>
+                                            <th>Combustivel Inicial</th>
+                                            <th>Data Final</th>
+                                            <th>Hora Final</th>
+                                            <th>Km Final</th>
+                                            <th>Combustivel Final</th>
+                                            <th>Resumo Ocorrência</th>
+                                            <th>Descrição Ocorrência</th>
+                                            <th>Status Documento</th>
+                                            <th>Status Cartão Abastecimento</th>
+                                            <th>Descricao</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div id="divViagens"></div>
+    </div>
+</form>
+
+@*----------------- MODAL de Finalização da Viagem ------------------------*@
+@*=========================================================================*@
+<div class="modal fade" id="modalFinalizaViagem" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="h3Titulo">Finalizar a Viagem</h3>
+            </div>
+
+            <div class="modal-body">
+                <form id="frmRequisitante">
+                    <input type="hidden" id="txtId" />
+
+                    <!-- Linha 1 -->
+                    <div class="form-row mb-3">
+                        <div class="col-md-3">
+                            <label><strong>Data Inicial</strong></label>
+                            <input readonly id="txtDataInicial" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Hora Inicial</strong></label>
+                            <input readonly id="txtHoraInicial" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Km Inicial</strong></label>
+                            <input readonly id="txtKmInicial" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Combustível Inicial</strong></label>
+                            <ejs-dropdowntree readonly id="ddtCombustivelInicial" popupHeight="200px" showClearButton="true" class="form-control">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataCombustivel"]" value="Nivel" text="Descricao" imageURL="Imagem"></e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+
+                    <!-- Linha 2 -->
+                    <div class="form-row mb-3">
+                        <div class="col-md-2">
+                            <label><strong>Data Final</strong></label>
+                            <input id="txtDataFinal" type="date" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Hora Final</strong></label>
+                            <input id="txtHoraFinal" type="time" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Duração (hs)</strong></label>
+                            <input id="txtDuracao" class="form-control" disabled />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Km Final</strong></label>
+                            <input id="txtKmFinal" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Km Percorrido</strong></label>
+                            <input id="txtKmPercorrido" type="number" class="form-control" disabled />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Combustível Final</strong></label>
+                            <ejs-dropdowntree id="ddtCombustivelFinal" popupHeight="200px" showClearButton="true" class="form-control">
+                                <e-dropdowntree-fields dataSource="@ViewData["dataCombustivel"]" value="Nivel" text="Descricao" imageURL="Imagem"></e-dropdowntree-fields>
+                            </ejs-dropdowntree>
+                        </div>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="form-row mb-3">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="chkStatusDocumento" />
+                            <label for="chkStatusDocumento">Documento Entregue</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="checkbox" id="chkStatusCartaoAbastecimento" />
+                            <label for="chkStatusCartaoAbastecimento">Cartão de Abastecimento Entregue</label>
+                        </div>
+                    </div>
+
+                    <!-- Descrição da Viagem -->
+                    <div class="form-group">
+                        <label><strong>Descrição da Viagem</strong> – Anotar AQUI observações sobre a entrega do veículo</label>
+                        <ejs-richtexteditor id="rteDescricao" created="onCreateDescricao" locale="pt-BR" height="150px">
+                            <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                        </ejs-richtexteditor>
+                    </div>
+
+                    <!-- Ocorrências -->
+                    <div class="form-group">
+                        <label class="mt-4"><strong>Ocorrências da Viagem</strong> – Apenas Danos ou Avarias ao Veículo</label>
+                        <input id="txtResumo" class="form-control mb-2" placeholder="Resumo" />
+                        <ejs-richtexteditor id="rteOcorrencias" created="onCreate" locale="pt-BR" height="150px">
+                            <e-richtexteditor-insertimagesettings saveUrl="api/Viagem/SaveImage" path="./DadosEditaveis/ImagensViagens/"></e-richtexteditor-insertimagesettings>
+                        </ejs-richtexteditor>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer justify-content">
+                <button id="btnFinalizarViagem" class="btn btn-primary" type="submit"><i class="fal fa-flag-checkered icon-space icon-pulse"></i> Finalizar Viagem</button>
+                <button id="btnFechar" type="button" class="btn btn-danger" data-dismiss="modal"> <i class="fa-solid fa-xmark me-2  icon-space icon-pulse"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* -------------- Modal da Ficha de Vistoria -------------- *@
+@* ======================================================== *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalFicha">
+        <div class="modal-dialog modal-md" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Ficha de Vistoria</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+                    <input type="hidden" id="txtViagemId" asp-for="ViagemId" />
+
+                    <div class="row float-left">
+                        <div class="col-6 float-left">
+                            <label class="label font-weight-bold">Seleciona Arquivo da Ficha de Vistoria</label>
+                            <input type="file" id="txtFile" class="fileUpload">
+                        </div>
+                        <button id="btnAdicionarFicha" type="button" class="btn btn-primary form-control" style="width:200px">Inserir Ficha de Vistoria</button>
+                    </div>
+
+                    <img class="img" id="imgViewer" style="border: 1px solid #000000; margin-top: 10px; height: auto" />
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@* -------------- Modal da Ficha da Viagem -------------- *@
+@* ====================================================== *@
+<form method="post" asp-action="Index" enctype="multipart/form-data">
+    <div class="modal fade" id="modalPrint">
+        <div class="modal-dialog modal-xl" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <h4 class="modal-title" id="DynamicModalLabel">Ficha da Viagem</h4>
+                    <button id="btnFecharModal" type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                </div>
+
+                <div class="modal-body table-bordered container-fluid">
+                    <input type="hidden" id="txtViagemId" asp-for="ViagemId" />
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div id="panel-1" class="panel">
+                                <div class="panel-container show">
+                                    <div id="divPainel" class="panel-content">
+
+                                        <div class="d-flex" style="height:700px" id="ReportContainer">
+                                            <div id="reportViewer1" style="width:100%" class="pb-3">
+                                                Loading...
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section ScriptsBlock {
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script>
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+    </script>
+
+    <script src="/api/reports/resources/js/telerikReportViewer-18.1.24.514.min.js"></script>
+
+    <script src="~/js/cadastros/ViagemIndex_v110.js"></script>
+
+}

@@ -1,0 +1,64 @@
+﻿@page
+@model FrotiX.Models.PlacaBronze
+
+@{
+    ViewData["Title"] = "Evento";
+    ViewData["PageName"] = "viagens_listaeventos";
+    ViewData["Heading"] = "<i class='fad fa-file-certificate'></i> Cadastros: <span class='fw-300'>Placas de Bronze</span>";
+    ViewData["Category1"] = "Cadastros";
+    ViewData["PageIcon"] = "fa-regular fa-file-certificate";
+}
+
+@section HeadBlock {
+
+}
+
+<style>
+    .fundo-cinza {
+        background-color: #2F4F4F;
+        color: aliceblue;
+    }
+
+    .label {
+        color: white;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-container show">
+                <div class="panel-content float-right">
+                    <a href="/PlacaBronze/Upsert" class="btn btn-info">
+                        <i class="fa-regular fa-file-certificate">
+                        </i> &nbsp; Adicionar Placa de Bronze
+                    </a>
+                </div>
+                <div class="panel-content ">
+                    <div class="box-body">
+                        <br /><br />
+                        <table id="tblPlacaBronze" class="table table-bordered table-striped" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Descrição da Placa</th>
+                                    <th>Veículo Associado</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsBlock{
+
+    <script src="~/js//cadastros/placabronze.js"></script>
+}
