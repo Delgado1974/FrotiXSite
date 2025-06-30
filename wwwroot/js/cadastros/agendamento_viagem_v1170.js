@@ -1,3 +1,29 @@
+var chamouAtualizaCalendario = false;
+
+//  ——————————————————————————————————————————————————
+//  Limpa a ^ Tela ^ depois do fechamento de um Modal
+//  —————————————————————————————————————————————————— 
+function limparResiduosModalVanilla()
+{
+    document.querySelectorAll('.modal-backdrop, .swal2-container, .swal2-backdrop-show').forEach(e => e.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    // Remove overlays full-screen invisíveis
+    document.querySelectorAll('div').forEach(div =>
+    {
+        const st = getComputedStyle(div);
+        if (
+            (st.position === 'fixed' || st.position === 'absolute') &&
+            +st.zIndex > 1040 &&
+            (st.width === '100vw' || st.width === window.innerWidth + 'px') &&
+            (st.height === '100vh' || st.height === window.innerHeight + 'px')
+        )
+        {
+            if (!div.classList.contains('fc') && !div.classList.contains('fc-view-harness')) div.remove();
+        }
+    });
+}
+
 // ——————————————————————————————————————————————————
 //  Extrai dinamicamente "ViagemUpsert_###" do nome do .js atual
 // ——————————————————————————————————————————————————
@@ -1610,7 +1636,7 @@ async function ValidaCampos(viagemId)
             if (document.getElementById("txtNoFichaVistoria").value === "")
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "O Nº da Ficha de Vistoria é obrigatório!",
                     icon: 'warning',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1647,7 +1673,7 @@ async function ValidaCampos(viagemId)
             if (lstMotorista.value === null)
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "O Motorista é obrigatório",
                     icon: 'warning',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1685,7 +1711,7 @@ async function ValidaCampos(viagemId)
             if (lstVeiculo.value === null)
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "O Veículo é obrigatório",
                     icon: 'warning',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1726,7 +1752,7 @@ async function ValidaCampos(viagemId)
             if (ddtCombustivelInicial.value === "")
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "O Combustível Inicial é obrigatório!",
                     icon: "error",
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1764,7 +1790,7 @@ async function ValidaCampos(viagemId)
         if (document.getElementById("txtHoraInicial").value === "")
         {
             await Swal.fire({
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A Hora Inicial é obrigatória',
                 icon: 'error',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1802,7 +1828,7 @@ async function ValidaCampos(viagemId)
         if (finalidade === '' || finalidade === null)
         {
             await Swal.fire({
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A Finalidade é obrigatória',
                 icon: 'error',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1842,7 +1868,7 @@ async function ValidaCampos(viagemId)
             if (origem === "")
             {
                 await Swal.fire({
-                    title: '⚠️ Atenção',
+                    title: 'Atenção',
                     text: 'A Origem é obrigatória',
                     icon: 'error',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1917,7 +1943,7 @@ async function ValidaCampos(viagemId)
             if (recorrente === 'S' && (!periodo || periodo === ''))
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "Se o Agendamento é Recorrente, você precisa escolher o Período de Recorrência!",
                     icon: 'error',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1954,7 +1980,7 @@ async function ValidaCampos(viagemId)
             if ((periodo === 'S' || periodo === 'Q' || periodo === 'M') && (document.getElementById("lstDias").ej2_instances[0].value === '' || document.getElementById("lstDias").ej2_instances[0].value === null))
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "Se o período foi escolhido como semanal, quinzenal ou mensal, você precisa escolher os Dias da Semana!",
                     icon: 'error',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -1995,7 +2021,7 @@ async function ValidaCampos(viagemId)
         {
 
             await Swal.fire({
-                title: "⚠️ Atenção",
+                title: "Atenção",
                 text: "Se o período foi escolhido como diário, semanal, quinzenal ou mensal, você precisa escolher a Data Final!",
                 icon: 'error',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -2036,7 +2062,7 @@ async function ValidaCampos(viagemId)
             if (!selectedDates || selectedDates.length === 0)
             {
                 await Swal.fire({
-                    title: "⚠️ Atenção",
+                    title: "Atenção",
                     text: "Se o período foi escolhido como Dias Variados, você precisa escolher ao menos um dia no Calendário!",
                     icon: 'warning',
                     iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -2092,13 +2118,13 @@ async function ValidaCampos(viagemId)
 
         if (kmFinal && parseFloat(kmFinal) <= 0)
         {
-            Alerta.Erro("⚠️ Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
+            Alerta.Erro("Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
             return false;
         }
 
         if (algumFinalPreenchido && !todosFinalPreenchidos)
         {
-            Alerta.Erro("⚠️ Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
+            Alerta.Erro("Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
             return false;
         }
 
@@ -4010,7 +4036,12 @@ function InitializeCalendar(URL)
                         {
                             try
                             {
-                                var events = $.map(data.data, function (item)
+                                console.log("Eventos carregados:", data); // <-- COLOQUE AQUI!
+
+                                // Limita o número de eventos retornados para testar performance
+                                var limitedData = data.data.slice(0, 50); // <-- Limite para 50, ajuste como quiser!
+
+                                var events = $.map(limitedData, function (item)
                                 {
                                     try
                                     {
@@ -4032,6 +4063,7 @@ function InitializeCalendar(URL)
                                     }
                                 });
                                 successCallback(events);
+
                             } catch (error)
                             {
                                 TratamentoErroComLinha("agendamento_viagem<num>.js", "success", error);
@@ -4057,6 +4089,8 @@ function InitializeCalendar(URL)
             {
                 try
                 {
+                    console.log("Clicou em evento!"); // <-- Coloque isso
+
                     var idViagem = info.event.id;
                     console.log("ID: " + idViagem);
                     info.jsEvent.preventDefault();
@@ -4114,6 +4148,11 @@ function InitializeCalendar(URL)
                 {
                     TratamentoErroComLinha("agendamento_viagem<num>.js", "eventDidMount", error);
                 }
+            },
+            eventRemove: function (info)
+            {
+                let tip = bootstrap.Tooltip.getInstance(info.el);
+                if (tip) tip.dispose();
             },
             loading: function (isLoading)
             {
@@ -4459,14 +4498,14 @@ document.getElementById('txtFinalRecorrencia').addEventListener('focusout', func
                 // Mostra o dialog e esvazia o campo txtFinalRecorrencia;
                 //dialogRecorrencia.show();
 
-                Alerta.Erro("⚠️ Informação Incorreta", "A data final não pode ser maior que 365 dias após a data inicial");
+                Alerta.Erro("Informação Incorreta", "A data final não pode ser maior que 365 dias após a data inicial");
 
                 //Swal.fire({
                 //    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
                 //    customClass: {
                 //        popup: 'custom-popup'
                 //    },
-                //    title: '⚠️ Atenção',
+                //    title: 'Atenção',
                 //    text: 'A data final não pode ser maior que 365 dias após a data inicial.',
                 //    icon: 'warning',
                 //    confirmButtonText: 'Ok',
@@ -4723,10 +4762,8 @@ $('#modalViagens').on('shown.bs.modal', function (event)
         // Remove o relatório e recria o container para o próximo uso;
         $("#fichaReport").remove();
         $("#ReportContainer").append("<div id='fichaReport' style='width:100%' class='pb-3'> Carregando... </div>");
-        $("div").removeClass("modal-backdrop");
-        $('body').removeClass('modal-open');
-        $("body").css("overflow", "auto");
-        //location.reload();
+        setTimeout(limparResiduosModalVanilla, 300);
+
     } catch (error)
     {
         TratamentoErroComLinha("agendamento_viagem<num>.js", "(anonymous)", error);
@@ -4844,7 +4881,7 @@ $("#btnViagem").click(function (event)
         //    },
         //    error: function (err)
         //    {
-        //        Alerta.Erro("⚠️ Erro ao buscar número da última ficha", "Classe: Viagem_050 | Método: document.ready | Erro: " + err.statusText);
+        //        Alerta.Erro("Erro ao buscar número da última ficha", "Classe: Viagem_050 | Método: document.ready | Erro: " + err.statusText);
         //    }
         //});
 
@@ -4885,31 +4922,42 @@ $("#btnApaga").click(async function (event)
             showCancelButton: true,
             confirmButtonText: 'Apagar Todos',
             cancelButtonText: 'Apenas Atual',
-            dangerMode: true,
+            
             heightAuto: false,
             showCloseButton: true,
             // Habilita o botão de fechamento no canto superior direito
             didOpen: () =>
             {
-                try
-                {
-                    $('.modal-backdrop').css('z-index', '1040').hide();
-                    $('.swal2-container').css({
-                        'z-index': 9999,
-                        'position': 'fixed'
-                    });
-                    $('.swal2-backdrop-show').css('z-index', 9998);
-                    Swal.getPopup().focus();
-                } catch (error)
-                {
-                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                }
+
+                chamouAtualizaCalendario = false;
+
+            //    try
+            //    {
+            //        $('.modal-backdrop').css('z-index', '1040').hide();
+            //        $('.swal2-container').css({
+            //            'z-index': 9999,
+            //            'position': 'fixed'
+            //        });
+            //        $('.swal2-backdrop-show').css('z-index', 9998);
+            //        Swal.getPopup().focus();
+            //    } catch (error)
+            //    {
+            //        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
+            //    }
             },
             didClose: () =>
             {
                 try
                 {
-                    $('.modal-backdrop').css('z-index', '1040').show();
+                    // Dispose todos tooltips Bootstrap
+                    var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltips.forEach(function (el)
+                    {
+                        var tip = bootstrap.Tooltip.getInstance(el);
+                        if (tip) tip.dispose();
+                    });
+
+
                 } catch (error)
                 {
                     TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
@@ -4934,12 +4982,23 @@ $("#btnApaga").click(async function (event)
                 toastr.success('Todos os agendamentos foram excluídos com sucesso!', {
                     timeOut: 3000
                 });
-                //await delay(2000);
-                $("#modalViagens").hide();
-                $("div").removeClass("modal-backdrop");
-                $('body').removeClass('modal-open');
-                $("body").css("overflow", "auto");
-                calendar.refetchEvents(); // Atualiza só os eventos!
+
+                $("#modalViagens").modal('hide');
+
+                // Remove tooltips abertos
+                document.querySelectorAll('.tooltip.show').forEach(tip => tip.remove());
+
+                // Dispose todos tooltips Bootstrap
+                var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltips.forEach(function (el)
+                {
+                    var tip = bootstrap.Tooltip.getInstance(el);
+                    if (tip) tip.dispose();
+                });
+
+                // ...Após excluir eventos e limpar tooltips...
+                calendar.refetchEvents()
+
             } catch (error)
             {
                 /* CATCH ORIGINAL:
@@ -4954,12 +5013,13 @@ $("#btnApaga").click(async function (event)
             toastr.success('O agendamento foi excluído com sucesso!', {
                 timeOut: 3000
             });
-            //await delay(2000);
-            $("#modalViagens").hide();
-            $("div").removeClass("modal-backdrop");
-            $('body').removeClass('modal-open');
-            $("body").css("overflow", "auto");
-            calendar.refetchEvents(); // Atualiza só os eventos!
+
+            // Remove tooltips abertos
+            document.querySelectorAll('.tooltip.show').forEach(tip => tip.remove());
+
+            // ...Após excluir eventos e limpar tooltips...
+            calendar.refetchEvents()
+
         }
     } catch (error)
     {
@@ -5401,10 +5461,10 @@ $("#txtDataFinal").focusout(function ()
                 customClass: {
                     popup: 'custom-popup'
                 },
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A data final deve ser maior que a inicial!',
                 icon: 'error',
-                dangerMode: true,
+                
                 confirmButtonText: 'Ok',
                 backdrop: true,
                 // Ensures SweetAlert2 has a backdrop like a modal;
@@ -5478,7 +5538,7 @@ $("#txtDataInicial").focusout(function ()
                 text: "A data inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5513,7 +5573,7 @@ $("#txtHoraFinal").focusout(function ()
                 text: "Preencha a Data Final para poder preencher a Hora Final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5527,7 +5587,7 @@ $("#txtHoraFinal").focusout(function ()
                 text: "A hora final deve ser maior que a inicial!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5563,7 +5623,7 @@ $("#txtHoraInicial").focusout(function ()
                 text: "A hora inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5601,7 +5661,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
             return;
         }
 
@@ -5609,7 +5669,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
             return;
         }
 
@@ -5637,7 +5697,7 @@ $("#txtKmFinal").focusout(function ()
                 text: "A quilometragem final deve ser maior que a inicial!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5650,7 +5710,7 @@ $("#txtKmFinal").focusout(function ()
                 text: "A quilometragem final excede em 100km a inicial!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5680,7 +5740,7 @@ $("#txtKmInicial").focusout(function ()
                 text: "A quilometragem inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5712,7 +5772,7 @@ $("#txtKmInicial").focusout(function ()
                 text: "A quilometragem inicial deve ser maior que a atual!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5727,7 +5787,7 @@ $("#txtKmInicial").focusout(function ()
                 text: "A quilometragem inicial não confere com a atual!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -5888,7 +5948,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "O Nome do Evento é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5902,7 +5962,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "A Descrição do Evento é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5916,7 +5976,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "A Data Inicial é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5930,7 +5990,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "A Data Final é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5944,7 +6004,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "A Quantidade de Pessoas é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5959,7 +6019,7 @@ $("#btnInserirEvento").click(async function (e)
                 text: "O Setor do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5971,7 +6031,7 @@ $("#btnInserirEvento").click(async function (e)
         if (requisitantes.value === null)
         {
 
-            Alerta.Erro("⚠️ Informação Incorreta", "O Requisitante é obrigatório");
+            Alerta.Erro("Informação Incorreta", "O Requisitante é obrigatório");
 
             return;
         }
@@ -6179,7 +6239,7 @@ $("#btnInserirRequisitante").click(function (e)
                 text: "O Ponto do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -6193,7 +6253,7 @@ $("#btnInserirRequisitante").click(function (e)
                 text: "O Nome do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -6207,7 +6267,7 @@ $("#btnInserirRequisitante").click(function (e)
                 text: "O Ramal do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -6222,7 +6282,7 @@ $("#btnInserirRequisitante").click(function (e)
                 text: "O Setor do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -6618,49 +6678,62 @@ async function validarDatas()
         if (diferenca >= 5)
         {
 
-            Alerta.Alerta()
-
-            const result = await Swal.fire({
-                title: '⚠️ Atenção',
-                text: 'A Data Final está 5 dias ou mais após a Inicial. Tem certeza?',
-                icon: 'warning',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                showCancelButton: true,
-                confirmButtonText: 'Tenho certeza! 💪🏼',
-                cancelButtonText: 'Me enganei! 😟',
-                customClass: { popup: 'custom-popup' },
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
-
-            if (!result.isConfirmed)
+            const confirmacao = await Alerta.Confirmar(
+                "Cuidado com as Datas",
+                'A <strong>Data Final<;strong> está 5 dias ou mais após a <strong>Data Inicial</strong>. Tem certeza?',
+                "Tenho certeza! 💪🏼",
+                "Me enganei! 😟"
+            );
+            if (!confirmacao)
             {
                 $('#txtDataFinal').val('');
                 $('#txtDataFinal').focus();
                 return false;
             }
+
+        //    Alerta.Alerta("Cuidado com as Datas", "A quilometragem <strong>Final</strong> excede em 100km a inicial!");
+
+        //    const result = await Swal.fire({
+        //        title: 'Atenção',
+        //        text: 'A Data Final está 5 dias ou mais após a Inicial. Tem certeza?',
+        //        icon: 'warning',
+        //        iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
+        //        showCancelButton: true,
+        //        confirmButtonText: 'Tenho certeza! 💪🏼',
+        //        cancelButtonText: 'Me enganei! 😟',
+        //        customClass: { popup: 'custom-popup' },
+        //        heightAuto: false,
+        //        willOpen: () =>
+        //        {
+        //            try
+        //            {
+        //                $('.modal-backdrop').css('z-index', '1040').hide();
+        //                $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
+        //                $('.swal2-backdrop-show').css('z-index', 9998);
+        //                Swal.getPopup().focus();
+        //            } catch (error)
+        //            {
+        //                TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
+        //            }
+        //        },
+        //        didClose: () =>
+        //        {
+        //            try
+        //            {
+        //                $('.modal-backdrop').css('z-index', '1040').show();
+        //            } catch (error)
+        //            {
+        //                TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
+        //            }
+        //        }
+        //    });
+
+        //    if (!result.isConfirmed)
+        //    {
+        //        $('#txtDataFinal').val('');
+        //        $('#txtDataFinal').focus();
+        //        return false;
+        //    }
         }
 
         return true;
@@ -6691,7 +6764,7 @@ async function validarQuilometragem()
         if (txtKmInicial === "")
         {
             await Swal.fire({
-                title: "⚠️ Atenção",
+                title: "Atenção",
                 text: "A quilometragem inicial é obrigatória",
                 icon: "error",
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -6724,7 +6797,7 @@ async function validarQuilometragem()
                 if (diferencaKm >= 100)
                 {
                     const result = await Swal.fire({
-                        title: '⚠️ Atenção',
+                        title: 'Atenção',
                         text: 'A quilometragem final está 100 km ou mais acima da inicial. Tem certeza?',
                         icon: 'warning',
                         iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -6853,7 +6926,7 @@ function calcularDistanciaViagem()
         $('#txtQuilometragem').val(kmPercorrido);
 
         //    if (kmPercorrido > 100) {
-        //        Alerta.Alerta("⚠️ Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
+        //        Alerta.Alerta("Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
         //    }
     } catch (error)
     {
@@ -6882,7 +6955,7 @@ $("#txtNoFichaVistoria").focusout(function ()
                         title: "Alerta na Ficha de Vistoria",
                         text: "O número inserido difere em ±100 da última Ficha inserida!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: { ok: "Ok" }
                     });
                 }
@@ -6902,7 +6975,7 @@ $("#txtNoFichaVistoria").focusout(function ()
                         title: "Alerta na Ficha de Vistoria",
                         text: "Já existe uma Ficha inserida com esta numeração!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: { ok: "Ok" }
                     });
                 }
@@ -6954,7 +7027,7 @@ async function validarDatasInicialFinal(DataInicial, DataFinal)
         if (diff >= 5)
         {
             const result = await Swal.fire({
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A Data Final está 5 dias ou mais após a Inicial. Tem certeza?',
                 icon: 'warning',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -7178,5 +7251,6 @@ function calcularDuracaoViagem()
         TratamentoErroComLinha("CalculoDuracao", "calcularDuracaoViagem", error);
     }
 }
+
 
 

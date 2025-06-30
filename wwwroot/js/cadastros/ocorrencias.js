@@ -10,7 +10,7 @@ $(document).ready(function () {
             text: "Verifique se as condições do veículo já retornaram ao normal",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Desistir",
                 confirm: "Baixar"

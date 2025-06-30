@@ -20,7 +20,7 @@ if (path == '/secaopatrimonial/index' || path == '/secaopatrimonial') {
             text: "Não será possível recuperar os dados eliminados!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Cancelar",
                 confirm: "Excluir"
@@ -171,7 +171,7 @@ if (path == '/secaopatrimonial/index' || path == '/secaopatrimonial') {
                     text: "O nome da seção não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -191,7 +191,7 @@ if (path == '/secaopatrimonial/index' || path == '/secaopatrimonial') {
                     text: "O Setor da seção não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }

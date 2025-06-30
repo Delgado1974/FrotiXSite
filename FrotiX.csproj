@@ -51,6 +51,7 @@
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v1030.js" />
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v1049.js" />
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v11.js" />
+    <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v1124.js" />
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v332.js" />
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v388.js" />
     <Content Remove="wwwroot\js\cadastros\agendamento_viagem_v601.js" />
@@ -1317,9 +1318,6 @@
     <Content Update="wwwroot\js\brands.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\cadastros\agendamento_viagem_v1124.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\js\cadastros\anulacao.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1515,7 +1513,7 @@
     <Content Update="wwwroot\js\solid.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\sweetalert_interop_048.js">
+    <Content Update="wwwroot\js\sweetalert_interop_050.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\js\thin.js">

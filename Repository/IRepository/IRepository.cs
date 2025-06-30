@@ -22,6 +22,13 @@ namespace FrotiX.Repository.IRepository
             string includeProperties = null
             );
 
+        IQueryable<TResult> GetAllReducedIQueryable<TResult>(
+            Expression<Func<T, TResult>> selector,
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+            );
+
         T GetFirstOrDefault(
             Expression<Func<T, bool>> filter = null,
              string includeProperties = null

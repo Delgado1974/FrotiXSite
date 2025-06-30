@@ -11,7 +11,7 @@ $(document).ready(function () {
             text: "Você deverá associá-lo novamente se necessário!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Cancelar",
                 confirm: "Excluir"

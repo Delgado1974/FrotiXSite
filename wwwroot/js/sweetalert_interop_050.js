@@ -1,5 +1,6 @@
 ﻿window.SweetAlertInterop = {
-    ShowCustomAlert: async function (icon, iconHtml, title, message, confirmButtonText, cancelButtonText = null) {
+    ShowCustomAlert: async function (icon, iconHtml, title, message, confirmButtonText, cancelButtonText = null)
+    {
         const msg = `
         <div style="background:#1e1e2f; border-radius: 8px; overflow: hidden; font-family: 'Segoe UI', sans-serif; color: #e0e0e0;">
           <div style="background:#2d2d4d; padding: 20px; text-align: center;">
@@ -39,7 +40,8 @@
           </div>
         </div>`;
 
-        return new Promise((resolve) => {
+        return new Promise((resolve) =>
+        {
             Swal.fire({
                 showConfirmButton: false,
                 html: msg,
@@ -51,9 +53,11 @@
                 customClass: {
                     popup: 'swal2-popup swal2-no-border swal2-no-shadow'
                 },
-                didOpen: () => {
+                didOpen: () =>
+                {
                     const popup = document.querySelector('.swal2-popup');
-                    if (popup) {
+                    if (popup)
+                    {
                         popup.style.border = 'none';
                         popup.style.boxShadow = 'none';
                         popup.style.background = 'transparent';
@@ -64,9 +68,18 @@
                     if (cancelBtn) cancelBtn.onclick = () => { Swal.close(); resolve(false); };
 
                     const swalContainer = document.querySelector('.swal2-container');
-                    if (swalContainer) {
+                    if (swalContainer)
+                    {
                         swalContainer.style.zIndex = '3000';
                         document.body.appendChild(swalContainer);
+                    }
+                },
+                didClose: () =>
+                {
+                    // Limpeza universal após qualquer SweetAlert fechar
+                    if (typeof limparResiduosModalVanilla === "function")
+                    {
+                        limparResiduosModalVanilla();
                     }
                 }
             });
@@ -219,6 +232,36 @@
 window.SweetAlertInterop;
 
 
+//  ——————————————————————————————————————————————————
+//  Limpa a ^ Tela ^ depois do fechamento de um Modal
+//  —————————————————————————————————————————————————— 
+function limparResiduosModalVanilla()
+{
+    // Remove overlays conhecidos
+    document.querySelectorAll('.modal-backdrop, .swal2-container, .swal2-backdrop-show').forEach(e => e.remove());
+document.body.classList.remove('modal-open');
+document.body.style.overflow = '';
+document.body.style.zIndex = '';
+
+    // NEW: Remove qualquer DIV fullscreen que bloqueie clique
+    document.querySelectorAll('div').forEach(div =>
+{
+        const style = getComputedStyle(div);
+if (
+(style.position === 'fixed' || style.position === 'absolute') &&
+            parseInt(style.zIndex || 0) >= 1040 &&
+(parseInt(style.width) === window.innerWidth || style.width === '100vw' || style.left === '0px') &&
+(parseInt(style.height) === window.innerHeight || style.height === '100vh' || style.top === '0px')
+)
+{
+            // Cuidado para não remover seu próprio calendário
+            if (!div.classList.contains('fc') && !div.classList.contains('fc-view-harness'))
+{
+    div.remove();
+            }
+        }
+    });
+}
 
 
 

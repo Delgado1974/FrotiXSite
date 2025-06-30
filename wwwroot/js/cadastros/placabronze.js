@@ -11,7 +11,7 @@ $(document).ready(function () {
             text: "Não será possível recuperar os dados eliminados!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Cancelar",
                 confirm: "Excluir"
@@ -53,7 +53,7 @@ $(document).ready(function () {
             text: "Você precisará reassociá-lo se for o caso!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Cancelar",
                 confirm: "Desvincular"

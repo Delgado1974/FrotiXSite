@@ -1115,7 +1115,7 @@ function MotoristaValueChange()
                         title: "Motorista em Viagem",
                         text: "Este motorista encontra-se em uma viagem não terminada!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -1156,7 +1156,7 @@ function VeiculoValueChange()
                         title: "Veículo em Viagem",
                         text: "Este veículo encontra-se em uma viagem não terminada!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }

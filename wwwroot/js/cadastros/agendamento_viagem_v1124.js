@@ -3923,7 +3923,7 @@ $("#btnApaga").click(async function (event) {
             showCancelButton: true,
             confirmButtonText: 'Apagar Todos',
             cancelButtonText: 'Apenas Atual',
-            dangerMode: true,
+            
             heightAuto: false,
             showCloseButton: true,
             // Habilita o botão de fechamento no canto superior direito
@@ -4376,7 +4376,7 @@ $("#txtDataFinal").focusout(function () {
                 title: '⚠️ Atenção',
                 text: 'A data final deve ser maior que a inicial!',
                 icon: 'error',
-                dangerMode: true,
+                
                 confirmButtonText: 'Ok',
                 backdrop: true,
                 // Ensures SweetAlert2 has a backdrop like a modal;
@@ -4439,7 +4439,7 @@ $("#txtDataInicial").focusout(function () {
                 text: "A data inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4470,7 +4470,7 @@ $("#txtHoraFinal").focusout(function () {
                 text: "Preencha a Data Final para poder preencher a Hora Final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4483,7 +4483,7 @@ $("#txtHoraFinal").focusout(function () {
                 text: "A hora final deve ser maior que a inicial!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4514,7 +4514,7 @@ $("#txtHoraInicial").focusout(function () {
                 text: "A hora inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4577,7 +4577,7 @@ $("#txtKmFinal").focusout(function () {
                 text: "A quilometragem final deve ser maior que a inicial!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4589,7 +4589,7 @@ $("#txtKmFinal").focusout(function () {
                 text: "A quilometragem final excede em 100km a inicial!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4615,7 +4615,7 @@ $("#txtKmInicial").focusout(function () {
                 text: "A quilometragem inicial deve ser menor que a final!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4642,7 +4642,7 @@ $("#txtKmInicial").focusout(function () {
                 text: "A quilometragem inicial deve ser maior que a atual!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4656,7 +4656,7 @@ $("#txtKmInicial").focusout(function () {
                 text: "A quilometragem inicial não confere com a atual!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     ok: "Ok"
                 }
@@ -4799,7 +4799,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "O Nome do Evento é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4812,7 +4812,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "A Descrição do Evento é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4825,7 +4825,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "A Data Inicial é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4838,7 +4838,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "A Data Final é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4851,7 +4851,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "A Quantidade de Pessoas é obrigatória!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4865,7 +4865,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "O Setor do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -4880,7 +4880,7 @@ $("#btnInserirEvento").click(async function (e) {
                 text: "O Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5060,7 +5060,7 @@ $("#btnInserirRequisitante").click(function (e) {
                 text: "O Ponto do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5073,7 +5073,7 @@ $("#btnInserirRequisitante").click(function (e) {
                 text: "O Nome do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5086,7 +5086,7 @@ $("#btnInserirRequisitante").click(function (e) {
                 text: "O Ramal do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -5100,7 +5100,7 @@ $("#btnInserirRequisitante").click(function (e) {
                 text: "O Setor do Requisitante é obrigatório!",
                 icon: "error",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     close: "Fechar"
                 }
@@ -6032,7 +6032,7 @@ $("#txtNoFichaVistoria").focusout(function () {
                         title: "Alerta na Ficha de Vistoria",
                         text: "O número inserido difere em ±100 da última Ficha inserida!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: { ok: "Ok" }
                     });
                 }
@@ -6050,7 +6050,7 @@ $("#txtNoFichaVistoria").focusout(function () {
                         title: "Alerta na Ficha de Vistoria",
                         text: "Já existe uma Ficha inserida com esta numeração!",
                         icon: "warning",
-                        dangerMode: true,
+                        
                         buttons: { ok: "Ok" }
                     });
                 }

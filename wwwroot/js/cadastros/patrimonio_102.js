@@ -251,7 +251,7 @@ if (path == "/patrimonio/index" || path == "/patrimonio") {
                     text: "O NPR não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -264,7 +264,7 @@ if (path == "/patrimonio/index" || path == "/patrimonio") {
                     text: "O setor não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -277,7 +277,7 @@ if (path == "/patrimonio/index" || path == "/patrimonio") {
                     text: "A seção não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -583,7 +583,7 @@ if (path == "/patrimonio/index" || path == "/patrimonio") {
                 text: "Não será possível recuperar os dados eliminados!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     cancel: "Cancelar",
                     confirm: "Excluir"

@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using FrotiX.Cache;
+using FrotiX.Helpers;
 using FrotiX.Models;
+using FrotiX.Models.Views;
 using FrotiX.Repository.IRepository;
 using FrotiX.Services;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NPOI.SS.Formula.Functions;
-using Telerik.Windows.Documents.Model.Drawing.Charts;
-using static Stimulsoft.Report.Func;
-
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using AspNetCoreHero.ToastNotification.Abstractions;
-using FrotiX.Cache;
-using FrotiX.Helpers;
-using FrotiX.Models.Views;
-using HtmlAgilityPack;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Syncfusion.Blazor.Data;
 using Syncfusion.EJ2.Base;
 using Syncfusion.EJ2.DropDowns;
-
+using Telerik.Windows.Documents.Model.Drawing.Charts;
+using static Stimulsoft.Report.Func;
 
 namespace FrotiX.Controllers
 {
@@ -266,35 +265,25 @@ namespace FrotiX.Controllers
         [HttpGet]
         public ActionResult CarregaViagens(DateTime start, DateTime end)
         {
-            List<Agenda> AgendaList = new List<Agenda>();
+            // Expressão lambda para selecionar só os campos necessários
+            Expression<Func<ViewViagensAgenda, object>> selector = v => new
+            {
+                id = v.ViagemId,
+                title = v.Titulo,
+                start = v.Start, // Precisa ser DateTime completo no formato ISO
+                end = v.End, // Precisa ser DateTime completo no formato ISO
+                backgroundColor = v.CorEvento,
+                textColor = v.CorTexto,
+                descricao = v.DescricaoEvento ?? v.DescricaoMontada,
+            };
 
-            // Normalize the start date to include all events from the beginning of the day
-            start = start.Date; // This sets the time part to midnight (00:00:00)
+            // Filtro para pegar apenas o range pedido
+            Expression<Func<ViewViagensAgenda, bool>> filter = v =>
+                v.DataInicial >= start && v.DataInicial < end;
 
-            // Adjust the end date to make it inclusive (remove one day so that the full end date is covered)
-            end = end.AddDays(-1).Date.AddDays(1).AddTicks(-1);
-
-            // Consulta eficiente diretamente na view com todos os campos prontos
+            // Executa a query filtrada e reduzida
             var viagens = _unitOfWork
-                .ViewViagensAgenda.GetAll()
-                .Where(v => v.DataInicial >= start && v.DataInicial <= end)
-                .Select(v => new
-                {
-                    id = v.ViagemId,
-                    title = v.Titulo,
-                    start = v.Start,
-
-                    //start = v.DataInicial.HasValue && v.HoraInicio.HasValue
-                    //    ? v.DataInicial.Value.ToString("yyyy-MM-dd")
-                    //        + "T"
-                    //        + v.HoraInicio.Value.ToString(@"hh\:mm\:ss")
-                    //    : null, // Ensure null safety
-
-                    end = v.HoraFim.HasValue ? v.HoraFim.Value.ToString(@"hh\:mm\:ss") : null, // Ensure null safety
-                    backgroundColor = v.CorEvento,
-                    textColor = v.CorTexto,
-                    descricao = v.DescricaoEvento ?? v.DescricaoMontada,
-                })
+                .ViewViagensAgenda.GetAllReducedIQueryable(selector, filter)
                 .ToList();
 
             return Json(new { data = viagens });
@@ -679,7 +668,6 @@ namespace FrotiX.Controllers
             if (objViagem.Descricao != null)
                 descricao = Servicos.ConvertHtml(descricao);
             objViagem.DescricaoSemFormato = descricao;
-
         }
 
         [Route("ApagaAgendamento")]

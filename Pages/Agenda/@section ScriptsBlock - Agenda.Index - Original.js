@@ -191,7 +191,7 @@
 				text: "Não será possível recuperar os dados eliminados!",
 				icon: "warning",
 				buttons: true,
-				dangerMode: true,
+				
 				buttons: {
 					cancel: "Desistir",
 					confirm: "Apagar"
@@ -246,7 +246,7 @@
 				text: "Não será possível recuperar os dados eliminados!",
 				icon: "warning",
 				buttons: true,
-				dangerMode: true,
+				
 				buttons: {
 					cancel: "Desistir",
 					confirm: "Cancelar"
@@ -472,7 +472,7 @@
 					text: "A Data Inicial é obrigatória",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -487,7 +487,7 @@
 					text: "A Hora Inicial é obrigatória",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -505,7 +505,7 @@
 					text: "A Finalidade é obrigatória",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -520,7 +520,7 @@
 					text: "A Origem é obrigatória",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -543,7 +543,7 @@
 						text: "O Nº da Ficha de Vistoria é obrigatório!",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -559,7 +559,7 @@
 						text: "O Motorista é obrigatório",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -575,7 +575,7 @@
 						text: "O Veículo é obrigatório",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -590,7 +590,7 @@
 						text: "A quilometragem inicial é obrigatória",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -606,7 +606,7 @@
 						text: "O Combustível Inicial é obrigatório!",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -625,7 +625,7 @@
 					text: "O Requisitante é obrigatório",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -640,7 +640,7 @@
 					text: "O Ramal do Requisitante é obrigatório",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -656,7 +656,7 @@
 					text: "O Setor Solicitante é obrigatório",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -672,7 +672,7 @@
 					text: "A Finalidade é obrigatória",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -687,7 +687,7 @@
 						text: "o nome do evento é obrigatório",
 						icon: "error",
 						buttons: true,
-						dangerMode: true,
+						
 						buttons: {
 							ok: "Ok"
 						}
@@ -710,7 +710,7 @@
 			//        text: "Os campos de Data Final, Hora Final, Combustível Final e KM Final devem estar todos preenchidos para que a viagem seja considerada Finalizada",
 			//        icon: "error",
 			//        buttons: true,
-			//        dangerMode: true,
+			//        
 			//        buttons: {
 			//            ok: "Ok"
 			//        }
@@ -747,7 +747,7 @@
 					text: "A data final deve ser maior que a inicial!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -773,7 +773,7 @@
 					text: "A data inicial deve ser menor que a final!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -801,7 +801,7 @@
                     text: "Preencha a Data Final para poder preencher a Hora Final!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -815,7 +815,7 @@
                     text: "A hora final deve ser maior que a inicial!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -844,7 +844,7 @@
                     text: "A hora inicial deve ser menor que a final!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -867,7 +867,7 @@
 					text: "A quilometragem final deve ser maior que a inicial!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -882,7 +882,7 @@
 					text: "A quilometragem final excede em 100km a inicial!",
 					icon: "warning",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -908,7 +908,7 @@
 					text: "A quilometragem inicial deve ser menor que a final!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -936,7 +936,7 @@
 					text: "A quilometragem inicial deve ser maior que a atual!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -951,7 +951,7 @@
 					text: "A quilometragem inicial não confere com a atual!",
 					icon: "warning",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						ok: "Ok"
 					}
@@ -1098,7 +1098,7 @@
 					text: "O Nome do Evento é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1112,7 +1112,7 @@
 					text: "A Descrição do Evento é obrigatória!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1126,7 +1126,7 @@
 					text: "A Data Inicial é obrigatória!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1140,7 +1140,7 @@
 					text: "A Data Final é obrigatória!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1154,7 +1154,7 @@
 					text: "A Quantidade de Pessoas é obrigatória!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1169,7 +1169,7 @@
 					text: "O Setor do Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1185,7 +1185,7 @@
 					text: "O Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar"
 					}
@@ -1305,7 +1305,7 @@
 					text: "O Ponto do Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar",
 					}
@@ -1319,7 +1319,7 @@
 					text: "O Nome do Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar",
 					}
@@ -1333,7 +1333,7 @@
 					text: "O Ramal do Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar",
 					}
@@ -1348,7 +1348,7 @@
 					text: "O Setor do Requisitante é obrigatório!",
 					icon: "error",
 					buttons: true,
-					dangerMode: true,
+					
 					buttons: {
 						close: "Fechar",
 					}

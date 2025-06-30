@@ -17,7 +17,7 @@ if (path == '/setorpatrimonial/index' || path == '/setorpatrimonial') {
                 text: "Não será possível recuperar os dados eliminados!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     cancel: "Cancelar",
                     confirm: "Excluir"
@@ -166,7 +166,7 @@ if (path == '/setorpatrimonial/index' || path == '/setorpatrimonial') {
                     text: "O nome do setor não pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }
@@ -186,7 +186,7 @@ if (path == '/setorpatrimonial/index' || path == '/setorpatrimonial') {
                     text: "O detentor da seçãonão pode estar em branco!",
                     icon: "error",
                     buttons: true,
-                    dangerMode: true,
+                    
                     buttons: {
                         ok: "Ok"
                     }

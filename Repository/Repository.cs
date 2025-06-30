@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrotiX.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T>
+        where T : class
     {
-
         protected readonly DbContext Context;
         internal DbSet<T> dbSet;
 
@@ -29,7 +29,10 @@ namespace FrotiX.Repository
             return dbSet.Find(id);
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)
+        public T GetFirstOrDefault(
+            Expression<Func<T, bool>> filter = null,
+            string includeProperties = null
+        )
         {
             IQueryable<T> query = dbSet;
 
@@ -41,7 +44,12 @@ namespace FrotiX.Repository
             //include properties serão separadas por vírgula
             if (includeProperties != null)
             {
-                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (
+                    var includeProperty in includeProperties.Split(
+                        new char[] { ',' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                )
                 {
                     query = query.Include(includeProperty);
                 }
@@ -50,7 +58,11 @@ namespace FrotiX.Repository
             return query.FirstOrDefault();
         }
 
-        private IQueryable<T> GetPreparedQuery(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, string includeProperties)
+        private IQueryable<T> GetPreparedQuery(
+            Expression<Func<T, bool>> filter,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy,
+            string includeProperties
+        )
         {
             IQueryable<T> query = dbSet;
 
@@ -62,7 +74,12 @@ namespace FrotiX.Repository
             //include properties serão separadas por vírgula
             if (includeProperties != null)
             {
-                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (
+                    var includeProperty in includeProperties.Split(
+                        new char[] { ',' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                )
                 {
                     query = query.Include(includeProperty);
                 }
@@ -76,20 +93,41 @@ namespace FrotiX.Repository
             return query;
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
+        public IEnumerable<T> GetAll(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+        )
         {
             var query = GetPreparedQuery(filter, orderBy, includeProperties);
 
             return query.ToList();
         }
 
-        public IEnumerable<TResult> GetAllReduced<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
+        public IEnumerable<TResult> GetAllReduced<TResult>(
+            Expression<Func<T, TResult>> selector,
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+        )
         {
             var query = GetPreparedQuery(filter, orderBy, includeProperties);
 
             var reducedQuery = query.Select(selector);
 
             return reducedQuery.ToList();
+        }
+
+        public IQueryable<TResult> GetAllReducedIQueryable<TResult>(
+            Expression<Func<T, TResult>> selector,
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+        )
+        {
+            var query = GetPreparedQuery(filter, orderBy, includeProperties);
+            var reducedQuery = query.Select(selector);
+            return reducedQuery; // <-- sem ToList()
         }
 
         public void Remove(Guid id)

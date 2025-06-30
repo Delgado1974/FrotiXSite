@@ -172,7 +172,7 @@ $("#txtDataFinal").focusout(function () {
             text: "A data final deve ser maior que a inicial!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -196,7 +196,7 @@ $("#txtHoraFinal").focusout(function () {
             text: "Preencha a Data Final para poder preencher a Hora Final!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -215,7 +215,7 @@ $("#txtHoraFinal").focusout(function () {
             text: "A hora final deve ser maior que a inicial!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -235,7 +235,7 @@ $("#txtKmFinal").focusout(function () {
             text: "A quilometragem final deve ser maior que a inicial!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -248,7 +248,7 @@ $("#txtKmFinal").focusout(function () {
             text: "A quilometragem final excede em 100km a inicial!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -281,7 +281,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "Se a Finalidade for EVENTO, o Evento deve ser informado!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -295,7 +295,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "O número da Ficha de Vistoria é obrigatório!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -311,7 +311,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A data inicial é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -327,7 +327,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A hora inicial é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -343,7 +343,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A quilometragem inicial é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -359,7 +359,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A data final é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -375,7 +375,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A hora final é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }
@@ -391,7 +391,7 @@ $("#btnAjustarViagem").click(function (e) {
             text: "A quilometragem final é obrigatória!",
             icon: "error",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 ok: "Ok"
             }

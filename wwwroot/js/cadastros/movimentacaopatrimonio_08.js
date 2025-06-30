@@ -17,7 +17,7 @@ $(document).ready(function () {
                 text: "Não será possível recuperar os dados eliminados!",
                 icon: "warning",
                 buttons: true,
-                dangerMode: true,
+                
                 buttons: {
                     cancel: "Cancelar",
                     confirm: "Excluir"
@@ -387,7 +387,7 @@ $(document).ready(function () {
                         text: "O Patrimonio não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -400,7 +400,7 @@ $(document).ready(function () {
                         text: "A data não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -413,7 +413,7 @@ $(document).ready(function () {
                         text: "O setor de origem não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -426,7 +426,7 @@ $(document).ready(function () {
                         text: "A seção de origem não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -439,7 +439,7 @@ $(document).ready(function () {
                         text: "O setor de destino não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -452,7 +452,7 @@ $(document).ready(function () {
                         text: "O setor de destino não pode estar em branco!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }
@@ -465,7 +465,7 @@ $(document).ready(function () {
                         text: "A seção de destino não pode ser a mesma que a seção de origem!",
                         icon: "error",
                         buttons: true,
-                        dangerMode: true,
+                        
                         buttons: {
                             ok: "Ok"
                         }

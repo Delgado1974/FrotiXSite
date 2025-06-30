@@ -13,7 +13,7 @@ $(document).ready(function ()
             text: "Não será possível recuperar os dados eliminados!",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            
             buttons: {
                 cancel: "Cancelar",
                 confirm: "Excluir"

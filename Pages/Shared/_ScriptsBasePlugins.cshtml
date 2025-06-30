@@ -59,7 +59,7 @@
 @*Funções de Apoio ("Helpers")*@
 @*============================*@
 <script src="js/toastHelper_006.js"></script>
-<script src="js/sweetalert_interop_048.js"></script>
+<script src="js/sweetalert_interop_050.js"></script>
 <script src="js/alerta_006.js"></script>
 
 
@@ -277,3 +277,31 @@
 
 </script>
 
+@* ——————————————————————————————————————————————————
+Limpa a ^Tela^ depois do fechamento de um Modal
+—————————————————————————————————————————————————— *@
+<script>
+	function limparResiduosModalVanilla() {
+		// Remove overlays conhecidos
+		document.querySelectorAll('.modal-backdrop, .swal2-container, .swal2-backdrop-show').forEach(e => e.remove());
+		document.body.classList.remove('modal-open');
+		document.body.style.overflow = '';
+		document.body.style.zIndex = '';
+
+		// NEW: Remove qualquer DIV fullscreen que bloqueie clique
+		document.querySelectorAll('div').forEach(div => {
+			const style = getComputedStyle(div);
+			if (
+				(style.position === 'fixed' || style.position === 'absolute') &&
+				parseInt(style.zIndex || 0) >= 1040 &&
+				(parseInt(style.width) === window.innerWidth || style.width === '100vw' || style.left === '0px') &&
+				(parseInt(style.height) === window.innerHeight || style.height === '100vh' || style.top === '0px')
+			) {
+				// Cuidado para não remover seu próprio calendário
+				if (!div.classList.contains('fc') && !div.classList.contains('fc-view-harness')) {
+					div.remove();
+				}
+			}
+		});
+	}
+</script>
