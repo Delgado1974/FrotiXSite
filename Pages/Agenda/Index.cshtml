@@ -1050,6 +1050,19 @@
 			box-shadow: none;
 			outline: none;
 		}
+
+	.e-dropdownbase, .e-dropdowntree {
+		margin-bottom: 0 !important;
+	}
+
+	.alinhar-vertical {
+		align-items: center !important;
+	}
+
+	.e-dropdownbase, .e-combobox, .e-dropdowntree {
+		min-height: 31px; /* ajuste para o seu design */
+	}
+
 </style>
 
 
@@ -1090,7 +1103,7 @@
 @*================================================*@
 
 <div class="modal fade" id="modalViagens" role="dialog" data-bs-focus="false">
-	<div class="modal-dialog  modal-xl custom-modal-lg" style="max-width: 55vw;">
+	<div class="modal-dialog modal-xl custom-modal-lg" style="max-width: 1100px;">
 		<div class="modal-content">
 			<div id="Titulo" class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
@@ -1406,31 +1419,31 @@
 						</div>
 					</div>
 
-					<!-- Requisitante and Setor Solicitante -->
-					<div class="row align-baseline">
+
+					<!-- ===================== REQUISITANTE E SETOR ========================= -->
+					<div class="row align-items-center">
+						<!-- Bloco Requisitante com botão grudado -->
 						<div class="col-md-6">
-							<!-- Requisitante Section -->
 							<div class="form-group">
 								<div class="d-flex align-items-end">
-									<div class="flex-grow-1">
+									<!-- ComboBox + botão colado -->
+									<div style="flex:1;">
 										<div class="d-flex flex-column ml-2">
 											<div class="d-flex align-items-center mb-1">
 												<label for="lstRequisitante" class="label font-weight-bold mr-2" style="margin: 0;">Requisitante</label>
 												<i class="fa-duotone fa-solid fa-person-simple" style="font-size: 1.25em; cursor: pointer;"></i>
 											</div>
-											<ejs-combobox id="lstRequisitante" placeholder="Selecione um Requisitante..."
-														  allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataRequisitante"]"
-														  popupHeight="200px" width="350px" showClearButton="true"
-														  change="RequisitanteValueChange">
-												<e-combobox-fields text="Requisitante" value="RequisitanteId"></e-combobox-fields>
-											</ejs-combobox>
+											<div class="d-flex flex-row align-items-end" style="gap: 6px;">
+												<!-- ComboBox Syncfusion mantido -->
+												<ejs-combobox id="lstRequisitante" placeholder="Selecione um Requisitante..." allowFiltering="true" filterType="Contains" dataSource="@ViewData["dataRequisitante"]" popupHeight="200px" width="350px" showClearButton="true" change="RequisitanteValueChange">
+													<e-combobox-fields text="Requisitante" value="RequisitanteId"></e-combobox-fields>
+												</ejs-combobox>
+												<!-- Botão grudado à direita -->
+												<a class="btn btn-nfs ml-0" id="btnRequisitante"><i class="fal fa-user-plus"></i></a>
+											</div>
 										</div>
 									</div>
-									<div class="ml-2">
-										<a class="btn btn-nfs" id="btnRequisitante">
-											<i class="fal fa-user-plus"></i>
-										</a>
-									</div>
+									<!-- Ramal ao lado, alinhado em coluna -->
 									<div class="d-flex flex-column ml-2">
 										<div class="d-flex align-items-center mb-1">
 											<label class="label font-weight-bold mr-2" style="margin: 0;">Ramal</label>
@@ -1440,7 +1453,7 @@
 									</div>
 								</div>
 							</div>
-
+							<!-- Accordion do Requisitante mantido -->
 							<div id="accordionRequisitante" class="accordion-container-requisitante">
 								<e-accordion>
 									<e-accordion-items>
@@ -1501,17 +1514,17 @@
 								</e-accordion>
 							</div>
 						</div>
+						<!-- Bloco Setor do Requisitante -->
 						<div class="col-md-6">
-							<!-- Setor Solicitante Section -->
 							<div class="form-group">
-
-								<div class="d-flex align-items-end">
+								<div class="d-flex alinhar-vertical">
 									<div class="flex-grow-1">
-										<div class="d-flex flex-column ml-2">
+										<div class="d-flex flex-column">
 											<div class="d-flex align-items-center mb-1">
 												<label for="ddtSetor" class="label font-weight-bold mr-2" style="margin: 0;">Setor do Requisitante</label>
 												<i class="fa-duotone fa-solid fa-building-user" style="font-size: 1.25em; cursor: pointer;"></i>
 											</div>
+											<!-- Syncfusion DropDownTree mantido -->
 											<ejs-dropdowntree id="ddtSetor"
 															  allowFiltering="true"
 															  placeholder="Selecione um Setor..."
@@ -1519,7 +1532,7 @@
 															  showCheckBox="false"
 															  filterType="Contains"
 															  filterBarPlaceholder="Procurar setor..."
-															  width="100%">
+															  width="450px">
 												<e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
 																	   value="SetorSolicitanteId"
 																	   parentValue="SetorPaiId"
@@ -1530,73 +1543,12 @@
 											</ejs-dropdowntree>
 										</div>
 									</div>
-									@* 									<div class="ml-2">
-										<a class="btn btn-nfs" id="btnAbrirNovoSetor">
-											<i class="fa-thin fa-building-user"></i>
-										</a>
-									</div>
- *@								</div>
+								</div>
 							</div>
-
+							<!-- Accordion de Setor está comentado como no original -->
 						</div>
-
-						@* 						<div id="accordionSetor" class="accordion-container-requisitante">
-							<e-accordion>
-								<e-accordion-items>
-									<e-accordion-item expanded="true" header="Inserir um novo Setor">
-										<ng-template #content>
-											<form id="frmSetor">
-												<div class="row g-3 mb-3">
-													<div class="col-md-3">
-														<div class="form-group">
-															<label for="txtSigla">Sigla</label>
-															<input id="txtSigla" class="form-control form-control-xs"
-																   placeholder="Insira a sigla" />
-														</div>
-													</div>
-													<div class="col-md-9">
-														<div class="form-group">
-															<label for="txtNomeSetor">Nome do Setor</label>
-															<input id="txtNomeSetor" class="form-control form-control-xs"
-																   placeholder="Insira o nome do setor" />
-														</div>
-													</div>
-												</div>
-												<!-- Move txtRamalSetor to a new line -->
-												<div class="row g-3 mb-3">
-													<div class="col-md-3">
-														<div class="form-group">
-															<label for="txtRamalSetor">Ramal</label>
-															<input id="txtRamalSetor" class="form-control form-control-xs"
-																   placeholder="Insira o ramal" />
-														</div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="ddtSetorPai">Setor Pai (se houver)</label>
-													<ejs-dropdowntree id="ddtSetorPai" placeholder="Selecione um Setor"
-																	  sortOrder="Ascending" allowFiltering="true"
-																	  filterType="Contains" filterBarPlaceholder="Procurar..."
-																	  width="100%">
-														<e-dropdowntree-fields dataSource="@ViewData["dataSetor"]"
-																			   value="SetorSolicitanteId" text="Nome"
-																			   parentValue="SetorPaiId" hasChildren="HasChild">
-														</e-dropdowntree-fields>
-													</ejs-dropdowntree>
-												</div>
-												<div class="d-flex justify-content-end">
-													<button id="btnInserirSetor" class="btn btn-primary mr-2" type="submit">
-														Inserir Setor
-													</button>
-													<button type="button" class="btn btn-danger" id="btnFecharAccordionSetor">Fechar</button>
-												</div>
-											</form>
-										</ng-template>
-									</e-accordion-item>
-								</e-accordion-items>
-							</e-accordion>
-						</div>
- *@					</div>
+					</div>
+					<!-- ===================== FIM REQUISITANTE E SETOR ========================= -->
 				</div>
 
 				<!-- Recorrente Section -->
@@ -2469,8 +2421,6 @@
 	</div>
 </form>
 
-
-
 @section ScriptsBlock
 {
 	<link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.default-main.min.css" rel="stylesheet" type="text/css" />
@@ -2498,5 +2448,5 @@
 	<script src="~/lib/fullcalendar/locales-all.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 	<script src="/api/reports/resources/js/telerikReportViewer-18.1.24.514.min.js"></script>
-	<script type="module" src="/js/cadastros/agendamento_viagem_v1170.js"></script>
+	<script type="module" src="/js/cadastros/agendamento_viagem_v1151.js"></script>
 }

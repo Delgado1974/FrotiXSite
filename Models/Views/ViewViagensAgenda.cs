@@ -44,6 +44,8 @@ namespace FrotiX.Models
 
         public DateTime? End { get; set; }
 
+        public DateTime? DataFinal{ get; set; }
+
         public DateTime? HoraFim { get; set; }
 
         public string? CorEvento { get; set; }

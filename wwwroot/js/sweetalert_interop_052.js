@@ -68,19 +68,21 @@
                     if (cancelBtn) cancelBtn.onclick = () => { Swal.close(); resolve(false); };
 
                     const swalContainer = document.querySelector('.swal2-container');
-                    if (swalContainer)
-                    {
-                        swalContainer.style.zIndex = '3000';
-                        document.body.appendChild(swalContainer);
-                    }
+                    //if (swalContainer)
+                    //{
+                    //    swalContainer.style.zIndex = '3000';
+                    //    document.body.appendChild(swalContainer);
+                    //}
+
                 },
                 didClose: () =>
                 {
                     // Limpeza universal após qualquer SweetAlert fechar
-                    if (typeof limparResiduosModalVanilla === "function")
-                    {
-                        limparResiduosModalVanilla();
-                    }
+                    //if (typeof limparResiduosModalVanilla === "function")
+                    //{
+                    //    limparResiduosModalVanilla();
+                    //}
+
                 }
             });
         });
@@ -237,27 +239,31 @@ window.SweetAlertInterop;
 //  —————————————————————————————————————————————————— 
 function limparResiduosModalVanilla()
 {
-    // Remove overlays conhecidos
-    document.querySelectorAll('.modal-backdrop, .swal2-container, .swal2-backdrop-show').forEach(e => e.remove());
-document.body.classList.remove('modal-open');
-document.body.style.overflow = '';
-document.body.style.zIndex = '';
+    // Remove apenas overlays do SweetAlert
+    document.querySelectorAll('.swal2-container, .swal2-backdrop-show').forEach(e => e.remove());
+    // NÃO remove mais .modal-backdrop!
+    // NÃO mexe mais na class modal-open ou no overflow/zIndex do body!
 
-    // NEW: Remove qualquer DIV fullscreen que bloqueie clique
+    // Remover apenas DIVs fullscreen criadas pelo SweetAlert, NÃO do Bootstrap!
     document.querySelectorAll('div').forEach(div =>
-{
+    {
         const style = getComputedStyle(div);
-if (
-(style.position === 'fixed' || style.position === 'absolute') &&
-            parseInt(style.zIndex || 0) >= 1040 &&
-(parseInt(style.width) === window.innerWidth || style.width === '100vw' || style.left === '0px') &&
-(parseInt(style.height) === window.innerHeight || style.height === '100vh' || style.top === '0px')
-)
-{
-            // Cuidado para não remover seu próprio calendário
-            if (!div.classList.contains('fc') && !div.classList.contains('fc-view-harness'))
-{
-    div.remove();
+        if (
+            (style.position === 'fixed' || style.position === 'absolute') &&
+            parseInt(style.zIndex || 0) >= 2000 && // z-index mais alto para SweetAlert
+            (parseInt(style.width) === window.innerWidth || style.width === '100vw' || style.left === '0px') &&
+            (parseInt(style.height) === window.innerHeight || style.height === '100vh' || style.top === '0px')
+        )
+        {
+            // NÃO remove divs de calendar ou do Bootstrap
+            if (
+                !div.classList.contains('fc') &&
+                !div.classList.contains('fc-view-harness') &&
+                !div.classList.contains('modal-backdrop') &&
+                !div.closest('.modal') // não é filho de modal do Bootstrap
+            )
+            {
+                div.remove();
             }
         }
     });

@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using AspNetCoreHero.ToastNotification.Abstractions;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using FrotiX.Cache;
 using FrotiX.Helpers;
 using FrotiX.Models;
+using FrotiX.Models.DTO;
 using FrotiX.Models.Views;
 using FrotiX.Repository.IRepository;
 using FrotiX.Services;
@@ -28,8 +18,20 @@ using NPOI.SS.Formula.Functions;
 using Syncfusion.Blazor.Data;
 using Syncfusion.EJ2.Base;
 using Syncfusion.EJ2.DropDowns;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Telerik.Windows.Documents.Model.Drawing.Charts;
 using static Stimulsoft.Report.Func;
+
 
 namespace FrotiX.Controllers
 {
@@ -265,29 +267,111 @@ namespace FrotiX.Controllers
         [HttpGet]
         public ActionResult CarregaViagens(DateTime start, DateTime end)
         {
-            // Expressão lambda para selecionar só os campos necessários
-            Expression<Func<ViewViagensAgenda, object>> selector = v => new
+        //List<Agenda> AgendaList = new List<Agenda>();
+
+        //// Normalize the start date to include all events from the beginning of the day
+        //start = start.Date; // This sets the time part to midnight (00:00:00)
+
+        //// Adjust the end date to make it inclusive (remove one day so that the full end date is covered)
+        //end = end.AddDays(-1).Date.AddDays(1).AddTicks(-1);
+
+        //// Consulta eficiente diretamente na view com todos os campos prontos
+        //var viagens = _unitOfWork
+        //    .ViewViagensAgenda.GetAll()
+        //    .Where(v => v.DataInicial >= start && v.DataInicial <= end)
+        //    .Select(v => new
+        //        {
+        //        id = v.ViagemId,
+        //        title = v.Titulo,
+        //        start = v.Start,
+
+        //        //start = v.DataInicial.HasValue && v.HoraInicio.HasValue
+        //        //    ? v.DataInicial.Value.ToString("yyyy-MM-dd")
+        //        //        + "T"
+        //        //        + v.HoraInicio.Value.ToString(@"hh\:mm\:ss")
+        //        //    : null, // Ensure null safety
+
+        //        end = v.HoraFim.HasValue ? v.HoraFim.Value.ToString(@"hh\:mm\:ss") : null, // Ensure null safety
+        //        backgroundColor = v.CorEvento,
+        //        textColor = v.CorTexto,
+        //        descricao = v.DescricaoEvento ?? v.DescricaoMontada,
+        //        })
+        //    .ToList();
+
+        //return Json(new { data = viagens });
+
+
+
+        Expression<Func<ViewViagensAgenda, bool>> filtro = v =>
+            v.DataInicial >= start && v.DataInicial < end;
+
+        //Expressão lambda para selecionar só os campos necessários
+        Expression<Func<ViewViagensAgenda, ViagemCalendarDTO>> seletor = v => new ViagemCalendarDTO
+        {
+            id = v.ViagemId,
+            title = v.Titulo,
+            dataInicial = v.DataInicial.Value,  // se no banco nunca é nulo, pode usar .Value
+            horaInicio = v.HoraInicio.Value,
+            dataFinal = v.DataFinal,
+            horaFim = v.HoraFim,
+            backgroundColor = v.CorEvento,
+            textColor = v.CorTexto,
+            descricao = v.DescricaoEvento ?? v.DescricaoMontada,
+        };
+
+
+        var viagensBrutas = _unitOfWork
+            .ViewViagensAgenda
+            .GetAllReducedIQueryable(seletor, filtro)
+            .ToList();
+
+        var viagens = viagensBrutas.Select(x =>
+        {
+            var inicio = x.dataInicial.HasValue
+                ? x.dataInicial.Value.AddDays(-1).Date
+                .AddHours(x.horaInicio?.Hour ?? 0)
+                .AddMinutes(x.horaInicio?.Minute ?? 0)
+                .AddSeconds(x.horaInicio?.Second ?? 0)
+                : DateTime.MinValue; // Default value if dataInicial is null
+
+            var fim = inicio.AddHours(1);
+
+            return new
+                {
+                id = x.id,
+                title = x.title,
+                start = inicio.ToString("yyyy-MM-ddTHH:mm:ss"),
+                end = fim.ToString("yyyy-MM-ddTHH:mm:ss"),
+                backgroundColor = x.backgroundColor,
+                textColor = x.textColor,
+                descricao = x.descricao
+                };
+        }).ToList();
+
+
+        foreach (var v in viagens)
             {
-                id = v.ViagemId,
-                title = v.Titulo,
-                start = v.Start, // Precisa ser DateTime completo no formato ISO
-                end = v.End, // Precisa ser DateTime completo no formato ISO
-                backgroundColor = v.CorEvento,
-                textColor = v.CorTexto,
-                descricao = v.DescricaoEvento ?? v.DescricaoMontada,
-            };
+                 Console.WriteLine($"start={v.start}"); // debug: veja o formato!
+            }
 
-            // Filtro para pegar apenas o range pedido
-            Expression<Func<ViewViagensAgenda, bool>> filter = v =>
-                v.DataInicial >= start && v.DataInicial < end;
 
-            // Executa a query filtrada e reduzida
-            var viagens = _unitOfWork
-                .ViewViagensAgenda.GetAllReducedIQueryable(selector, filter)
-                .ToList();
+        //var viagens = new List<object>
+        //{
+        //    new {
+        //        id = 1,
+        //        title = "Teste Manual",
+        //        start = "2025-07-01T07:00:00",
+        //        end = "2025-07-01T08:00:00",
+        //        backgroundColor = "#FF0000",
+        //        textColor = "white",
+        //        descricao = "Evento teste manual"
+        //    }
+        //};
 
-            return Json(new { data = viagens });
-        }
+        return Json(new { data = viagens });
+
+
+            }
 
         //Recupera o nome do Usuário de Criação/Finalização
         //=================================================
@@ -668,6 +752,7 @@ namespace FrotiX.Controllers
             if (objViagem.Descricao != null)
                 descricao = Servicos.ConvertHtml(descricao);
             objViagem.DescricaoSemFormato = descricao;
+
         }
 
         [Route("ApagaAgendamento")]

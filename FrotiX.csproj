@@ -1513,7 +1513,7 @@
     <Content Update="wwwroot\js\solid.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\sweetalert_interop_050.js">
+    <Content Update="wwwroot\js\sweetalert_interop_052.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\js\thin.js">
