@@ -1297,7 +1297,7 @@
     <Content Update="wwwroot\Images\Veiculos.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\alerta_006.js">
+    <Content Update="wwwroot\js\alerta_007.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\js\all.js">
@@ -1513,7 +1513,7 @@
     <Content Update="wwwroot\js\solid.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\sweetalert_interop_052.js">
+    <Content Update="wwwroot\js\sweetalert_interop_053.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\js\thin.js">

@@ -24,9 +24,12 @@ window.Alerta = {
     },
 
     Alerta: function (titulo, texto, confirm = "OK") {
-        if (window.SweetAlertInterop && SweetAlertInterop.ShowInfo) {
+        if (window.SweetAlertInterop && SweetAlertInterop.ShowWarning)
+        {
             SweetAlertInterop.ShowWarning(titulo, texto, confirm);
-        } else {
+        }
+        else
+        {
             console.error("SweetAlertInterop.ShowWarning não está disponível.");
         }
     },
@@ -60,10 +63,10 @@ function TratamentoErroComLinha(classe, metodo, erro) {
 /**
 * @typedef {{
 *   Confirmar: (titulo: string, texto: string, confirm?: string, cancel?: string) => Promise<boolean>,
-*   Erro: Function,
-*   Sucesso: Function,
-*   Info: Function,
-*   Alerta: Function
+*   Erro: (titulo: string, texto: string, confirm?: string) => void,
+*   Sucesso: (titulo: string, texto: string, confirm?: string) => void,
+*   Info: (titulo: string, texto: string, confirm?: string) => void,
+*   Alerta: (titulo: string, texto: string, confirm?: string) => void
 * }} AlertaAPI
 */
 

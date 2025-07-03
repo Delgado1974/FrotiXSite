@@ -195,27 +195,6 @@
 		}
 
 
-		function lstFinalidade_Change() {
-
-			if (document.getElementById('lstFinalidade').ej2_instances[0].value[0] === 'Evento') {
-
-				var lstEvento = document.getElementById("lstEventos").ej2_instances[0];
-				lstEvento.enabled = true; // To enable
-				document.getElementById("btnEvento").style.display = "block";
-				$('#btnEvento').removeAttr('hidden');
-				$(".esconde-diveventos").show(); /* Use the .show() method to make the div visible */
-
-			}
-			else {
-				var lstEvento = document.getElementById("lstEventos").ej2_instances[0];
-				lstEvento.enabled = false; // To disable
-				lstEvento.value = null;
-				document.getElementById("btnEvento").style.display = "none";
-				$(".esconde-diveventos").hide(); /* Use the .hide() method to make the div invisible */
-
-			}
-		}
-
 		//Escolheu um Requisitante no Evento
 		function RequisitanteEventoValueChange() {
 
@@ -437,6 +416,10 @@
 					'</div>';
 			};
 		}
+
+		var dataFinalidade = @Html.Raw(Json.Serialize(ViewData["dataFinalidade"]));
+		var dataPeriodo = @Html.Raw(Json.Serialize(ViewData["dataPeriodo"]));
+
 
 	</script>
 
@@ -1063,6 +1046,17 @@
 		min-height: 31px; /* ajuste para o seu design */
 	}
 
+	#ReportContainer {
+		display: none;
+		height: 0 !important;
+		transition: height 0.2s;
+	}
+
+		#ReportContainer.visible {
+			display: block;
+			height: 200px !important;
+		}
+
 </style>
 
 
@@ -1188,9 +1182,7 @@
 									<i class="fa-duotone fa-solid fa-rectangle-history-circle-user" style="font-size: 1.25em; cursor: pointer;"></i>
 								</div>
 								<!-- DropDownTree Control -->
-								<ejs-dropdowntree id="lstFinalidade" showCheckBox="false" allowMultiSelection="false" allowFiltering="true" filterType="Contains" select="lstFinalidade_Change" popupHeight="200px" sortOrder="Ascending" showClearButton="true" change="lstFinalidade_Change" changeOnBlur="false">
-									<e-dropdowntree-fields dataSource="@ViewData["dataFinalidade"]" value="FinalidadeId" text="Descricao"></e-dropdowntree-fields>
-								</ejs-dropdowntree>
+								<div id="lstFinalidade"></div>
 							</div>
 
 						</div>
@@ -1686,10 +1678,8 @@
 				</div>
 
 				<!-- Report Container -->
-				<div style="height:200px; display: none;" id="ReportContainer">
-					<div id="fichaReport" style="width:100%" class="pb-3">
-						Carregando...
-					</div>
+				<div id="ReportContainer" style="display:none; height:0;">
+					<div id="fichaReport" style="width:100%" class="pb-3"></div>
 				</div>
 
 				<!-- User Labels -->
@@ -2448,5 +2438,5 @@
 	<script src="~/lib/fullcalendar/locales-all.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 	<script src="/api/reports/resources/js/telerikReportViewer-18.1.24.514.min.js"></script>
-	<script type="module" src="/js/cadastros/agendamento_viagem_v1151.js"></script>
+	<script type="module" src="/js/cadastros/agendamento_viagem_v1169.js"></script>
 }

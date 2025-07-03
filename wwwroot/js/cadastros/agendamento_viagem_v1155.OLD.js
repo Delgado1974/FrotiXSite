@@ -105,79 +105,17 @@ $("#btnConfirma").off("click").on("click", async function (event)
                         if (data.success)
                         {
                             toastr.success("Agendamento Criado com Sucesso");
-                            await Swal.fire({
-                                iconHtml: '<img src="/images/barbudo.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                                customClass: { popup: 'custom-popup' },
-                                title: 'Sucesso',
-                                text: 'Agendamento Criado com Sucesso',
-                                icon: 'success',
-                                confirmButtonText: 'Ok',
-                                backdrop: true,
-                                heightAuto: false,
-                                willOpen: () =>
-                                {
-                                    try
-                                    {
-                                        $('.modal-backdrop').css('z-index', '1040').hide();
-                                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                                        $('.swal2-backdrop-show').css('z-index', 9998);
-                                        Swal.getPopup().focus();
-                                    } catch (error)
-                                    {
-                                        TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
-                                    }
-                                },
-                                didClose: () =>
-                                {
-                                    try
-                                    {
-                                        $('#modalViagens').modal('hide');
-                                        $('.modal-backdrop').css('z-index', '1040').show();
-                                    } catch (error)
-                                    {
-                                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                                    }
-                                }
-                            });
-                        } else
-                        {
-                            toastr.error("Erro ao Criar Viagem", 500);
-                            await Swal.fire({
-                                iconHtml: '<img src="/images/assustado.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                                customClass: { popup: 'custom-popup' },
-                                title: 'Falha',
-                                text: 'Viagem Não Criada.',
-                                icon: 'error',
-                                confirmButtonText: 'Ok',
-                                backdrop: true,
-                                heightAuto: false,
-                                willOpen: () =>
-                                {
-                                    try
-                                    {
-                                        $('.modal-backdrop').css('z-index', '1040').hide();
-                                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                                        $('.swal2-backdrop-show').css('z-index', 9998);
-                                        Swal.getPopup().focus();
-                                    } catch (error)
-                                    {
-                                        TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
-                                    }
-                                },
-                                didClose: () =>
-                                {
-                                    try
-                                    {
-                                        $('#modalViagens').modal('hide');
-                                        $('.modal-backdrop').css('z-index', '1040').show();
-                                    } catch (error)
-                                    {
-                                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                                    }
-                                }
-                            });
                         }
-                    } catch (error)
+                        else
+                        {
+                            toastr.error("Erro ao Criar Viagem");
+
+                            await Alerta.Erro("Erro na Criação da Viagem", "Viagem Não Criada");
+
+                        }
+
+                    }
+                    catch (error)
                     {
                         TratamentoErroComLinha("agendamento_viagem<num>.js", "(criarAgendamentoUnico)", error);
                     }
@@ -216,41 +154,8 @@ $("#btnConfirma").off("click").on("click", async function (event)
                         {
                             toastr.error("Erro ao Criar Viagem", 500);
                         }
-                        await Swal.fire({
-                            iconHtml: '<img src="/images/barbudo.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                            customClass: { popup: 'custom-popup' },
-                            title: 'Sucesso',
-                            text: 'Viagem Criada com Sucesso.',
-                            icon: 'success',
-                            confirmButtonText: 'Ok',
-                            backdrop: true,
-                            heightAuto: false,
-                            willOpen: () =>
-                            {
-                                try
-                                {
-                                    $('.modal-backdrop').css('z-index', '1040').hide();
-                                    $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                                    $('.swal2-backdrop-show').css('z-index', 9998);
-                                    Swal.getPopup().focus();
-                                } catch (error)
-                                {
-                                    TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
-                                }
-                            },
-                            didClose: () =>
-                            {
-                                try
-                                {
-                                    $('#modalViagens').modal('hide');
-                                    $('.modal-backdrop').css('z-index', '1040').show();
-                                } catch (error)
-                                {
-                                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                                }
-                            }
-                        });
-                    } catch (error)
+                    }
+                    catch (error)
                     {
                         TratamentoErroComLinha("agendamento_viagem<num>.js", "RegistraViagem", error);
                     }
@@ -279,42 +184,15 @@ $("#btnConfirma").off("click").on("click", async function (event)
                                 const objViagem = await recuperarViagemEdicao(viagemId);
                                 if (objViagem.recorrente === "S")
                                 {
-                                    const result = await Swal.fire({
-                                        iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                                        customClass: { popup: 'custom-popup' },
-                                        title: 'Editar Agendamento Recorrente',
-                                        text: 'Deseja aplicar as alterações a todos os agendamentos recorrentes ou apenas ao atual?',
-                                        icon: 'question',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Todos',
-                                        cancelButtonText: 'Apenas Atual',
-                                        backdrop: true,
-                                        heightAuto: false,
-                                        willOpen: () =>
-                                        {
-                                            try
-                                            {
-                                                $('.modal-backdrop').css('z-index', '1040').hide();
-                                                $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                                                $('.swal2-backdrop-show').css('z-index', 9998);
-                                                Swal.getPopup().focus();
-                                            } catch (error)
-                                            {
-                                                TratamentoErroComLinha("agendamento_viagem<num>.js", "willOpen", error);
-                                            }
-                                        },
-                                        didClose: () =>
-                                        {
-                                            try
-                                            {
-                                                $('.modal-backdrop').css('z-index', '1040').show();
-                                            } catch (error)
-                                            {
-                                                TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                                            }
-                                        }
-                                    });
-                                    if (result.isConfirmed)
+
+                                    const confirmacao = await Alerta.Confirmar(
+                                        "Editar Agendamento Recorrente",
+                                        'Deseja aplicar as alterações a todos os agendamentos recorrentes ou apenas ao atual?',
+                                        "Todos",
+                                        "Apenas ao Atual"
+                                    );
+
+                                    if (confirmacao)
                                     {
                                         editarTodosRecorrentes = true;
                                         await editarAgendamentoRecorrente(viagemId, true, objViagem.dataInicial, objViagem.recorrenciaViagemId, editarTodosRecorrentes);
@@ -569,45 +447,7 @@ async function editarAgendamentoRecorrente(viagemId, editaTodos, dataInicialReco
                     toastr.error(data.message);
                 }
             }
-            Swal.fire({
-                iconHtml: '<img src="/images/barbudo.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: {
-                    popup: 'custom-popup'
-                },
-                title: 'Sucesso',
-                text: 'Agendamento Editado com Sucesso.',
-                icon: 'success',
-                confirmButtonText: 'Ok',
-                backdrop: true,
-                heightAuto: false,
-                didOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({
-                            'z-index': 9999,
-                            'position': 'fixed'
-                        });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('#modalViagens').modal('hide');
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
+
         } catch (error)
         {
             /* CATCH ORIGINAL:
@@ -687,42 +527,6 @@ async function editarAgendamento(viagemId)
                 {
                     window.calendar.refetchEvents();
                 }
-                await Swal.fire({
-                    iconHtml: '<img src="/images/barbudo.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    title: 'Sucesso!',
-                    text: tipoAgendamento + ' alterado com sucesso!',
-                    confirmButtonText: 'Ok',
-                    backdrop: true,
-                    heightAuto: false,
-                    customClass: {
-                        popup: 'custom-popup'
-                    },
-                    didOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').hide().css('z-index', '1040');
-                            $('.swal2-container').css({
-                                'z-index': 9999,
-                                position: 'fixed'
-                            });
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').show().css('z-index', '1040');
-                            $('#modalViagens').modal('hide');
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
             }
 
         } catch (error)
@@ -870,14 +674,11 @@ async function enviarAgendamentoComOpcao(viagemId, editarTodos, editarProximos, 
             const objViagem = await enviarAgendamento(agendamento);
             if (objViagem)
             {
-                Swal.fire({
-                    title: 'Sucesso',
-                    text: 'Agendamento atualizado com sucesso!',
-                    icon: 'success',
-                    confirmButtonText: 'Ok'
-                });
+                toastr.success('Agendamento atualizado com sucesso!');
+
             }
-        } catch (error)
+        }
+        catch (error)
         {
             TratamentoErroComLinha("agendamento_viagem<num>.js", "enviarAgendamentoComOpcao", error);
         }
@@ -1227,53 +1028,12 @@ function exibirErroAgendamento()
 {
     try
     {
-        Swal.fire({
-            iconHtml: '<img src="/images/assustado.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-            customClass: {
-                popup: 'custom-popup'
-            },
-            title: 'Erro ao criar agendamento',
-            text: 'Não foi possível criar o agendamento com os dados informados!',
-            icon: 'error',
-            confirmButtonText: 'Ok',
-            backdrop: true,
-            heightAuto: false,
-            timer: 3000,
-            didOpen: () =>
-            {
-                try
-                {
-                    // Garantir que todos os backdrops e modais relacionados ao modal estejam ocultos;
-                    $('.modal-backdrop').css('z-index', '1040').hide(); // Ocultar o backdrop do Bootstrap;
 
-                    // Definir z-index para o container e backdrop do SweetAlert2;
-                    $('.swal2-container').css({
-                        'z-index': 9999,
-                        // Maior valor de z-index possível;
-                        'position': 'fixed' // Garantir que esteja posicionado corretamente;
-                    });
-                    $('.swal2-backdrop-show').css('z-index', 9998); // Logo abaixo da janela de alerta;
+        Alerta.Erro("Erro ao criar agendamento", "Não foi possível criar o agendamento com os dados informados");
 
-                    // Focar no SweetAlert2 para evitar interferências dos modais;
-                    Swal.getPopup().focus();
-                } catch (error)
-                {
-                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                }
-            },
-            didClose: () =>
-            {
-                try
-                {
-                    // Restaurar o backdrop do Bootstrap após o fechamento do SweetAlert;
-                    $('.modal-backdrop').css('z-index', '1040').show();
-                } catch (error)
-                {
-                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                }
-            }
-        });
-    } catch (error)
+
+    }
+    catch (error)
     {
         TratamentoErroComLinha("agendamento_viagem<num>.js", "exibirErroAgendamento", error);
     }
@@ -1539,54 +1299,16 @@ function exibirMensagemSucesso()
 {
     try
     {
-        Swal.fire({
-            iconHtml: '<img src="/images/barbudo.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-            customClass: {
-                popup: 'custom-popup'
-            },
-            title: 'Sucesso',
-            text: 'Agendamentos criados com sucesso para todas as datas selecionadas.',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-            backdrop: true,
-            heightAuto: false,
-            didOpen: () =>
-            {
-                try
-                {
-                    // Garantir que todos os backdrops e modais relacionados ao modal estejam ocultos;
-                    $('.modal-backdrop').css('z-index', '1040').hide(); // Ocultar o backdrop do Bootstrap;
 
-                    // Definir z-index para o container e backdrop do SweetAlert2;
-                    $('.swal2-container').css({
-                        'z-index': 9999,
-                        // Maior valor de z-index possível;
-                        'position': 'fixed' // Garantir que esteja posicionado corretamente;
-                    });
-                    $('.swal2-backdrop-show').css('z-index', 9998); // Logo abaixo da janela de alerta;
+        //SweetAlertInterop.ShowInfo("Agendamentos Criados", "Agendamentos criados com sucesso para todas as datas selecionadas")
 
-                    // Focar no SweetAlert2 para evitar interferências dos modais;
-                    Swal.getPopup().focus();
-                } catch (error)
-                {
-                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                }
-            },
-            didClose: () =>
-            {
-                try
-                {
-                    // Fechar o modal "modalViagens" após o fechamento do SweetAlert;
-                    $('#modalViagens').modal('hide');
-                    // Restaurar o backdrop do Bootstrap após o fechamento do SweetAlert;
-                    $('.modal-backdrop').css('z-index', '1040').show();
-                } catch (error)
-                {
-                    TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                }
-            }
-        });
-    } catch (error)
+        Alerta.Sucesso(
+            "Agendamentos Criados",
+            `<svg width="16" height="16" viewBox="0 0 128 128" style="vertical-align:middle;margin-right:4px;" xmlns="http://www.w3.org/2000/svg" fill="none"><circle cx="64" cy="64" r="60" fill="#28a745" stroke="#fff" stroke-width="4"/><path d="M40 68 L56 84 L88 44" stroke="#FFD700" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg> Agendamentos criados com sucesso para todas as datas selecionadas`
+        );
+
+    }
+    catch (error)
     {
         TratamentoErroComLinha("agendamento_viagem<num>.js", "exibirMensagemSucesso", error);
     }
@@ -1614,414 +1336,138 @@ async function ValidaCampos(viagemId)
             lstDdataInicial.value = moment().format('DD/MM/YYYY');
         }
 
-        ////if (!valDataInicial && !moment(valDataInicial).isValid())
-        ////{
-
-
-        ////    await Alerta.Erro("Informação Ausente", "A Data Inicial é obrigatória");
-
-        ////    lstDdataInicial.value = moment().format('DD/MM/YYYY');
-
-        ////    lstDdataInicial.focus();
-
-        ////    return false;
-
-        ////}
-
-        const datasOk = await validarDatas();
-        if (!datasOk) return false;
-
-        if (document.getElementById("txtHoraInicial").value === "")
-        {
-            await Swal.fire({
-                title: '⚠️ Atenção',
-                text: 'A Hora Inicial é obrigatória',
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
-            return false;
-        }
-
         const finalidade = document.getElementById("lstFinalidade").ej2_instances[0].value;
         if (finalidade === '' || finalidade === null)
         {
 
-            await Alerta.Erro("Informação Ausente", "A Finalidade é obrigatória");
+            await Alerta.Erro("Informação Ausente", "A <strong>Finalidade<strong> é obrigatória");
 
             return false;
 
         }
 
         const origem = document.getElementById("cmbOrigem").ej2_instances[0].value;
-        if (origem === "")
+        if (origem === "" || origem === null)
         {
-            await Swal.fire({
-                title: '⚠️ Atenção',
-                text: 'A Origem é obrigatória',
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
-            document.getElementById("cmbOrigem").ej2_instances[0].focus();
+
+            //await Alerta.Erro(<svg width="16" height="16" viewBox="0 0 128 128" style="vertical-align:middle; margin-right:4px;" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="60" fill="#FFD700" stroke="#FFFFFF" stroke-width="4" /><path d="M64,20 C76,20 76,64 64,90 C52,64 52,20 64,20 Z" fill="#E53E3E" /><circle cx="64" cy="106" r="10" fill="#E53E3E" /></svg>"Informação Ausente", "A Origem é obrigatória");
+            await Alerta.Erro("Informação Ausente", "A Origem é obrigatória");
+
             return false;
+
+        }
+
+        const ddtCombustivelInicial = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
+        const ddtCombustivelFinal = document.getElementById("ddtCombustivelFinal").ej2_instances[0];
+        const dataInicial = document.getElementById("txtDataInicial").ej2_instances[0].value;
+        const horaFinal = document.getElementById("txtHoraFinal").value;
+        const kmInicial = document.getElementById("txtKmInicial").value;
+        const kmFinal = document.getElementById("txtKmFinal").value;
+        const dataFinal = $("#txtDataFinal").val();
+        const combustivelFinal = ddtCombustivelFinal.value;
+
+        const algumFinalPreenchido = dataFinal || horaFinal || combustivelFinal || kmFinal;
+        const todosFinalPreenchidos = dataFinal && horaFinal && combustivelFinal && kmFinal;
+
+        if (todosFinalPreenchidos)
+        {
+            const destino = document.getElementById("cmbDestino").ej2_instances[0].value;
+            if (destino === "" || destino === null)
+            {
+
+                //await Alerta.Erro(<svg width="16" height="16" viewBox="0 0 128 128" style="vertical-align:middle; margin-right:4px;" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="60" fill="#FFD700" stroke="#FFFFFF" stroke-width="4" /><path d="M64,20 C76,20 76,64 64,90 C52,64 52,20 64,20 Z" fill="#E53E3E" /><circle cx="64" cy="106" r="10" fill="#E53E3E" /></svg>"Informação Ausente", "O Destino é obrigatório");
+                await Alerta.Erro("Informação Ausente", "O Destino é obrigatório");
+
+                return false;
+
+            }
+
         }
 
         if (viagemId != null && viagemId !== '' && $("#btnConfirma").text() !== 'Edita Agendamento')
         {
-            if (document.getElementById("txtNoFichaVistoria").value === "")
+            if (document.getElementById("txtNoFichaVistoria").value === "" || document.getElementById("txtNoFichaVistoria").value === null)
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "O Nº da Ficha de Vistoria é obrigatório!",
-                    icon: 'warning',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "O Nº da Ficha de Vistoria é obrigatório");
+
                 return false;
+
             }
+
             const lstMotorista = document.getElementById("lstMotorista").ej2_instances[0];
-            if (lstMotorista.value === null)
+            if (lstMotorista.value === null || lstMotorista.value === "")
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "O Motorista é obrigatório",
-                    icon: 'warning',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "O Motorista é obrigatório");
+
                 return false;
+
             }
 
             const lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
-            if (lstVeiculo.value === null)
+            if (lstVeiculo.value === null || lstVeiculo.value === "")
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "O Veículo é obrigatório",
-                    icon: 'warning',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "O Veículo é obrigatório");
+
                 return false;
+
             }
 
             const kmOk = await validarKmInicialFinal();
             if (!kmOk) return false;
 
             const ddtCombustivelInicial = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
-            if (ddtCombustivelInicial.value === "")
+            if (ddtCombustivelInicial.value === "" || ddtCombustivelInicial.value === null)
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "O Combustível Inicial é obrigatório!",
-                    icon: "error",
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "O Combustível Inicial é obrigatório");
+
                 return false;
+
             }
         }
+
         const lstRequisitante = document.getElementById("lstRequisitante").ej2_instances[0];
-        if (!lstRequisitante.value)
+        if (lstRequisitante.value === "" || lstRequisitante.value === null)
         {
-            await Swal.fire({
-                title: "⚠️ Atenção",
-                text: "O Requisitante é obrigatório",
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
+
+            await Alerta.Erro("Informação Ausente", "O Requisitante é obrigatório");
+
             return false;
+
         }
 
-        if (document.getElementById("txtRamalRequisitante").value === "")
+        if (document.getElementById("txtRamalRequisitante").value === "" || document.getElementById("txtRamalRequisitante").value === null)
         {
-            await Swal.fire({
-                title: "⚠️ Atenção",
-                text: "O Ramal do Requisitante é obrigatório",
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
+
+            await Alerta.Erro("Informação Ausente", "O Ramal do Requisitante é obrigatório");
+
             return false;
+
         }
+
         const ddtSetor = document.getElementById("ddtSetor").ej2_instances[0];
-        if (ddtSetor.value === null)
+        if (ddtSetor.value === "" || ddtSetor.value === null)
         {
-            await Swal.fire({
-                title: "⚠️ Atenção",
-                text: "O Setor Solicitante é obrigatório",
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
+
+            await Alerta.Erro("Informação Ausente", "O Setor do Requisitante é obrigatório");
+
             return false;
+
         }
 
         if (document.getElementById("lstFinalidade").ej2_instances[0].value[0] === 'Evento')
         {
             const evento = document.getElementById("lstEventos").ej2_instances[0].value;
-            if (!evento)
+            if (evento === "" || evento === null)
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "O nome do evento é obrigatório",
-                    icon: 'error',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "O Nome do Evento é obrigatório");
+
                 return false;
+
             }
         }
 
@@ -2037,117 +1483,31 @@ async function ValidaCampos(viagemId)
 
             if (recorrente === 'S' && (!periodo || periodo === ''))
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "Se o Agendamento é Recorrente, você precisa escolher o Período de Recorrência!",
-                    icon: 'error',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "Se o Agendamento é Recorrente, você precisa escolher o Período de Recorrência");
+
                 return false;
+
             }
 
             if ((periodo === 'S' || periodo === 'Q' || periodo === 'M') && (document.getElementById("lstDias").ej2_instances[0].value === '' || document.getElementById("lstDias").ej2_instances[0].value === null))
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "Se o período foi escolhido como semanal, quinzenal ou mensal, você precisa escolher os Dias da Semana!",
-                    icon: 'error',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "Se o período foi escolhido como semanal, quinzenal ou mensal, você precisa escolher os Dias da Semana");
+
                 return false;
+
             }
         }
+
         const periodo = document.getElementById("lstPeriodos").ej2_instances[0].value;
-        if ((periodo === 'D' || periodo === 'S' || periodo === 'Q' || periodo === 'M') &&
-            (document.getElementById("txtFinalRecorrencia").ej2_instances[0].value === '' ||
-                document.getElementById("txtFinalRecorrencia").ej2_instances[0].value === null))
+        if ((periodo === 'D' || periodo === 'S' || periodo === 'Q' || periodo === 'M') && (document.getElementById("txtFinalRecorrencia").ej2_instances[0].value === '' || document.getElementById("txtFinalRecorrencia").ej2_instances[0].value === null))
         {
 
-            await Swal.fire({
-                title: "⚠️ Atenção",
-                text: "Se o período foi escolhido como diário, semanal, quinzenal ou mensal, você precisa escolher a Data Final!",
-                icon: 'error',
-                iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                customClass: { popup: 'custom-popup' },
-                confirmButtonText: 'OK',
-                heightAuto: false,
-                willOpen: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').hide();
-                        $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                        $('.swal2-backdrop-show').css('z-index', 9998);
-                        Swal.getPopup().focus();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                    }
-                },
-                didClose: () =>
-                {
-                    try
-                    {
-                        $('.modal-backdrop').css('z-index', '1040').show();
-                    } catch (error)
-                    {
-                        TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                    }
-                }
-            });
+            await Alerta.Erro("Informação Ausente", "Se o período foi escolhido como diário, semanal, quinzenal ou mensal, você precisa escolher a Data Final");
+
             return false;
+
         }
 
         if (periodo === 'V')
@@ -2156,70 +1516,30 @@ async function ValidaCampos(viagemId)
             const selectedDates = calendarObj.values;
             if (!selectedDates || selectedDates.length === 0)
             {
-                await Swal.fire({
-                    title: "⚠️ Atenção",
-                    text: "Se o período foi escolhido como Dias Variados, você precisa escolher ao menos um dia no Calendário!",
-                    icon: 'warning',
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: { popup: 'custom-popup' },
-                    confirmButtonText: 'OK',
-                    heightAuto: false,
-                    willOpen: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').hide();
-                            $('.swal2-container').css({ 'z-index': 9999, 'position': 'fixed' });
-                            $('.swal2-backdrop-show').css('z-index', 9998);
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            $('.modal-backdrop').css('z-index', '1040').show();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+
+                await Alerta.Erro("Informação Ausente", "Se o período foi escolhido como Dias Variados, você precisa escolher ao menos um dia no Calendário");
+
                 return false;
+
             }
         }
-        StatusViagem = "Aberta";
 
-        const ddtCombustivelInicial = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
-        const ddtCombustivelFinal = document.getElementById("ddtCombustivelFinal").ej2_instances[0];
-        const dataInicial = document.getElementById("txtDataInicial").ej2_instances[0].value;
-        const horaFinal = document.getElementById("txtHoraFinal").value;
-        const kmInicial = document.getElementById("txtKmInicial").value;
-        const kmFinal = document.getElementById("txtKmFinal").value;
+        StatusViagem = "Aberta";
 
         if (dataInicial && horaFinal && kmInicial && ddtCombustivelInicial.value !== "")
         {
             StatusViagem = "Realizada";
         }
 
-        const dataFinal = $("#txtDataFinal").val();
-        const combustivelFinal = ddtCombustivelFinal.value;
-
-        const algumFinalPreenchido = dataFinal || horaFinal || combustivelFinal || kmFinal;
-        const todosFinalPreenchidos = dataFinal && horaFinal && combustivelFinal && kmFinal;
-
         if (kmFinal && parseFloat(kmFinal) <= 0)
         {
-            Alerta.Erro("⚠️ Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
+            Alerta.Erro("Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
             return false;
         }
 
         if (algumFinalPreenchido && !todosFinalPreenchidos)
         {
-            Alerta.Erro("⚠️ Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
+            Alerta.Erro("Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
             return false;
         }
 
@@ -4614,58 +3934,61 @@ document.getElementById('txtFinalRecorrencia').addEventListener('focusout', func
                 // Mostra o dialog e esvazia o campo txtFinalRecorrencia;
                 //dialogRecorrencia.show();
 
-                Swal.fire({
-                    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
-                    customClass: {
-                        popup: 'custom-popup'
-                    },
-                    title: '⚠️ Atenção',
-                    text: 'A data final não pode ser maior que 365 dias após a data inicial.',
-                    icon: 'warning',
-                    confirmButtonText: 'Ok',
-                    backdrop: true,
-                    // Ensures SweetAlert2 has a backdrop like a modal;
-                    heightAuto: false,
-                    // Prevent layout issues;
-                    didOpen: () =>
-                    {
-                        try
-                        {
-                            // Ensure all modal-related backdrops and modals are hidden behind;
-                            $('.modal-backdrop').css('z-index', '1040').hide(); // Hide Bootstrap backdrop;
+                Alerta.Alerta("Atenção", "A data final não pode ser maior que 365 dias após a data inicial");
 
-                            // Set z-index for SweetAlert2 container and backdrop;
-                            $('.swal2-container').css({
-                                'z-index': 9999,
-                                // Highest possible z-index;
-                                'position': 'fixed' // Ensure it's positioned correctly;
-                            });
-                            $('.swal2-backdrop-show').css('z-index', 9998); // Just below the alert window;
 
-                            // Force focus to SweetAlert2 to prevent modals from interfering;
-                            Swal.getPopup().focus();
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
-                        }
-                    },
-                    didClose: () =>
-                    {
-                        try
-                        {
-                            // Restore the Bootstrap backdrop after SweetAlert closes;
-                            $('.modal-backdrop').css('z-index', '1040').show();
+                //Swal.fire({
+                //    iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
+                //    customClass: {
+                //        popup: 'custom-popup'
+                //    },
+                //    title: 'Atenção',
+                //    text: 'A data final não pode ser maior que 365 dias após a data inicial.',
+                //    icon: 'warning',
+                //    confirmButtonText: 'Ok',
+                //    backdrop: true,
+                //    // Ensures SweetAlert2 has a backdrop like a modal;
+                //    heightAuto: false,
+                //    // Prevent layout issues;
+                //    didOpen: () =>
+                //    {
+                //        try
+                //        {
+                //            // Ensure all modal-related backdrops and modals are hidden behind;
+                //            $('.modal-backdrop').css('z-index', '1040').hide(); // Hide Bootstrap backdrop;
 
-                            // Close the modal after success;
-                            $("#modalViagens").hide();
-                            $("body").removeClass("modal-open");
-                            $("body").css("overflow", "auto");
-                        } catch (error)
-                        {
-                            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
-                        }
-                    }
-                });
+                //            // Set z-index for SweetAlert2 container and backdrop;
+                //            $('.swal2-container').css({
+                //                'z-index': 9999,
+                //                // Highest possible z-index;
+                //                'position': 'fixed' // Ensure it's positioned correctly;
+                //            });
+                //            $('.swal2-backdrop-show').css('z-index', 9998); // Just below the alert window;
+
+                //            // Force focus to SweetAlert2 to prevent modals from interfering;
+                //            Swal.getPopup().focus();
+                //        } catch (error)
+                //        {
+                //            TratamentoErroComLinha("agendamento_viagem<num>.js", "didOpen", error);
+                //        }
+                //    },
+                //    didClose: () =>
+                //    {
+                //        try
+                //        {
+                //            // Restore the Bootstrap backdrop after SweetAlert closes;
+                //            $('.modal-backdrop').css('z-index', '1040').show();
+
+                //            // Close the modal after success;
+                //            $("#modalViagens").hide();
+                //            $("body").removeClass("modal-open");
+                //            $("body").css("overflow", "auto");
+                //        } catch (error)
+                //        {
+                //            TratamentoErroComLinha("agendamento_viagem<num>.js", "didClose", error);
+                //        }
+                //    }
+                //});
                 document.getElementById('txtFinalRecorrencia').value = '';
             }
         }
@@ -4728,7 +4051,8 @@ $('#modalViagens').on('shown.bs.modal', function (event)
     try
     {
 
-
+        //document.getElementById("ReportContainer").classList.add("d-flex");
+        //document.getElementById("ReportContainer").style.display = "block";
 
         const tooltipTargets = [
             { id: '#txtDuracao', msg: 'Se a <strong>Duração da Viagem</strong> estiver muito longa, verifique primeiro se ela está <strong>Correta</strong> antes de confirmar.' },
@@ -4873,12 +4197,187 @@ $('#modalViagens').on('shown.bs.modal', function (event)
     {
         // Remove o relatório e recria o container para o próximo uso;
         $("#fichaReport").remove();
-        $("#ReportContainer").append("<div id='fichaReport' style='width:100%' class='pb-3'> Carregando... </div>");
-        $("div").removeClass("modal-backdrop");
-        $('body').removeClass('modal-open');
-        $("body").css("overflow", "auto");
+
+        //document.getElementById("ReportContainer").classList.remove("d-flex");
+        //document.getElementById("ReportContainer").style.display = "none";
+
+        //$("div").removeClass("modal-backdrop");
+        //$('body').removeClass('modal-open');
+        //$("body").css("overflow", "auto");
+
+
+        //Limpa todos os Campos
+        //=====================
+
+        //var childNodes = document.getElementById("divModal").getElementsByTagName('*');
+        //for (var node of childNodes)
+        //{
+        //    if (node.id !== "divBotoes")
+        //    {
+        //        node.disabled = false;
+        //        node.value = "";
+        //    }
+        //}
+
+        //document.getElementById("lblUsuarioAgendamento").style.display = "block";
+
+        //document.getElementById("lblUsuarioAgendamento").innerHTML = "";
+
+        //document.getElementById("lblUsuarioCriacao").innerHTML = "";
+
+        //document.getElementById("lblUsuarioFinalizacao").innerHTML = "";
+
+        //document.getElementById("lblUsuarioCancelamento").innerHTML = "";
+
+        //document.getElementById("divNoFichaVistoria").style.display = 'none';
+        //document.getElementById("divDataFinal").style.display = 'none';
+        //document.getElementById("divHoraFinal").style.display = 'none';
+        //document.getElementById("divDuracao").style.display = 'none';
+        //document.getElementById("divKmAtual").style.display = 'none';
+        //document.getElementById("divKmInicial").style.display = 'none';
+        //document.getElementById("divKmFinal").style.display = 'none';
+        //document.getElementById("divQuilometragem").style.display = 'none';
+        //var rte = document.getElementById("rteDescricao").ej2_instances[0];
+        //rte.enabled = true;
+        //rte.value = "";
+        //var lstMotorista = document.getElementById("lstMotorista").ej2_instances[0];
+        //lstMotorista.enabled = true;
+        //lstMotorista.value = "";
+        //lstMotorista.dataBind();
+        //var lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
+        //lstVeiculo.enabled = true;
+        //lstVeiculo.value = "";
+        //lstVeiculo.dataBind();
+        //var lstRequisitante = document.getElementById("lstRequisitante").ej2_instances[0];
+        //lstRequisitante.enabled = true;
+        //lstRequisitante.value = "";
+        //lstRequisitante.dataBind();
+        //var ddtSetor = document.getElementById("ddtSetor").ej2_instances[0];
+        //ddtSetor.enabled = true;
+        //ddtSetor.value = "";
+        //ddtSetor.dataBind();
+        //var ddtCombustivelInicial = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
+        //ddtCombustivelInicial.value = "";
+        //ddtCombustivelInicial.dataBind();
+        //document.getElementById("divCombustivelInicial").style.display = 'none';
+        //var ddtCombustivelFinal = document.getElementById("ddtCombustivelFinal").ej2_instances[0];
+        //ddtCombustivelFinal.value = "";
+        //ddtCombustivelFinal.dataBind();
+        //document.getElementById("divCombustivelFinal").style.display = 'none';
+
+        //var lstEvento = document.getElementById("lstEventos").ej2_instances[0];
+        //lstEvento.value = "";
+        //lstEvento.dataBind();
+        //lstEvento.enabled = false;
+        //document.getElementById("btnEvento").style.display = "none";
+
+        ////Limpa Controles Recorrência;
+        //document.getElementById("lstRecorrente").ej2_instances[0].value = "";
+        //document.getElementById("lstRecorrente").ej2_instances[0].dataBind();
+
+        //document.getElementById("lstPeriodos").ej2_instances[0].value = "";
+        //document.getElementById("lstPeriodos").ej2_instances[0].dataBind();
+
+        //document.getElementById("lstDias").ej2_instances[0].value = "";
+        //document.getElementById("lstDias").ej2_instances[0].dataBind();
+
+        //document.getElementById('txtFinalRecorrencia').value = null;
+
+        //document.getElementById('calDatasSelecionadas').ej2_instances[0].value = null;
+        //document.getElementById('calDatasSelecionadas').ej2_instances[0].dataBind();
+
+        //var listBox = document.getElementById("lstDiasCalendario").ej2_instances[0];
+        //listBox.dataSource = [];
+        //document.getElementById("itensBadge").textContent = 0;
+
+        //const btnRequisitante = document.getElementById("btnRequisitante");
+        //// Remove a classe "disabled" que desativa o link
+        //btnRequisitante.classList.remove('disabled');
+        //// Reativa o comportamento do clique (se for necessário, remova o evento preventivo adicionado antes)
+
+        //document.getElementById("Titulo").innerHTML = "<h3 class='modal-title'><i class='fad fa-calendar-alt' aria-hidden='true'></i> Criar Agendamento</h3>";
+        //console.log("Criar Agendamento");
+        //$("#btnViagem").hide();
+        //$("#btnImprime").hide();
+        //$("#btnApaga").hide();
+        //$("#btnCancela").hide();
+        //$("#btnConfirma").html("<i class='fa fa-save' aria-hidden='true'></i>Cria Agendamento");
+
+        //$("#txtViagemId").val("");
+        //$("#txtRecorrenciaViagemId").val("");
+        //$("#txtStatusAgendamento").val("");
+        //$("#txtUsuarioIdCriacao").val("");
+        //$("#txtDataCriacao").val("");
+
+        //$("#txtNoFichaVistoria").val("");
+
+        //document.getElementById("lstFinalidade").ej2_instances[0].value = "";
+        //document.getElementById("lstFinalidade").ej2_instances[0].text = "";
+        //document.getElementById("lstFinalidade").ej2_instances[0].dataBind();
+
+        //document.getElementById("cmbOrigem").ej2_instances[0].value = "";
+        //document.getElementById("cmbOrigem").ej2_instances[0].dataBind();
+
+        //document.getElementById("cmbDestino").ej2_instances[0].value = "";
+        //document.getElementById("cmbDestino").ej2_instances[0].dataBind();
+
+        //lstEvento.enabled = false;
+        //lstEvento.value = "";
+        //document.getElementById("btnEvento").style.display = "none";
+
+        //document.getElementById("txtRamalRequisitante").value = "";
+
+        //document.getElementById("txtPeriodos").display = "none";
+
+        ////Recorrência;
+        //document.getElementById("lstRecorrente").ej2_instances[0].enabled = true;
+        //document.getElementById("lstRecorrente").ej2_instances[0].value = "";
+        //document.getElementById("lstRecorrente").ej2_instances[0].dataBind();
+
+
+        //document.getElementById("txtPeriodos").value = "";
+        //document.getElementById("divPeriodo").style.display = "none";
+        //document.getElementById("divTxtPeriodo").style.display = "block";
+        //document.getElementById("txtPeriodos").disabled = true;
+        //document.getElementById("divDias").style.display = "";
+
+        //var multiSelect = document.querySelector('#lstDias').ej2_instances[0];
+        //multiSelect.value = "";
+        //multiSelect.dataBind(); // Aplica a seleção inicial;
+
+        //document.getElementById("divDias").style.display = "none";
+        //document.getElementById("divDiaMes").style.display = "none";
+        //document.getElementById("lstDiasMes").ej2_instances[0].enabled = false;
+        //document.getElementById("lstDiasMes").ej2_instances[0].value = "";
+        //document.getElementById("lstDiasMes").ej2_instances[0].text = "";
+        //document.getElementById("txtDataFinalRecorrencia").disabled = true;
+        //document.getElementById("txtDataFinalRecorrencia").value = "";
+        //document.getElementById("divFinalRecorrencia").style.display = "none";
+        //document.getElementById("divFinalFalsoRecorrencia").style.display = "none";
+        //var calendarContainer = document.getElementById("calendarContainer");
+        //calendarContainer.style.display = "none";
+        //var listboxContainer = document.getElementById("listboxContainer");
+        //listboxContainer.style.display = "none";
+        //var listboxContainerHTML = document.getElementById("listboxContainerHTML");
+        //listboxContainerHTML.style.display = "none";
+
+        //const listBoxHTML = document.getElementById("lstDiasCalendarioHTML");
+        //listBoxHTML.innerHTML = "";
+
+        //const divDiasSelecionados = document.getElementById("diasSelecionadosTexto");
+
+        //if (divDiasSelecionados != null)
+        //{
+        //    divDiasSelecionados.textContent = "";
+        //}
+
+        //document.getElementById("rteDescricao").ej2_instances[0].value = "";
+
+        //$("#btnFecha").enabled = true;
+
         //location.reload();
-    } catch (error)
+    }
+    catch (error)
     {
         TratamentoErroComLinha("agendamento_viagem<num>.js", "(anonymous)", error);
     }
@@ -4995,7 +4494,7 @@ $("#btnViagem").click(function (event)
         //    },
         //    error: function (err)
         //    {
-        //        Alerta.Erro("⚠️ Erro ao buscar número da última ficha", "Classe: Viagem_050 | Método: document.ready | Erro: " + err.statusText);
+        //        Alerta.Erro("Erro ao buscar número da última ficha", "Classe: Viagem_050 | Método: document.ready | Erro: " + err.statusText);
         //    }
         //});
 
@@ -5552,7 +5051,7 @@ $("#txtDataFinal").focusout(function ()
                 customClass: {
                     popup: 'custom-popup'
                 },
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A data final deve ser maior que a inicial!',
                 icon: 'error',
                 dangerMode: true,
@@ -5763,7 +5262,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
             return;
         }
 
@@ -5771,7 +5270,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
             return;
         }
 
@@ -6786,7 +6285,7 @@ async function validarDatas()
         if (diferenca >= 5)
         {
             const result = await Swal.fire({
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A Data Final está 5 dias ou mais após a Inicial. Tem certeza?',
                 icon: 'warning',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -6856,7 +6355,7 @@ async function validarQuilometragem()
         if (txtKmInicial === "")
         {
             await Swal.fire({
-                title: "⚠️ Atenção",
+                title: "Atenção",
                 text: "A quilometragem inicial é obrigatória",
                 icon: "error",
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -6889,7 +6388,7 @@ async function validarQuilometragem()
                 if (diferencaKm >= 100)
                 {
                     const result = await Swal.fire({
-                        title: '⚠️ Atenção',
+                        title: 'Atenção',
                         text: 'A quilometragem final está 100 km ou mais acima da inicial. Tem certeza?',
                         icon: 'warning',
                         iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -7018,7 +6517,7 @@ function calcularDistanciaViagem()
         $('#txtQuilometragem').val(kmPercorrido);
 
         //    if (kmPercorrido > 100) {
-        //        Alerta.Alerta("⚠️ Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
+        //        Alerta.Alerta("Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
         //    }
     } catch (error)
     {
@@ -7119,7 +6618,7 @@ async function validarDatasInicialFinal(DataInicial, DataFinal)
         if (diff >= 5)
         {
             const result = await Swal.fire({
-                title: '⚠️ Atenção',
+                title: 'Atenção',
                 text: 'A Data Final está 5 dias ou mais após a Inicial. Tem certeza?',
                 icon: 'warning',
                 iconHtml: '<img src="/images/eyebrown.jpg" style="width: 50px; height: 50px; border-radius: 50%;">',
@@ -7345,3 +6844,154 @@ function calcularDuracaoViagem()
 }
 
 
+//function ExibeViagem(viagem)
+//{
+//        StatusViagem = "Aberta";
+//        var childNodes = document.getElementById("divModal").getElementsByTagName('*');
+//        for (var node of childNodes)
+//        {
+//            if (node.id !== "divBotoes")
+//            {
+//                node.disabled = false;
+//                node.value = "";
+//            }
+//        }
+
+//        document.getElementById("lblUsuarioAgendamento").style.display = "block";
+
+//        document.getElementById("lblUsuarioAgendamento").innerHTML = "";
+
+//        document.getElementById("lblUsuarioCriacao").innerHTML = "";
+
+//        document.getElementById("lblUsuarioFinalizacao").innerHTML = "";
+
+//        document.getElementById("lblUsuarioCancelamento").innerHTML = "";
+
+//        document.getElementById("divNoFichaVistoria").style.display = 'none';
+//        document.getElementById("divDataFinal").style.display = 'none';
+//        document.getElementById("divHoraFinal").style.display = 'none';
+//        document.getElementById("divDuracao").style.display = 'none';
+//        document.getElementById("divKmAtual").style.display = 'none';
+//        document.getElementById("divKmInicial").style.display = 'none';
+//        document.getElementById("divKmFinal").style.display = 'none';
+//        document.getElementById("divQuilometragem").style.display = 'none';
+//        var rte = document.getElementById("rteDescricao").ej2_instances[0];
+//        rte.enabled = true;
+//        rte.value = "";
+//        var lstMotorista = document.getElementById("lstMotorista").ej2_instances[0];
+//        lstMotorista.enabled = true;
+//        lstMotorista.value = "";
+//        var lstVeiculo = document.getElementById("lstVeiculo").ej2_instances[0];
+//        lstVeiculo.enabled = true;
+//        lstVeiculo.value = "";
+//        var lstRequisitante = document.getElementById("lstRequisitante").ej2_instances[0];
+//        lstRequisitante.enabled = true;
+//        lstRequisitante.value = "";
+//        var ddtSetor = document.getElementById("ddtSetor").ej2_instances[0];
+//        ddtSetor.enabled = true;
+//        ddtSetor.value = "";
+//        var ddtCombustivelInicial = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
+//        ddtCombustivelInicial.value = "";
+//        document.getElementById("divCombustivelInicial").style.display = 'none';
+//        var ddtCombustivelFinal = document.getElementById("ddtCombustivelFinal").ej2_instances[0];
+//        ddtCombustivelFinal.value = "";
+//        document.getElementById("divCombustivelFinal").style.display = 'none';
+
+//        var lstEvento = document.getElementById("lstEventos").ej2_instances[0];
+//        lstEvento.value = "";
+//        lstEvento.enabled = false;
+//        document.getElementById("btnEvento").style.display = "none";
+
+//        //Limpa Controles Recorrência;
+//        document.getElementById("lstRecorrente").ej2_instances[0].value = "";
+//        document.getElementById("lstPeriodos").ej2_instances[0].value = "";
+//        document.getElementById("lstDias").ej2_instances[0].value = "";
+//        document.getElementById('txtFinalRecorrencia').value = null;
+//        document.getElementById('calDatasSelecionadas').ej2_instances[0].value = null;
+//        var listBox = document.getElementById("lstDiasCalendario").ej2_instances[0];
+//        listBox.dataSource = [];
+//        document.getElementById("itensBadge").textContent = 0;
+
+//        const btnRequisitante = document.getElementById("btnRequisitante");
+//        // Remove a classe "disabled" que desativa o link
+//        btnRequisitante.classList.remove('disabled');
+//        // Reativa o comportamento do clique (se for necessário, remova o evento preventivo adicionado antes)
+
+//        document.getElementById("Titulo").innerHTML = "<h3 class='modal-title'><i class='fad fa-calendar-alt' aria-hidden='true'></i> Criar Agendamento</h3>";
+//        console.log("Criar Agendamento");
+//        $("#btnViagem").hide();
+//        $("#btnImprime").hide();
+//        $("#btnApaga").hide();
+//        $("#btnCancela").hide();
+//        $("#btnConfirma").html("<i class='fa fa-save' aria-hidden='true'></i>Cria Agendamento");
+
+//        $("#txtViagemId").val("");
+//        $("#txtRecorrenciaViagemId").val("");
+//        $("#txtStatusAgendamento").val("");
+//        $("#txtUsuarioIdCriacao").val("");
+//        $("#txtDataCriacao").val("");
+
+//        $("#txtNoFichaVistoria").val("");
+
+//        var datePicker = document.getElementById("txtDataInicial").ej2_instances[0];
+//        datePicker.value = moment(viagem.dataInicial).toDate(); // Ou use o método correto para definir o valor;
+//        datePicker.dataBind(); // Atualiza a interface;
+
+//        $('#txtHoraInicial').removeAttr("type");
+//        document.getElementById("txtHoraInicial").value = viagem.horaInicio.substring(11, 16);
+//        $('#txtHoraInicial').attr('type', 'time');
+
+//        document.getElementById("lstFinalidade").ej2_instances[0].value = "" ;
+//        document.getElementById("lstFinalidade").ej2_instances[0].text = "" ;
+
+//        document.getElementById("cmbOrigem").ej2_instances[0].value = "";
+//        document.getElementById("cmbDestino").ej2_instances[0].value = "";
+
+//        lstEvento.enabled = false;
+//        lstEvento.value = "";
+//        document.getElementById("btnEvento").style.display = "none";
+
+//        document.getElementById("txtRamalRequisitante").value = "";
+
+//        document.getElementById("txtPeriodos").display = "none";
+
+//        //Recorrência;
+//        document.getElementById("lstRecorrente").ej2_instances[0].enabled = true;
+//        document.getElementById("lstRecorrente").ej2_instances[0].value = "";
+//        document.getElementById("txtPeriodos").value = "";
+//        document.getElementById("divPeriodo").style.display = "none";
+//        document.getElementById("divTxtPeriodo").style.display = "block";
+//        document.getElementById("txtPeriodos").disabled = true;
+//        document.getElementById("divDias").style.display = ""; 
+
+//        var multiSelect = document.querySelector('#lstDias').ej2_instances[0];
+//        multiSelect.value = "";
+//        multiSelect.dataBind(); // Aplica a seleção inicial;
+
+//        document.getElementById("divDias").style.display = "none";
+//        document.getElementById("divDiaMes").style.display = "none";
+//        document.getElementById("lstDiasMes").ej2_instances[0].enabled = false;
+//        document.getElementById("lstDiasMes").ej2_instances[0].value = "";
+//        document.getElementById("lstDiasMes").ej2_instances[0].text = "";
+//        document.getElementById("txtDataFinalRecorrencia").disabled = true;
+//        document.getElementById("txtDataFinalRecorrencia").value = "";
+//        document.getElementById("divFinalRecorrencia").style.display = "none";
+//        document.getElementById("divFinalFalsoRecorrencia").style.display = "none";
+//        var calendarContainer = document.getElementById("calendarContainer");
+//        calendarContainer.style.display = "none";
+//        var listboxContainer = document.getElementById("listboxContainer");
+//        listboxContainer.style.display = "none";
+//        var listboxContainerHTML = document.getElementById("listboxContainerHTML");
+//        listboxContainerHTML.style.display = "none";
+
+//        const listBoxHTML = document.getElementById("lstDiasCalendarioHTML");
+//        listBoxHTML.innerHTML = "";
+
+//        const divDiasSelecionados = document.getElementById("diasSelecionadosTexto");
+
+//        divDiasSelecionados.textContent = "";
+
+//        document.getElementById("rteDescricao").ej2_instances[0].value = "";
+
+//        $("#btnFecha").enabled = true;
+//}

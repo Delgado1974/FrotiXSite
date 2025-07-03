@@ -57,7 +57,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
             return;
         }
 
@@ -65,7 +65,7 @@ $("#txtKmInicial").focusout(function ()
         {
             $("#txtKmAtual").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
             return;
         }
 
@@ -105,7 +105,7 @@ $("#txtKmFinal").focusout(function ()
         {
             $("#txtKmFinal").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem final deve ser maior que a inicial!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem final deve ser maior que a inicial!");
             return;
         }
 
@@ -114,7 +114,7 @@ $("#txtKmFinal").focusout(function ()
 
         //if (kmPercorrido > 100)
         //{
-        //    Alerta.Alerta("⚠️ Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
+        //    Alerta.Alerta("Alerta na Quilometragem", "A quilometragem final excede em 100km a inicial!");
         //}
 
         calcularDistanciaViagem();
@@ -1192,7 +1192,7 @@ $("#btnInserirEvento").click(function (e)
             $("#txtDataInicialEvento").val() === "" || $("#txtDataFinalEvento").val() === "" ||
             $("#txtQtdPessoas").val() === "")
         {
-            Alerta.Alerta("⚠️ Atenção", "Todos os campos são obrigatórios!");
+            Alerta.Alerta("Atenção", "Todos os campos são obrigatórios!");
             return;
         }
 
@@ -1201,7 +1201,7 @@ $("#btnInserirEvento").click(function (e)
 
         if (!setores.value || !requisitantes.value)
         {
-                Alerta.Alerta("⚠️ Atenção", "Setor e Requisitante são obrigatórios!");
+                Alerta.Alerta("Atenção", "Setor e Requisitante são obrigatórios!");
                 return;
         }
 
@@ -1248,14 +1248,14 @@ $("#btnInserirRequisitante").click(function (e)
 
         if ($("#txtPonto").val() === "" || $("#txtNome").val() === "" || $("#txtRamal").val() === "")
         {
-            Alerta.Alerta("⚠️ Atenção", "Ponto, Nome e Ramal são obrigatórios!");
+            Alerta.Alerta("Atenção", "Ponto, Nome e Ramal são obrigatórios!");
             return;
         }
 
         let setores = document.getElementById('ddtSetorRequisitante').ej2_instances[0];
         if (!setores.value)
         {
-            Alerta.Alerta("⚠️ Atenção", "O Setor do Requisitante é obrigatório!");
+            Alerta.Alerta("Atenção", "O Setor do Requisitante é obrigatório!");
             return;
         }
 
@@ -1293,7 +1293,7 @@ $("#btnInserirRequisitante").click(function (e)
             },
             error: function (data)
             {
-                Alerta.Erro("⚠️ Atenção", "Já existe um requisitante com este ponto/nome!");
+                Alerta.Erro("Atenção", "Já existe um requisitante com este ponto/nome!");
                 console.log(data);
             }
         });
@@ -1311,7 +1311,7 @@ $("#btnInserirSetor").click(function (e)
 
         if ($("#txtNomeSetor").val() === "" || $("#txtRamalSetor").val() === "")
         {
-            Alerta.Alerta("⚠️ Atenção", "Nome e Ramal do Setor são obrigatórios!");
+            Alerta.Alerta("Atenção", "Nome e Ramal do Setor são obrigatórios!");
             return;
         }
 
@@ -1370,80 +1370,80 @@ $("#btnSubmit").click(async function (event)
 
         if ($("#txtNoFichaVistoria").val() === "")
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O número da Ficha de Vistoria é obrigatório");
+            Alerta.Erro("Informação Ausente", "O número da Ficha de Vistoria é obrigatório");
             return;
         }
 
         if ($("#txtDataInicial").val() === "")
         {
-            Alerta.Erro("⚠️ Informação Ausente", "A Data Inicial é obrigatória");
+            Alerta.Erro("Informação Ausente", "A Data Inicial é obrigatória");
             return;
         }
 
         if ($("#txtHoraInicial").val() === "")
         {
-            Alerta.Erro("⚠️ Informação Ausente", "A Hora Inicial é obrigatória");
+            Alerta.Erro("Informação Ausente", "A Hora Inicial é obrigatória");
             return;
         }
 
         const finalidade = document.getElementById("ddtFinalidade").ej2_instances[0];
         if (!finalidade.value || finalidade.value[0] === null)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "A Finalidade é obrigatória");
+            Alerta.Erro("Informação Ausente", "A Finalidade é obrigatória");
             return;
         }
 
         const origem = document.getElementById("cmbOrigem").ej2_instances[0];
         if (origem.value === null)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "A Origem é obrigatória");
+            Alerta.Erro("Informação Ausente", "A Origem é obrigatória");
             return;
         }
 
         const motorista = document.getElementById("cmbMotorista").ej2_instances[0];
         if (motorista.value === null)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Motorista é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Motorista é obrigatório");
             return;
         }
 
         const veiculo = document.getElementById("cmbVeiculo").ej2_instances[0];
         if (veiculo.value === null)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Veículo é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Veículo é obrigatório");
             return;
         }
 
         if ($("#txtKmInicial").val() === "")
         {
-            Alerta.Erro("⚠️ Informação Ausente", "A Quilometragem Inicial é obrigatória");
+            Alerta.Erro("Informação Ausente", "A Quilometragem Inicial é obrigatória");
             return;
         }
 
         const combustivel = document.getElementById("ddtCombustivelInicial").ej2_instances[0];
         if (!combustivel.value)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Nível de Combustível Inicial é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Nível de Combustível Inicial é obrigatório");
             return;
         }
 
         const requisitante = document.getElementById("cmbRequisitante").ej2_instances[0];
         if (!requisitante.value || requisitante.value[0] === null)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Requisitante é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Requisitante é obrigatório");
             return;
         }
 
         if ($("#txtRamalRequisitante").val() === "")
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Ramal do Requisitante é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Ramal do Requisitante é obrigatório");
             return;
         }
 
         const setor = document.getElementById("ddtSetor").ej2_instances[0];
         if (!setor.value)
         {
-            Alerta.Erro("⚠️ Informação Ausente", "O Setor Solicitante é obrigatório");
+            Alerta.Erro("Informação Ausente", "O Setor Solicitante é obrigatório");
             return;
         }
 
@@ -1457,13 +1457,13 @@ $("#btnSubmit").click(async function (event)
 
         if (kmFinal && parseFloat(kmFinal) <= 0)
         {
-            Alerta.Erro("⚠️ Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
+            Alerta.Erro("Informação Incorreta", "A Quilometragem Final deve ser maior que zero");
             return;
         }
 
         if (algumFinalPreenchido && !todosFinalPreenchidos)
         {
-            Alerta.Erro("⚠️ Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
+            Alerta.Erro("Informação Incompleta", "Todos os campos de Finalização devem ser preenchidos para encerrar a viagem");
             return;
         }
 

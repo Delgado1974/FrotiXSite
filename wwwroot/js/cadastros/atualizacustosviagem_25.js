@@ -70,12 +70,12 @@ $('#modalAjustaCustos').on('shown.bs.modal', function (event) {
         //        console.log("🟠 ID da Viagem: ", viagemId);
 
         //        if (viagemId == null) {
-        //            console.warn("⚠️ viagemId veio null!");
+        //            console.warn("viagemId veio null!");
         //        }
 
         //        $('#txtId').attr('value', viagemId?.toString() ?? '');
         //    } else {
-        //        console.warn("⚠️ Nenhuma linha relacionada foi encontrada.");
+        //        console.warn("Nenhuma linha relacionada foi encontrada.");
         //    }
 
         //return;

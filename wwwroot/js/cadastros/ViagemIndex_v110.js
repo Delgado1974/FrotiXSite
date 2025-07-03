@@ -80,7 +80,7 @@ $(document).ready(function () {
 
         ListaTodasViagens();
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: AppInit | Método: document.ready | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: AppInit | Método: document.ready | Erro: " + error.message);
         TratamentoErroComLinha("AppInit", "document.ready", error);
     }
 });
@@ -293,7 +293,7 @@ $('#modalFinalizaViagem').on('shown.bs.modal', function (event) {
             $('#btnFinalizarViagem').show();
         }
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ModalFinalizaViagem | Método: shown.bs.modal | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ModalFinalizaViagem | Método: shown.bs.modal | Erro: " + error.message);
         TratamentoErroComLinha("ModalFinalizaViagem", "shown.bs.modal", error);
     }
 });
@@ -340,7 +340,7 @@ $('#modalFinalizaViagem').on("hide.bs.modal", function () {
         $('#btnFinalizarViagem').show();
     } catch (error) {
         // console.error("Erro ao limpar modal:", error);
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Erro ao limpar campos do modal FinalizaViagem: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Erro ao limpar campos do modal FinalizaViagem: " + error.message);
         TratamentoErroComLinha("ModalFinalizaViagem", "hide.bs.modal", error);
     }
 });
@@ -445,7 +445,7 @@ $("#txtHoraFinal").focusout(function () {
         calcularDuracaoViagem();
 
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ValidadorHora | Método: focusout.txtHoraFinal | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ValidadorHora | Método: focusout.txtHoraFinal | Erro: " + error.message);
         TratamentoErroComLinha("ValidadorHora", "focusout.txtHoraFinal", error);
     }
 });
@@ -473,21 +473,21 @@ $("#txtKmInicial").focusout(function () {
         if (kmInicial < 0) {
             $("#txtKmInicial").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que <strong>zero</strong>!");
             return;
         }
 
         if (kmInicial < kmAtual) {
             $("#txtKmAtual").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>inicial</strong> deve ser maior que a <strong>atual</strong>!");
             return;
         }
 
         calcularDistanciaViagem();
 
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: Viagem_050 | Método: focusout.txtKmInicial | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: Viagem_050 | Método: focusout.txtKmInicial | Erro: " + error.message);
         TratamentoErroComLinha("Viagem_050", "focusout.txtKmInicial", error);
     }
 });
@@ -513,7 +513,7 @@ $("#txtKmFinal").focusout(function () {
         if (kmFinal < kmInicial) {
             $("#txtKmFinal").val('');
             $('#txtKmPercorrido').val('');
-            Alerta.Erro("⚠️ Erro na Quilometragem", "A quilometragem <strong>final</strong> deve ser maior que a <strong>inicial</strong>!");
+            Alerta.Erro("Erro na Quilometragem", "A quilometragem <strong>final</strong> deve ser maior que a <strong>inicial</strong>!");
             return;
         }
 
@@ -521,13 +521,13 @@ $("#txtKmFinal").focusout(function () {
         $('#txtKmPercorrido').val(kmPercorrido);
 
         if (kmPercorrido > 100) {
-            Alerta.Alerta("⚠️ Alerta na Quilometragem", "A quilometragem <strong>final</strong> excede em 100km a <strong>inicial</strong>!");
+            Alerta.Alerta("Alerta na Quilometragem", "A quilometragem <strong>final</strong> excede em 100km a <strong>inicial</strong>!");
         }
 
         calcularDistanciaViagem();
 
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ValidadorKM | Método: focusout.txtKmFinal | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ValidadorKM | Método: focusout.txtKmFinal | Erro: " + error.message);
         TratamentoErroComLinha("ValidadorKM", "focusout.txtKmFinal", error);
     }
 });
@@ -567,7 +567,7 @@ function parseDate(d) {
         }
         return null;
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: Util | Método: parseDate | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: Util | Método: parseDate | Erro: " + error.message);
         TratamentoErroComLinha("Util", "parseDate", error);
         return null;
     }
@@ -620,7 +620,7 @@ async function validarDatasSimples() {
 
         return true;
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ValidadorData | Método: validarDatasSimples | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ValidadorData | Método: validarDatasSimples | Erro: " + error.message);
         TratamentoErroComLinha("ValidadorData", "validarDatasSimples", error);
         return false;
     }
@@ -677,7 +677,7 @@ async function validarKmAtualFinal() {
 
         return true;
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ValidadorKM | Método: validarKmAtualInicial | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ValidadorKM | Método: validarKmAtualInicial | Erro: " + error.message);
         TratamentoErroComLinha("ValidadorKM", "validarKmAtualFinal", error);
         return false;
     }
@@ -736,7 +736,7 @@ async function validarKmInicialFinal() {
 
         return true;
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ValidadorKM | Método: validarKmInicialFinal | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ValidadorKM | Método: validarKmInicialFinal | Erro: " + error.message);
         TratamentoErroComLinha("ValidadorKM", "validarKmInicialFinal", error);
         return false;
     }
@@ -1023,7 +1023,7 @@ function ListaTodasViagens() {
         $('#divViagens').LoadingScript('destroy');
 
     } catch (error) {
-        // Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: ListaViagens | Método: ListaTodasViagens | Erro: " + error.message);
+        // Alerta.Erro("Erro Sem Tratamento", "Classe: ListaViagens | Método: ListaTodasViagens | Erro: " + error.message);
         TratamentoErroComLinha("ListaViagens", "ListaTodasViagens", error);
     }
 }
@@ -1101,11 +1101,11 @@ $("#btnFinalizarViagem").click(async function (e) {
                     $("div").removeClass("modal-backdrop");
                     $('body').removeClass('modal-open');
                 } catch (error) {
-                    Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: FinalizaViagem | Método: success | Erro: " + error.message);
+                    Alerta.Erro("Erro Sem Tratamento", "Classe: FinalizaViagem | Método: success | Erro: " + error.message);
                 }
             },
             error: function (data) {
-                Alerta.Erro("⚠️ Erro Sem Tratamento", "Classe: FinalizaViagem | Método: ajax.error | Erro: " + data.message);
+                Alerta.Erro("Erro Sem Tratamento", "Classe: FinalizaViagem | Método: ajax.error | Erro: " + data.message);
             }
         });
     } catch (error) {

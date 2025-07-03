@@ -94,7 +94,7 @@
     },
 
     ShowSuccess: async function (title, text, confirmButtonText = "OK") {
-        const iconHtml = '<img src="/images/sucesso_transparente.png" style="max-width: 150px; width: 100%; height: auto; margin-bottom: 10px;">';
+        const iconHtml = '<img src="/images/success_oculos_transparente.png" style="max-width: 150px; width: 100%; height: auto; margin-bottom: 10px;">';
         return await this.ShowCustomAlert('success', iconHtml, title, text, confirmButtonText);
     },
 
